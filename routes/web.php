@@ -12,3 +12,7 @@
 */
 
 Auth::routes();
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('challenge/list', 'Base\\ChallengeController@list');
+});
