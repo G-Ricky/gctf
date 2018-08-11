@@ -24,7 +24,7 @@ class Challenge extends Model
         return $this->hasMany('App\\Models\\Base\\Tag', 'challenge');
     }
 
-    public function list()
+    public function list($id, $page_size)
     {
         return $this
             ->select(
@@ -35,8 +35,34 @@ class Challenge extends Model
                 'points',
                 'updated_at'
             )
+            ->where('id', '=', $id)
             ->whereNotNull('flag')
             ->orderBy('updated_at', 'desc')
-            ->with('tags:challenge,name');
+            ->with('tags:challenge,name')
+            ->paginate($page_size)
+            ->jsonSerialize();
+    }
+
+    public function info($id)
+    {
+        return $this
+            ->select(
+                'id',
+                'title',
+                'description',
+                'category',
+                'poster',
+                'points',
+                'bank',
+                'created_at',
+                'updated_at'
+            )
+            ->where('id', $id)
+            ->with([
+               'tags' => function($query) {
+                   return $query->select('challenge', 'name');
+               }
+            ])
+            ->get();
     }
 }
