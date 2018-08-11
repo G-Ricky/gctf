@@ -20,18 +20,23 @@ class Challenge extends Model
         'bank'
     ];
 
+    public function tags() {
+        return $this->hasMany('App\\Models\\Base\\Tag', 'challenge');
+    }
+
     public function list()
     {
         return $this
             ->select(
                 'id',
                 'title',
-                DB::raw('LEFT(description,40) as description'),
+                'description',
                 'category',
                 'points',
                 'updated_at'
             )
             ->whereNotNull('flag')
-            ->orderBy('updated_at', 'desc');
+            ->orderBy('updated_at', 'desc')
+            ->with('tags:challenge,name');
     }
 }

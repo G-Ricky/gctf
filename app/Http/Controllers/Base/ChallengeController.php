@@ -21,6 +21,11 @@ class ChallengeController extends Controller
 
         $data = &$page_data['data'];
         foreach($data as &$challenge) {
+            $tags = [];
+            foreach($challenge['tags'] as &$tag) {
+                $tags[] = $tag['name'];
+            }
+            $challenge['tags'] = $tags;
             $challenge['description'] = str_limit($challenge['description'], 40);
         }
 
