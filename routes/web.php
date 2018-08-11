@@ -14,6 +14,10 @@
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
+    Route::get('challenge', 'Base\\ChallengeController@index');
     Route::get('challenge/list', 'Base\\ChallengeController@list');
     Route::get('challenge/info', 'Base\\ChallengeController@info');
+    Route::post('challenge/add', 'Base\\ChallengeController@add');
+    Route::put('challenge/edit', 'Base\\ChallengeController@edit');
+    Route::delete('challenge/remove', 'Base\\ChallengeController@remove');
 });

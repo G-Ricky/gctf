@@ -24,7 +24,11 @@ class Challenge extends Model
         return $this->hasMany('App\\Models\\Base\\Tag', 'challenge');
     }
 
-    public function list($id, $page_size)
+    public function hints() {
+
+    }
+
+    public function list($page_size)
     {
         return $this
             ->select(
@@ -35,7 +39,7 @@ class Challenge extends Model
                 'points',
                 'updated_at'
             )
-            ->where('id', '=', $id)
+            ->where('is_hidden', '=', false)
             ->whereNotNull('flag')
             ->orderBy('updated_at', 'desc')
             ->with('tags:challenge,name')
@@ -57,12 +61,24 @@ class Challenge extends Model
                 'created_at',
                 'updated_at'
             )
-            ->where('id', $id)
+            ->where('id', '=', $id)
+            ->where('is_hidden', '=', false)
             ->with([
                'tags' => function($query) {
                    return $query->select('challenge', 'name');
                }
             ])
             ->get();
+    }
+
+    public function saveWithTags(array $data)
+    {
+        foreach($data['tags'] as $value) {
+            $tags[] = new Tag(['name' => $value]);
+        }
+        unset($data['tags']);
+        //Create a record of new challenge and create records of tag related to the same challenge
+        $success = $this->create($data)->tags()->saveMany($tags);
+        return $success;
     }
 }
