@@ -49,21 +49,28 @@ class ChallengeController extends Controller
         $success = $this->challenges->saveWithTags($data);
 
         return [
-            'status' => 200,
+            'status'  => 200,
             'success' => $success
         ];
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
         //TODO Only administer
-
+        $this->validate($request, [
+            'id' => 'required|integer|exists:challenges,id'
+        ]);
     }
 
-    public function remove()
+    public function remove(Request $request)
     {
         //TODO Only administer
-
+        $id = $request->query('id');
+        $success = $this->challenges->remove($id);
+        return [
+            'status'  => 200,
+            'success' => $success
+        ];
     }
 
     public function list(Request $request)
@@ -92,12 +99,17 @@ class ChallengeController extends Controller
     public function info(Request $request)
     {
         $id = $request->query('id', 0);
-        $info = $this->challenges->info($id);
+        $challenge = $this->challenges->info($id);
+        $tags = [];
+        foreach($challenge['tags'] as &$tag) {
+            $tags[] = $tag['name'];
+        }
+        $challenge['tags'] = $tags;
 
         return [
             'status'  => 200,
-            'success' => (bool)$info,
-            'data'    => $info
+            'success' => (bool)$challenge,
+            'data'    => $challenge
         ];
     }
 }

@@ -20,15 +20,22 @@ class Challenge extends Model
         'bank'
     ];
 
-    public function tags() {
+    public function bank()
+    {
+        return $this->belongsTo('App\\Models\\Base\\Bank', 'bank');
+    }
+
+    public function tags()
+    {
         return $this->hasMany('App\\Models\\Base\\Tag', 'challenge');
     }
 
-    public function hints() {
+    public function hints()
+    {
 
     }
 
-    public function list($page_size)
+    public function list($page_size = 20)
     {
         return $this
             ->select(
@@ -37,6 +44,7 @@ class Challenge extends Model
                 'description',
                 'category',
                 'points',
+                'created_at',
                 'updated_at'
             )
             ->where('is_hidden', '=', false)
@@ -45,6 +53,11 @@ class Challenge extends Model
             ->with('tags:challenge,name')
             ->paginate($page_size)
             ->jsonSerialize();
+    }
+
+    public function search()
+    {
+
     }
 
     public function info($id)
@@ -80,5 +93,12 @@ class Challenge extends Model
         //Create a record of new challenge and create records of tag related to the same challenge
         $success = $this->create($data)->tags()->saveMany($tags);
         return $success;
+    }
+
+    public function remove($id)
+    {
+        return $this
+            ->where('id', '=', $id)
+            ->delete();
     }
 }
