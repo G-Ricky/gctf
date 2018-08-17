@@ -1,4 +1,5 @@
 @section('navigation')
+<div class="ui menu"></div>
 <div class="ui inverted fixed borderless menu">
     <div class="ui container">
         <a href="{{ url('/') }}" class="header item">
@@ -38,7 +39,7 @@
                 <div class="ui simple dropdown item">
                     {{ Auth::user()->nickname }} <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item" href="#">Profile</a>
+                        <a class="item" href="{{ url('user') }}">Profile</a>
                         <a class="item" href="#">Change Password</a>
                         <a class="item" href="#">Logout</a>
                     </div>

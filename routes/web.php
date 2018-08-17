@@ -21,3 +21,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('challenge/edit', 'Base\\ChallengeController@edit');
     Route::delete('challenge/remove', 'Base\\ChallengeController@remove');
 });
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('user', 'Base\\UserController@index');
+    Route::get('user/info', 'Base\\UserController@info');
+});

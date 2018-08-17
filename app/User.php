@@ -34,4 +34,15 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function info($id)
+    {
+        return $this
+            ->select('sid', 'name', 'nickname', 'sex', 'email')
+            ->where('id', '=', $id)
+            ->whereNull('deleted_at')
+            ->offset(0)
+            ->limit(1)
+            ->get();
+    }
 }
