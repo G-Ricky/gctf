@@ -25,6 +25,24 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        Gate::define('create-challenge', function($user) {
+            return $user->role === 'ADMIN' or $user->role === 'SUPER';
+        });
+        Gate::define('modify-challenge', function($user) {
+            return $user->role === 'ADMIN' or $user->role === 'SUPER';
+        });
+
+        Gate::define('view-all-submissions', function($user) {
+            return $user->role === 'ADMIN' or $user->role === 'SUPER';
+        });
+
+        Gate::define('view-all-users', function($user) {
+            return $user->role === 'ADMIN' or $user->role === 'SUPER';
+        });
+
+        Gate::define('grant-users', function($user) {
+            return $user->role === 'SUPER';
+        });
+
     }
 }
