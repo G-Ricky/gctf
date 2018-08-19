@@ -7,6 +7,7 @@
 
 @section('content')
 <div class="ui container">
+    <h4 class="ui horizontal divider header"><i class="tag icon"></i> 修改个人资料 </h4>
     <div class="ui form">
         <div class="field">
             <label>学号</label>
@@ -32,6 +33,9 @@
             <label>邮箱</label>
             <input id="email" type="text" value="" readonly>
         </div>
+        <div class="field">
+            <button class="ui submit button" disabled>保存</button>
+        </div>
     </div>
 </div>
 @endsection
@@ -47,7 +51,7 @@
                         $("#sid").val(data.data.sid);
                         $("#name").val(data.data.name);
                         $("#nickname").val(data.data.nickname);
-                        $("#gender").find("option[text='" + data.data.sex + "']").attr("selected",true);
+                        $("#gender").find("option[text='" + data.data.gender + "']").attr("selected",true);
                         $("#email").val(data.data.email);
                     }
                 }

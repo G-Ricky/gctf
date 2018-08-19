@@ -21,7 +21,7 @@ class User extends Authenticatable
         'nickname',
         'password',
         'email',
-        'sex',
+        'gender',
         'role',
         'is_hidden'
     ];
@@ -38,7 +38,7 @@ class User extends Authenticatable
     public function info($id)
     {
         return $this
-            ->select('sid', 'name', 'nickname', 'sex', 'email')
+            ->select('sid', 'name', 'nickname', 'gender', 'email')
             ->where('id', '=', $id)
             ->whereNull('deleted_at')
             ->offset(0)
