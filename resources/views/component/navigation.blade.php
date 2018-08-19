@@ -41,7 +41,10 @@
                     <div class="menu">
                         <a class="item" href="{{ url('user') }}">Profile</a>
                         <a class="item" href="#">Change Password</a>
-                        <a class="item" href="#">Logout</a>
+                        <a class="item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">Logout</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     </div>
                 </div>
             @endguest
