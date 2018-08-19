@@ -53,6 +53,7 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/common.error.js') }}"></script>
 <script>
     window.info = {
         "sid"     : "",
@@ -90,11 +91,9 @@
     }
     function changeSaveButtonStatus() {
         if(infoHasChanged()) {
-            $("#btn-save").removeClass("disabled");
-            $("#btn-save").attr("href", "javascript:save();");
+            $("#btn-save").removeClass("disabled").attr("href", "javascript:save();");
         }else{
-            $("#btn-save").attr("href", "javascript:void(0);");
-            $("#btn-save").addClass("disabled");
+            $("#btn-save").attr("href", "javascript:void(0);").addClass("disabled");
         }
     }
     function openLoader(message = "") {
@@ -136,8 +135,8 @@
                     console.log(response.message);
                 }
             },
-            "error": function() {
-                console.log("请求失败");
+            "error": function(XMLHttpRequest, textStatus, errorThrown) {
+                errorHandler(XMLHttpRequest.responseJSON.errors);
             },
             "complete": function() {
                 closeLoader();
@@ -172,6 +171,11 @@
             });
             openLoader("正在载入...");
         })();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         $("#form input").keyup(changeSaveButtonStatus);
         $("#form select").change(changeSaveButtonStatus);
     });

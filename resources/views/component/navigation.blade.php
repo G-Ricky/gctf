@@ -6,7 +6,7 @@
             <img class="logo" src="{{ asset('img') }}/logo.png">
             {{ config('app.name', 'Laravel') }}
         </a>
-        <a href="#" class="item">Home Page</a>
+        <a href="{{ url('challenge') }}" class="item">Challenge</a>
         <div class="ui simple dropdown item">
             Banks <i class="dropdown icon"></i>
             <div class=" menu">
