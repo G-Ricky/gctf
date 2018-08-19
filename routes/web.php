@@ -25,4 +25,5 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('user', 'Base\\UserController@index');
     Route::get('user/info', 'Base\\UserController@info');
+    Route::post('user/edit', 'Base\\UserController@edit');
 });

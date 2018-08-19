@@ -45,4 +45,11 @@ class User extends Authenticatable
             ->limit(1)
             ->get();
     }
+
+    public function edit($data)
+    {
+        return $this
+            ->where('id', '=', $data['id'])
+            ->update($data);
+    }
 }
