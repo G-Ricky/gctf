@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -35,9 +36,15 @@ class UserController extends Controller
     public function edit(Request $request, User $user)
     {
         $this->validate($request, [
-            'sid'    => 'required|string|max:10|unique:users,sid',
+            'sid'    => [
+                'required', 'string', 'max:10',
+                Rule::unique('users')->ignore(Auth::user()->id)
+            ],
             'gender' => 'required|string|in:UNKNOWN,MALE,FEMALE',
-            'email'  => 'required|string|email|unique:users,email'
+            'email'  => [
+                'required', 'string', 'email',
+                Rule::unique('users')->ignore(Auth::user()->id)
+            ]
         ]);
 
         $data = $request->all();
