@@ -4,6 +4,7 @@
 
 @push('stylesheets')
 <link href="{{ asset('css/g2uc/challenge.css') }}" rel="stylesheet">
+<link href="{{ asset('css/extends/modal.flat.css') }}" rel="stylesheet">
 <style>
     .ui.paging {
         margin-bottom: 30px;
@@ -76,7 +77,7 @@
         </script>
     </div>
         @can('create-challenge')
-            <div class="ui mini basic flat modal" id="challenge-modify">
+            <div class="ui tiny basic flat modal" id="challenge-modify">
                 <i class="close icon"></i>
                 <div class="header">
                     {{ __('Add challenge') }}

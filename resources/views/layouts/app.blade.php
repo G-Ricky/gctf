@@ -12,7 +12,6 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/semantic.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/g2uc.challenge.css') }}" rel="stylesheet">
     <style>
         html {height: 100%;}
         body {min-height: 100%;display: flex;flex-direction: column;}
