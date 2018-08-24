@@ -53,7 +53,7 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/error.js') }}"></script>
+<script src="{{ asset('js/common/error.js') }}"></script>
 <script>
     window.info = {
         "sid"     : "",

@@ -22,10 +22,10 @@
         @yield('footer')
     </div>
     <!--script src="//cdn.bootcss.com/underscore.js/1.9.0/underscore-min.js"></script-->
-    <script src="{{ asset('js') }}/arttemplate.js"></script>
-    <!--script src="{{ asset('js') }}/app.js"></script-->
-    <script src="{{ asset('js') }}/jquery.min.js"></script>
-    <script src="{{ asset('js') }}/semantic.min.js"></script>
+    <script src="{{ asset('js/arttemplate.js') }}"></script>
+    <!--script src="{{ asset('js/app.js') }}"></script-->
+    <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/semantic.min.js') }}"></script>
     @stack('scripts')
 </body>
 </html>
