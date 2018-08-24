@@ -11,16 +11,21 @@
     <title>{{ config('app.name', 'GCTF') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css') }}/semantic.min.css" rel="stylesheet">
-    <link href="{{ asset('css') }}/g2uc.challenge.css" rel="stylesheet">
+    <link href="{{ asset('css/semantic.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/g2uc.challenge.css') }}" rel="stylesheet">
+    <style>
+        html {height: 100%;}
+        body {min-height: 100%;display: flex;flex-direction: column;}
+        #app {flex: 1;}
+    </style>
     @stack('stylesheets')
 </head>
 <body>
+    @yield('navigation')
     <div id="app">
-        @yield('navigation')
         @yield('content')
-        @yield('footer')
     </div>
+    @yield('footer')
     <!--script src="//cdn.bootcss.com/underscore.js/1.9.0/underscore-min.js"></script-->
     <script src="{{ asset('js/arttemplate.js') }}"></script>
     <!--script src="{{ asset('js/app.js') }}"></script-->
