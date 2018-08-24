@@ -54,6 +54,7 @@
 
 @push('scripts')
 <script src="{{ asset('js/common/error.js') }}"></script>
+<script src="{{ asset('js/common/misc.js') }}"></script>
 <script>
     window.info = {
         "sid"     : "",
@@ -95,13 +96,6 @@
         }else{
             $("#btn-save").attr("href", "javascript:void(0);").addClass("disabled");
         }
-    }
-    function openLoader(message = "") {
-        $("#global-loader").children(".loader").html(message);
-        $("#global-loader").addClass("active");
-    }
-    function closeLoader() {
-        $("#global-loader").removeClass("active");
     }
     function edit() {
         $("#btn-edit").hide();
