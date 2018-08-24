@@ -27,3 +27,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user/info', 'Base\\UserController@info');
     Route::post('user/edit', 'Base\\UserController@edit');
 });
+
+Route::group(['middleware' => 'auth'], function() {
+    Route::get('bank', 'Base\\BankController@index');
+    Route::post('bank/add', 'Base\\BankController@add');
+});
