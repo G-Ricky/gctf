@@ -17,9 +17,10 @@ class Bank extends Model
         return $this->hasMany('App\\Models\\Base\\Challenge', 'bank');
     }
 
-    public function add()
+    public function add($data)
     {
-
+        $data = array_only($data, ['name', 'description', 'is_hidden']);
+        return $this->create($data);
     }
 
     public function edit()
