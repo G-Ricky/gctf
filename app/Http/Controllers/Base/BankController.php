@@ -34,9 +34,7 @@ class BankController extends Controller
             $data['is_hidden'] = false;
         }
 
-        $data = array_only($data, ['name', 'description', 'is_hidden']);
-
-        $success = $this->banks->create($data);
+        $success = $this->banks->add($data);
         return [
             'status'  => 200,
             'success' => $success
