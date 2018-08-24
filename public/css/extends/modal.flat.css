@@ -1,0 +1,99 @@
+
+/* Basic */
+.ui.modal.basic {
+    border: 1px solid #fff;
+}
+
+.ui.modal.basic label,
+.ui.modal.basic label:focus {
+    color: #fff;
+}
+
+.ui.modal.basic input[type=text],
+.ui.modal.basic input[type=text]:focus{
+    background-color: transparent;
+    color: #fff;
+}
+
+.ui.modal.basic input[type=button],
+.ui.modal.basic input[type=button]:hover,
+.ui.modal.basic input[type=submit],
+.ui.modal.basic input[type=submit]:hover {
+    background-color: transparent!important;
+}
+
+.ui.modal.basic input[type=button],
+.ui.modal.basic input[type=submit] {
+    color: #fff!important;
+    border: 1px solid #fff;
+}
+
+.ui.modal.basic input[type=button]:hover,
+.ui.modal.basic input[type=submit]:hover {
+    color: #85b7d9!important;
+    border: 1px solid #85b7d9;
+}
+
+.ui.modal.basic textarea,
+.ui.modal.basic textarea:focus {
+    color: #fff;
+}
+
+.ui.modal.basic textarea {
+    background-color: transparent;
+}
+
+/* Basic positive */
+
+.ui.modal.basic.positive {
+    border: 1px solid #21ba45;
+}
+
+.ui.modal.basic.positive label,
+.ui.modal.basic.positive label:focus,
+.ui.modal.basic.positive input[type=text],
+.ui.modal.basic.positive input[type=text]:focus {
+    color: #21ba45;
+}
+
+.ui.modal.basic.positive>.close,
+.ui.modal.basic.positive>.header {
+    color: #21ba45;
+}
+
+/* Flat theme */
+.ui.modal.flat input[type=text],
+.ui.modal.flat input[type=text]:focus {
+    border-radius: 0em;
+    outline: none;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+}
+
+.ui.modal.flat input[type=text] {
+    border-bottom: 1px solid #dddddd;
+}
+
+.ui.modal.flat input[type=text]:focus {
+    border-bottom: 1px solid #85b7d9;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.ui.modal.flat textarea,
+.ui.modal.flat textarea:focus {
+    border-radius: 0em;
+}
+
+.ui.modal.flat textarea:focus {
+    border: 1px solid #85b7d9;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.ui.modal.flat textarea {
+    border: 1px solid #dddddd;
+}
+
+.ui.modal .actions>.fluid.button {
+    margin-left: 0em;
+}

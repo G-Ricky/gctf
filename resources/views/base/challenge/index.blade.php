@@ -3,7 +3,7 @@
 @extends('layouts.app')
 
 @push('stylesheets')
-<link href="{{ asset('css/g2uc.challenge.css') }}" rel="stylesheet">
+<link href="{{ asset('css/g2uc/challenge.css') }}" rel="stylesheet">
 <style>
     .ui.paging {
         margin-bottom: 30px;
