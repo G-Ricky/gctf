@@ -48,6 +48,7 @@ class User extends Authenticatable
 
     public function edit($data)
     {
+        $data = array_only($data, ['id', 'name', 'gender', 'email']);
         return $this
             ->where('id', '=', $data['id'])
             ->update($data);
