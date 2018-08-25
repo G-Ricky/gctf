@@ -3,7 +3,7 @@
 <div class="ui inverted fixed borderless menu">
     <div class="ui container">
         <a href="{{ url('/') }}" class="header item">
-            <img class="logo" src="{{ asset('img') }}/logo.png">
+            <img class="logo" src="{{ asset('img/logo.png') }}">
             {{ config('app.name', 'Laravel') }}
         </a>
         <a href="{{ url('challenge') }}" class="item">Challenge</a>
@@ -14,7 +14,7 @@
                 <a href="#" class="item">题库2</a>
                 <a href="#" class="item">题库3</a>
                 <div class="ui fitted divider"></div>
-                <a href="#" class="item">更多</a>
+                <a href="{{ url('bank') }}" class="item">更多</a>
             </div>
         </div>
         <a href="#" class="item">Ranking</a>

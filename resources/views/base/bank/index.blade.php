@@ -7,10 +7,14 @@
 @endpush
 @section('content')
 <div class="ui container">
+    <!-- Add Button -->
     <div class="ui basic vertical clearing segment">
         <button id="bank-add" class="ui primary right floated button"><i class="add circle icon"></i> Add</button>
     </div>
+    <!-- Bank List -->
+    <div id="bank-list"></div>
 </div>
+<!-- Modal -->
 <div class="ui tiny basic flat modal" id="bank-modify">
     <div class="ui dimmer" id="bank-dimmer">
         <div class="ui big text loader"></div>
@@ -46,6 +50,17 @@
         <input class="ui basic fluid button" id="btn-submit" type="button" value="{{ __('Add') }}">
     </div>
 </div>
+<script id="bank-template" type="text/html">
+    @{{each banks bank index}}
+    <div class="ui icon message">
+        <i class="inbox icon"></i>
+        <div class="content">
+            <div class="header"><a href="{{ url('challenge') }}?bank=@{{bank.id}}">@{{bank.name}}</a></div>
+            <p>@{{bank.description}}</p>
+        </div>
+    </div>
+    @{{/each}}
+</script>
 @endsection
 @push('scripts')
 <script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
@@ -79,6 +94,21 @@
             "rules": {
                 "name": {"required": true, "maxlength": 60},
                 "description": {"required": true, "maxlength": 1000}
+            }
+        });
+        $.ajax({
+            "url": "{{ url('bank/list') }}",
+            "method": "GET",
+            "success": function(request) {
+                if(request.success) {
+                    let html = template("bank-template", {
+                        "banks": request.data
+                    });
+                    $("#bank-list").html(html);
+                }
+            },
+            "error": function() {
+
             }
         });
         $("#bank-add").click(function() {
