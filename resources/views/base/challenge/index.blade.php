@@ -6,16 +6,6 @@
 <link href="{{ asset('css/g2uc/challenge.css') }}" rel="stylesheet">
 <link href="{{ asset('css/extends/modal.flat.css') }}" rel="stylesheet">
 <style>
-    .ui.paging {
-        margin-bottom: 30px;
-    }
-    .ui.right.aligned.object {
-        display: flex;
-    }
-    .ui.right.aligned.object>* {
-        margin-left: auto;
-        display: flex;
-    }
     .ui.right.aligned.object>* {
         margin-top: 20px;
         margin-bottom: 20px;
@@ -40,37 +30,6 @@
     <div class="ui paging" id="pagination">
         <a class="huge ui button" id="pg-prev" href="#"><i class="chevron left icon"></i></a>
         <a class="huge ui button" id="pg-next" href="#"><i class="chevron right icon"></i></a>
-    </div>
-    <div id="templates" style="display: none">
-        <script id="challenge-cards" type="text/html">
-            @{{each categories challenges category}}
-            <div class="ui segment borderless">
-                <div class="ui left mini rail">
-                    <div class="ui right aligned segment borderless">
-                        <h3>@{{category}}</h3>
-                    </div>
-                </div>
-                <div class="ui four link cards" id="challenges-list" style="margin-bottom: 30px">
-                    @{{each challenges challenge i}}
-                    <div class="card card-challenge">
-                        <div class="content">
-                            <div class="header">@{{ challenge.title }}</div>
-                        </div>
-                        <div class="content">
-                            <div class="description">@{{ challenge.description }}</div>
-                            <div class="point">@{{ challenge.points }} pt</div>
-                        </div>
-                        <div class="ui two bottom attached buttons">
-                            <div class="ui button"><i class="edit icon"></i></div>
-                            <div class="ui button"><i class="trash icon"></i></div>
-                        </div>
-                    </div>
-                    @{{/each}}
-
-                </div>
-            </div>
-            @{{/each}}
-        </script>
     </div>
     <div class="ui tiny basic flat modal" id="challenge-modify">
         <i class="close icon"></i>
@@ -136,6 +95,30 @@
         </div>
     </div>
 </div>
+<script id="tpl-challenge-cards" type="text/html">
+    @{{each categories challenges category}}
+    <div class="ui basic vertical segment">
+        <h1>@{{category}}</h1>
+        <div class="ui link challenge cards">
+            @{{each challenges challenge i}}
+            <div class="ui card">
+                <div class="content">
+                    <div class="header">@{{ challenge.title }}</div>
+                </div>
+                <div class="content">
+                    <div class="description">@{{ challenge.description }}</div>
+                    <div class="point">@{{ challenge.points }} pt</div>
+                </div>
+                <div class="ui two bottom attached buttons">
+                    <div class="ui button" onclick="challengeEdit('@{{ challenge.id }}')"><i class="edit icon"></i></div>
+                    <div class="ui button" onclick="challengeDelete('@{{ challenge.id }}')"><i class="trash icon"></i></div>
+                </div>
+            </div>
+            @{{/each}}
+        </div>
+    </div>
+    @{{/each}}
+</script>
 @endsection
 @push('scripts')
 <script>
@@ -147,6 +130,14 @@
             $("#challenge-modify").modal('show');
         });
     });
+
+    function challengeDelete(id) {
+        alert(id);
+    }
+
+    function challengeEdit(id) {
+        alert(id);
+    }
 
     function get_template(tpl_name) {
         if(templates[tpl_name] == null) {
@@ -191,10 +182,10 @@
                 "points": data[i].points
             });
         }
-        var html = template("challenge-cards", {
+        var html = template("tpl-challenge-cards", {
             "categories": categories
         });
-        document.getElementById("challenges-list").innerHTML = html;
+        $("#challenges-list").html(html);
     }
 </script>
 @endpush
