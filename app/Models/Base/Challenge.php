@@ -35,7 +35,7 @@ class Challenge extends Model
 
     }
 
-    public function list($page_size = 20)
+    public function list($bank, $page, $page_size = 20)
     {
         return $this
             ->select(
@@ -48,10 +48,11 @@ class Challenge extends Model
                 'updated_at'
             )
             ->where('is_hidden', '=', false)
+            ->where('bank', '=', $bank)
             ->whereNotNull('flag')
             ->orderBy('updated_at', 'desc')
             ->with('tags:challenge,name')
-            ->paginate($page_size)
+            ->paginate($page_size, '*', 'page', $page)
             ->jsonSerialize();
     }
 

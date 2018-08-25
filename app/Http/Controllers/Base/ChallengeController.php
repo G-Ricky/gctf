@@ -16,8 +16,13 @@ class ChallengeController extends Controller
         $this->challenges = $challenges;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        session([
+            'bank' => [
+                'id' => $request->query('bank', 1)
+            ]
+        ]);
         return view('base.challenge.index');
     }
 
@@ -75,11 +80,12 @@ class ChallengeController extends Controller
 
     public function list(Request $request)
     {
-        $page_size = $request->query('id', 20);
-        $page_size = $page_size > 20 ? 20 : $page_size;
-        $page_data = $this->challenges->list($page_size);
+        $bank = session('bank');
+        $page = $request->query('page', 1);
+        $page_size = $request->query('pageSize', 20);
+        $result = $this->challenges->list($bank, $page, min($page_size, 30));
 
-        $data = &$page_data['data'];
+        $data = &$result['data'];
         foreach($data as &$challenge) {
             $tags = [];
             foreach($challenge['tags'] as &$tag) {
@@ -89,11 +95,19 @@ class ChallengeController extends Controller
             $challenge['description'] = str_limit($challenge['description'], 40);
         }
 
-        $page_data['status'] = 200;
-        $page_data['success'] = true;
-        unset($page_data['total']);
+        $result['status'] = 200;
+        $result['success'] = true;
+        unset($result['total']);
 
-        return $page_data;
+        return [
+            'status' => 200,
+            'success' => true,
+            'data' => $result['data'],
+            'page' => array_only($result, [
+                'current_page', 'first_page_url', 'from', 'last_page', 'last_page_url', 'next_page_url', 'path',
+                'per_page', 'prev_page_url', 'to'
+            ])
+        ];
     }
 
     public function info(Request $request)

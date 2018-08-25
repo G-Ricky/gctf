@@ -59,7 +59,7 @@ class BankController extends Controller
             'data'    => $result['data'],
             'page'    => array_only($result, [
                 'current_page', 'first_page_url', 'from', 'last_page', 'last_page_url', 'next_page_url', 'path',
-                'per_page', 'prev_page_url', 'to', 'total'
+                'per_page', 'prev_page_url', 'to'
             ])
         ];
     }
