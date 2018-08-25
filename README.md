@@ -1,1 +1,1 @@
-#G2UC CTF平台
+# G2UC CTF平台
