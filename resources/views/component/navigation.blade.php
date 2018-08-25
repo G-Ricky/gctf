@@ -12,7 +12,6 @@
             <div class=" menu" id="bank-menu"></div>
         </div>
         <a href="#" class="item">Ranking</a>
-        @can('view-all-submissions', Auth::class)
         <div class="ui simple dropdown item">
             Submissions <i class="dropdown icon"></i>
             <div class="menu">
@@ -21,10 +20,7 @@
                 <a href="#" class="item">All</a>
             </div>
         </div>
-        @endcan
-        @can('view-all-users', Auth::class)
         <a href="#" class="item">Users</a>
-        @endcan
         <div class="right menu">
             @guest
                 <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>
