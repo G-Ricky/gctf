@@ -166,7 +166,7 @@
         var pagination;
         $.ajax({
             "type": "GET",
-            "url": "{{ asset('/challenge/list') }}?page=" + page ,
+            "url": "{{ asset('/challenge/list') }}?page=" + page + "&bank={{$bank}}",
             "async": false,
             "success": function(data) {
                 pagination = data;

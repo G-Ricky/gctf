@@ -18,12 +18,9 @@ class ChallengeController extends Controller
 
     public function index(Request $request)
     {
-        session([
-            'bank' => [
-                'id' => $request->query('bank', 1)
-            ]
+        return view('base.challenge.index', [
+            'bank' => $request->query('bank', 1)
         ]);
-        return view('base.challenge.index');
     }
 
     public function add(Request $request)
@@ -80,7 +77,7 @@ class ChallengeController extends Controller
 
     public function list(Request $request)
     {
-        $bank = session('bank');
+        $bank = $request->query('bank', 1);
         $page = $request->query('page', 1);
         $page_size = $request->query('pageSize', 20);
         $result = $this->challenges->list($bank, $page, min($page_size, 30));

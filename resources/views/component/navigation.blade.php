@@ -9,13 +9,7 @@
         <a href="{{ url('challenge') }}" class="item">Challenge</a>
         <div class="ui simple dropdown item">
             Banks <i class="dropdown icon"></i>
-            <div class=" menu">
-                <a href="#" class="item">题库1</a>
-                <a href="#" class="item">题库2</a>
-                <a href="#" class="item">题库3</a>
-                <div class="ui fitted divider"></div>
-                <a href="{{ url('bank') }}" class="item">更多</a>
-            </div>
+            <div class=" menu" id="bank-menu"></div>
         </div>
         <a href="#" class="item">Ranking</a>
         @can('view-all-submissions', Auth::class)
@@ -51,4 +45,30 @@
         </div>
     </div>
 </div>
+<script id="bank-menu-template" type="text/html">
+    @{{each banks bank index}}
+    <a href="{{ url('challenge') }}?bank=@{{  bank.id }}" class="item">@{{ bank.name }}</a>
+    @{{/each}}
+    <div class="ui fitted divider"></div>
+    <a href="{{ url('bank') }}" class="item">更多</a>
+</script>
 @endsection
+
+@push('nav-scripts')
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            "url": "{{ url('bank/list') }}?page=1&pageSize=3",
+            "method": "GET",
+            "success": function(response) {
+                if(response.success) {
+                    let html = template("bank-menu-template", {
+                        'banks': response.data
+                    });
+                    $("#bank-menu").html(html);
+                }
+            }
+        });
+    });
+</script>
+@endpush

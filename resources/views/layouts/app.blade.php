@@ -30,6 +30,7 @@
     <!--script src="{{ asset('js/app.js') }}"></script-->
     <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('js/semantic.min.js') }}"></script>
+    @stack('nav-scripts')
     @stack('scripts')
 </body>
 </html>
