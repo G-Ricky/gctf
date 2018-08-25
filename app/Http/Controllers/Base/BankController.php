@@ -46,9 +46,22 @@ class BankController extends Controller
 
     }
 
-    public function list()
+    public function list(Request $request)
     {
+        $data['page'] = $request->query('page', 1);
+        $data['pageSize'] = $request->query('pageSize', 20);
 
+        $result = $this->banks->list($data['page'], min($data['pageSize'], 30));
+
+        return [
+            'status'  => 200,
+            'success' => true,
+            'data'    => $result['data'],
+            'page'    => array_only($result, [
+                'current_page', 'first_page_url', 'from', 'last_page', 'last_page_url', 'next_page_url', 'path',
+                'per_page', 'prev_page_url', 'to', 'total'
+            ])
+        ];
     }
 
     public function remove()

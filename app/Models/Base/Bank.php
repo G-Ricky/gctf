@@ -28,9 +28,13 @@ class Bank extends Model
 
     }
 
-    public function list()
+    public function list($page, $pageSize = 20)
     {
-
+        return $this
+            ->select('id', 'name', 'description')
+            ->orderBy('created_at')
+            ->paginate($pageSize, '*', 'page', $page)
+            ->jsonSerialize();
     }
 
     public function remove()

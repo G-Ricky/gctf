@@ -31,4 +31,5 @@ Route::group(['middleware' => 'auth'], function () {
 Route::group(['middleware' => 'auth'], function() {
     Route::get('bank', 'Base\\BankController@index');
     Route::post('bank/add', 'Base\\BankController@add');
+    Route::get('bank/list', 'Base\\BankController@list');
 });
