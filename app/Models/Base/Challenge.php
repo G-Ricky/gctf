@@ -20,6 +20,10 @@ class Challenge extends Model
         'bank'
     ];
 
+    protected $datas = [
+        'deleted_at'
+    ];
+
     public function bank()
     {
         return $this->belongsTo('App\\Models\\Base\\Bank', 'bank');

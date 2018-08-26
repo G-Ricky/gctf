@@ -1,3 +1,7 @@
+.ui.challenge.cards>.ui.card {
+    width: 270px;
+}
+
 .ui.challenge.cards>.ui.card>.content>.header {
     text-align: center;
 

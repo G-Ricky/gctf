@@ -67,11 +67,15 @@ class ChallengeController extends Controller
     public function remove(Request $request)
     {
         //TODO Only administer
-        $id = $request->query('id');
+        $this->validate($request, [
+            'id' => 'required|integer|exists:challenges,id'
+        ]);
+        $id = $request->input('id');
         $success = $this->challenges->remove($id);
         return [
             'status'  => 200,
-            'success' => $success
+            'success' => $success,
+            'id' => $id
         ];
     }
 

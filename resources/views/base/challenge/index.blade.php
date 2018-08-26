@@ -20,7 +20,7 @@
 @endpush
 @section('content')
 <div class="ui vertical masthead center aligned segment logo">
-    <img class="ui medium circular centered image" src="{{ asset('img') }}/logo.png">
+    <img class="ui medium circular centered image" src="{{ asset('img/logo.png') }}">
 </div>
 <div class="ui container">
     <div class="ui basic vertical clearing segment">
@@ -38,7 +38,7 @@
         </div>
         <div class="scrolling content">
             <div class="description">
-                <form class="ui form" name="challenge-add" action="{{ url('/challenge/add') }}" method="post">
+                <form class="ui form" name="challenge-add" action="{{ url('challenge/add') }}" method="post">
                     @csrf
                     <div class="field">
                         <label for="ch-title">{{ __('Title') }}</label>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="ui two bottom attached buttons">
                     <div class="ui button" onclick="challengeEdit('@{{ challenge.id }}')"><i class="edit icon"></i></div>
-                    <div class="ui button" onclick="challengeDelete('@{{ challenge.id }}')"><i class="trash icon"></i></div>
+                    <div class="ui button" onclick="confirm('是否删除') &amp;&amp; challengeDelete('@{{ challenge.id }}')"><i class="trash icon"></i></div>
                 </div>
             </div>
             @{{/each}}
@@ -132,7 +132,20 @@
     });
 
     function challengeDelete(id) {
-        alert(id);
+        $.ajax({
+            "type": "POST",
+            "url": "{{ url('challenge/remove') }}",
+            "async": false,
+            "data": {
+                "id": id
+            },
+            "success": function (response) {
+                if(response.success) {
+                    alert("删除成功");
+                    location.reload();
+                }
+            }
+        });
     }
 
     function challengeEdit(id) {
