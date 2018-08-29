@@ -114,17 +114,20 @@ class ChallengeController extends Controller
     public function info(Request $request)
     {
         $id = $request->query('id', 0);
-        $challenge = $this->challenges->info($id);
-        $tags = [];
-        foreach($challenge['tags'] as &$tag) {
-            $tags[] = $tag['name'];
+        $result = $this->challenges->info($id);
+        foreach($result as &$challenge) {
+            if(array_key_exists('tags', $challenge)) {
+                $tags = [];
+                foreach($challenge['tags'] as &$tag) {
+                    $tags[] = $tag['name'];
+                }
+                $challenge['tags'] = $tags;
+            }
         }
-        $challenge['tags'] = $tags;
-
         return [
             'status'  => 200,
-            'success' => (bool)$challenge,
-            'data'    => $challenge
+            'success' => (bool)$result[0],
+            'data'    => $result[0]
         ];
     }
 }
