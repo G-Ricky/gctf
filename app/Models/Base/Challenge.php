@@ -81,11 +81,8 @@ class Challenge extends Model
             )
             ->where('id', '=', $id)
             ->where('is_hidden', '=', false)
-            ->with([
-               'tags' => function($query) {
-                   return $query->select('challenge', 'name');
-               }
-            ])
+            ->with('tags:challenge,name')
+            ->limit(1)
             ->get();
     }
 
