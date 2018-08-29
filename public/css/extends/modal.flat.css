@@ -61,6 +61,35 @@
     color: #21ba45;
 }
 
+.ui.modal.basic .ui.dropdown {
+    background-color: transparent;
+    color: #fff;
+}
+
+.ui.modal.basic .ui.dropdown .menu,
+.ui.modal.basic .ui.dropdown.active {
+    background-color: rgba(0,0,0,.9);
+}
+
+.ui.modal.basic .ui.selection.dropdown .menu>.item {
+    border-top: none;
+}
+
+.ui.modal.basic .ui.dropdown .menu .selected.item,
+.ui.modal.basic .ui.dropdown.selected,
+.ui.modal.basic .ui.dropdown .menu>.item,
+.ui.modal.basic .ui.selection.visible.dropdown>.text:not(.default) {
+    color: #fff;
+}
+
+.ui.modal.basic .ui.dropdown .menu>.item:hover {
+    background-color: rgba(255,255,255,.1);
+}
+
+.ui.modal.basic .ui.dropdown {
+    border: 1px solid #fff;
+}
+
 /* Flat theme */
 .ui.modal.flat input[type=text],
 .ui.modal.flat input[type=text]:focus {
