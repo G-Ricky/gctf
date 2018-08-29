@@ -16,10 +16,10 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
     Route::get('challenge', 'Base\\ChallengeController@index');
     Route::get('challenge/list', 'Base\\ChallengeController@list');
-    Route::get('challenge/info', 'Base\\ChallengeController@info');
-    Route::post('challenge/add', 'Base\\ChallengeController@add');
-    Route::put('challenge/edit', 'Base\\ChallengeController@edit');
-    Route::post('challenge/remove', 'Base\\ChallengeController@remove');
+    Route::get('challenge/info', 'Admin\\ChallengeController@info');
+    Route::post('challenge/add', 'Admin\\ChallengeController@add');
+    Route::put('challenge/edit', 'Admin\\ChallengeController@edit');
+    Route::post('challenge/remove', 'Admin\\ChallengeController@remove');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -29,7 +29,7 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('bank', 'Base\\BankController@index');
-    Route::post('bank/add', 'Base\\BankController@add');
-    Route::get('bank/list', 'Base\\BankController@list');
+    Route::get('bank', 'Admin\\BankController@index');
+    Route::post('bank/add', 'Admin\\BankController@add');
+    Route::get('bank/list', 'Admin\\BankController@list');
 });

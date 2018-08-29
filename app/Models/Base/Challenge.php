@@ -65,6 +65,10 @@ class Challenge extends Model
 
     }
 
+    /**
+     * @param integer $id
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function info($id)
     {
         return $this
@@ -72,6 +76,7 @@ class Challenge extends Model
                 'id',
                 'title',
                 'description',
+                'flag',
                 'category',
                 'poster',
                 'points',
