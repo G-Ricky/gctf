@@ -90,6 +90,10 @@
     border: 1px solid #fff;
 }
 
+.ui.modal.basic .ui.form .field.field input:-webkit-autofill {
+
+}
+
 /* Flat theme */
 .ui.modal.flat input[type=text],
 .ui.modal.flat input[type=text]:focus {

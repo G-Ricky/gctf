@@ -38,9 +38,9 @@
         </div>
         <div class="scrolling content">
             <div class="description">
-                <form class="ui form" name="challenge-add" action="{{ url('challenge/add') }}" method="post">
+                <form class="ui form" id="form-challenge" name="challenge-add" method="post">
                     @csrf
-                    <input name="id" type="hidden">
+                    <input id="challenge-id" name="id" type="hidden">
                     <div class="field">
                         <label for="title">{{ __('Title') }}</label>
                         <input name="title" type="text" id="title" maxlength="32" value="">
@@ -84,7 +84,7 @@
 
                     <div class="field">
                         <div class="ui checkbox">
-                            <input type="checkbox" tabindex="0">
+                            <input name="is_hidden" type="checkbox" tabindex="0">
                             <label>{{ __('Hide') }}</label>
                         </div>
                     </div>
@@ -92,7 +92,32 @@
             </div>
         </div>
         <div class="actions">
-            <input class="ui basic fluid button" type="submit" value="{{ __('Add') }}">
+            <input class="ui basic fluid button" id="btn-save" type="button" value="{{ __('Save') }}">
+        </div>
+    </div>
+    <div class="ui tiny basic flat modal" id="challenge-detail">
+        <i class="close icon"></i>
+        <div class="header">
+            {{ __('Challenge') }}
+        </div>
+        <div class="scrolling content">
+            <div class="description">
+                <form class="ui form" name="challenge-add" action="{{ url('challenge/add') }}" method="post">
+                    @csrf
+                    <h3 class="ui header" id="detail-title"></h3>
+                    <div class="ui segments">
+                        <div class="ui segment" id="detail-description"></div>
+                        <div class="ui segment" id="detail-hints"></div>
+                    </div>
+                    <div class="field">
+                        <label for="flag">{{ __('Tags') }}</label>
+                        <input id="detail-flag" name="flag" type="text" id="tags" value="">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="actions">
+            <input class="ui basic fluid button" id="btn-submit" type="button" value="">
         </div>
     </div>
 </div>
@@ -103,10 +128,10 @@
         <div class="ui link challenge cards">
             @{{each challenges challenge i}}
             <div class="ui card">
-                <div class="content">
+                <div class="content" onclick="challengeDetail('@{{ challenge.id }}')">
                     <div class="header">@{{ challenge.title }}</div>
                 </div>
-                <div class="content">
+                <div class="content" onclick="challengeDetail('@{{ challenge.id }}')">
                     <div class="description">@{{ challenge.description }}</div>
                     <div class="point">@{{ challenge.points }} pt</div>
                 </div>
@@ -127,20 +152,61 @@
 </script>
 @endsection
 @push('scripts')
+<script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
+<script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
 <script>
 
     $(document).ready(function() {
         loadChallenges();
         loadBanks();
+        $("#form-challenge").validate({
+            "submitHandler": function(form) {
+                if($("#challenge-id").val()) {
+                    form.action = "{{ url('challenge/edit') }}";
+                }else{
+                    form.action = "{{ url('challenge/add') }}";
+                }
+                $(form).ajaxSubmit();
+            },
+            "rules": {
+                "title": {
+                    "required": true,
+                    "maxlength": 32
+                }
+            }
+        });
         $("select[name=category]").dropdown();
+        $('#challenge-modify').modal({
+            "onShow": function() {
+                challengeClear();
+            }
+        });
         $("#challenge-add").click(function() {
             $("#challenge-modify").modal('show');
+        });
+        $("#btn-save").click(function() {
+            $("#form-challenge").submit();
         });
     });
 
     function challengeClear() {
-        $("#challenge-add input").val();
-        $("#challenge-add select").dropdown("set selected");
+        $("#challenge-modify input[type=text]").val("");
+        $("#challenge-modify textarea").val("");
+        $("#challenge-modify select").dropdown("clear");
+    }
+
+    function challengeDetail(id) {
+        $.ajax({
+            "type": "GET",
+            "url": "{{ url('challenge/info') }}?id=" + id,
+            "async": false,
+            "success": function(response) {
+                if(response.success) {
+                    fillForm(response.data);
+                    $("#challenge-detail").modal('show');
+                }
+            }
+        });
     }
 
     function challengeDelete(id) {
@@ -162,7 +228,6 @@
 
     function sendChallengeAction(data, action) {
         let url = "";
-        let success = false;
         if(action === "add") {
             url = "{{ url('challenge/add') }}"
         }else{
@@ -175,29 +240,30 @@
             "dataType": "json",
             "async": false,
             "success": function(response) {
-                success = response.success;
+                if(response.success) {
+                    alert("成功保存");
+                    location.reload();
+                }
             }
         });
-        if(success) {
-            alert("成功");
-            location.reload();
-        }
     }
 
     function fillForm(data) {
-        $("[name=id]").val(data.id);
-        $("[name=title]").val(data.title);
-        $("[name=description]").val(data.description);
-        $("[name=points]").val(data.points);
-        $("[name=flag]").val(data.flag);
-        $("[name=crypto]").dropdown("set selected", data.crypto);
-        $("[name=tags]").val(data.tags);
-        $("[name=bank]").dropdown("set selected", data.bank);
+        $("#id").val(data.id);
+        $("#title").val(data.title);
+        $("#description").val(data.description);
+        $("#points").val(data.points);
+        $("#flag").val(data.flag);
+        $("#category").dropdown("set selected", data.category);
+        $("#tags").val(data.tags);
+        $("#bank").dropdown("set selected", data.bank);
+    }
+
+    function fillDetail(data) {
+
     }
 
     function challengeEdit(id) {
-        let success = false;
-        let data = null;
         $.ajax({
             "type": "GET",
             "url": "{{ url('challenge/info') }}?id=" + id,
