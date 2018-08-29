@@ -40,29 +40,30 @@
             <div class="description">
                 <form class="ui form" name="challenge-add" action="{{ url('challenge/add') }}" method="post">
                     @csrf
+                    <input name="id" type="hidden">
                     <div class="field">
-                        <label for="ch-title">{{ __('Title') }}</label>
-                        <input name="title" type="text" id="ch-title" maxlength="32" value="">
+                        <label for="title">{{ __('Title') }}</label>
+                        <input name="title" type="text" id="title" maxlength="32" value="">
                     </div>
 
                     <div class="field">
-                        <label for="ch-description">{{ __('Description') }}</label>
-                        <textarea name="description" type="text" id="ch-description" rows="5" maxlength="1024"></textarea>
+                        <label for="description">{{ __('Description') }}</label>
+                        <textarea name="description" type="text" id="description" rows="5" maxlength="1024"></textarea>
                     </div>
 
                     <div class="field">
-                        <label for="ch-points">{{ __('Points') }}</label>
-                        <input name="points" type="text" id="ch-points" value="">
+                        <label for="points">{{ __('Points') }}</label>
+                        <input name="points" type="text" id="points" value="">
                     </div>
 
                     <div class="field">
-                        <label for="ch-flag">{{ __('Flag') }}</label>
-                        <input name="flag" type="text" id="ch-flag" value="">
+                        <label for="flag">{{ __('Flag') }}</label>
+                        <input name="flag" type="text" id="flag" value="">
                     </div>
 
                     <div class="field">
-                        <label for="ch-category">{{ __('Category') }}</label>
-                        <select name="category">
+                        <label for="category">{{ __('Category') }}</label>
+                        <select id="category" name="category">
                             <option value="CRYPTO">CRYPTO</option>
                             <option value="MISC">MISC</option>
                             <option value="PWN">PWN</option>
@@ -72,13 +73,13 @@
                     </div>
 
                     <div class="field">
-                        <label for="ch-tags">{{ __('Tags') }}</label>
-                        <input name="tags" type="text" id="ch-tags" value="">
+                        <label for="tags">{{ __('Tags') }}</label>
+                        <input name="tags" type="text" id="tags" value="">
                     </div>
 
                     <div class="field">
-                        <label for="ch-bank">{{ __('Bank') }}</label>
-                        <input name="bank" type="text" id="ch-bank" value="">
+                        <label for="bank">{{ __('Bank') }}</label>
+                        <select name="bank" id="bank"></select>
                     </div>
 
                     <div class="field">
@@ -119,17 +120,28 @@
     </div>
     @{{/each}}
 </script>
+<script id="tpl-banks" type="text/html">
+    @{{each banks bank index}}
+    <option value="@{{bank.id}}">@{{bank.name}}</option>
+    @{{/each}}
+</script>
 @endsection
 @push('scripts')
 <script>
 
     $(document).ready(function() {
-        load_challenges();
+        loadChallenges();
+        loadBanks();
         $("select[name=category]").dropdown();
         $("#challenge-add").click(function() {
             $("#challenge-modify").modal('show');
         });
     });
+
+    function challengeClear() {
+        $("#challenge-add input").val();
+        $("#challenge-add select").dropdown("set selected");
+    }
 
     function challengeDelete(id) {
         $.ajax({
@@ -148,30 +160,81 @@
         });
     }
 
-    function challengeEdit(id) {
-        alert(id);
-    }
-
-    function get_template(tpl_name) {
-        if(templates[tpl_name] == null) {
-            $.ajax({
-                    "type": "GET",
-                    "url": "{{ asset('tpl') }}/" + tpl_name + ".tpl",
-                    "async": false,
-                    "success": function (data) {
-                        templates[tpl_name] = data;
-                    }
-                }
-            );
+    function sendChallengeAction(data, action) {
+        let url = "";
+        let success = false;
+        if(action === "add") {
+            url = "{{ url('challenge/add') }}"
+        }else{
+            url = "{{ url('challenge/edit') }}"
         }
-        return templates[tpl_name];
+        $.ajax({
+            "type": "POST",
+            "url": url,
+            "data": data,
+            "dataType": "json",
+            "async": false,
+            "success": function(response) {
+                success = response.success;
+            }
+        });
+        if(success) {
+            alert("成功");
+            location.reload();
+        }
     }
 
-    function load_challenges(page = 1) {
+    function fillForm(data) {
+        $("[name=id]").val(data.id);
+        $("[name=title]").val(data.title);
+        $("[name=description]").val(data.description);
+        $("[name=points]").val(data.points);
+        $("[name=flag]").val(data.flag);
+        $("[name=crypto]").dropdown("set selected", data.crypto);
+        $("[name=tags]").val(data.tags);
+        $("[name=bank]").dropdown("set selected", data.bank);
+    }
+
+    function challengeEdit(id) {
+        let success = false;
+        let data = null;
+        $.ajax({
+            "type": "GET",
+            "url": "{{ url('challenge/info') }}?id=" + id,
+            "async": false,
+            "success": function(response) {
+                if(response.success) {
+                    fillForm(response.data);
+                    $("#challenge-modify").modal('show');
+                }
+            }
+        });
+    }
+
+    function loadBanks() {
+        let data = [];
+        $.ajax({
+            "type": "GET",
+            "url": "{{ url('bank/list') }}",
+            "async": false,
+            "success": function(response) {
+                if(response.success) {
+                    data = response.data;
+                }
+            }
+        });
+        let html = template('tpl-banks', {
+            "banks": data
+        });
+        $("#bank").html(html);
+        $("#bank").dropdown();
+    }
+
+    function loadChallenges(page = 1) {
         var pagination;
         $.ajax({
             "type": "GET",
-            "url": "{{ asset('/challenge/list') }}?page=" + page + "&bank={{$bank}}",
+            "url": "{{ url('challenge/list') }}?page=" + page + "&bank={{$bank}}",
             "async": false,
             "success": function(data) {
                 pagination = data;
