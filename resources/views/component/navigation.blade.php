@@ -2,9 +2,9 @@
 <div class="ui menu"></div>
 <div class="ui inverted fixed stackable borderless menu">
     <div class="ui container">
-        <a href="{{ url('/') }}" class="header item">
+        <a href="javascript:void(0)" class="header item">
             <img class="logo" src="{{ asset('img/logo.png') }}">
-            {{ config('app.name', 'Laravel') }}
+            {{ config('app.name', 'GCTF') }}
         </a>
         <a href="{{ url('challenge') }}" class="item">Challenge</a>
         <div class="ui simple dropdown item">
