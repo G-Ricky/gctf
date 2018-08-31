@@ -94,6 +94,15 @@
 
 }
 
+.ui.modal.basic .ui.segment {
+    background-color: transparent;
+    color: #fff;
+}
+
+.ui.modal.basic .ui.segment {
+    word-wrap: break-word;
+}
+
 /* Flat theme */
 .ui.modal.flat input[type=text],
 .ui.modal.flat input[type=text]:focus {

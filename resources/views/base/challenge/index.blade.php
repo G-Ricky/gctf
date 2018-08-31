@@ -97,27 +97,20 @@
     </div>
     <div class="ui tiny basic flat modal" id="challenge-detail">
         <i class="close icon"></i>
-        <div class="header">
-            {{ __('Challenge') }}
-        </div>
+        <div class="header" id="detail-title"></div>
         <div class="scrolling content">
             <div class="description">
-                <form class="ui form" name="challenge-add" action="{{ url('challenge/add') }}" method="post">
-                    @csrf
-                    <h3 class="ui header" id="detail-title"></h3>
-                    <div class="ui segments">
-                        <div class="ui segment" id="detail-description"></div>
-                        <div class="ui segment" id="detail-hints"></div>
-                    </div>
+                <div class="ui segment" id="detail-description"></div>
+                <div class="ui form">
                     <div class="field">
-                        <label for="flag">{{ __('Tags') }}</label>
-                        <input id="detail-flag" name="flag" type="text" id="tags" value="">
+                        <input id="detail-id" type="hidden" value="">
+                        <input id="detail-flag" type="text" value="">
                     </div>
-                </form>
+                </div>
             </div>
         </div>
         <div class="actions">
-            <input class="ui basic fluid button" id="btn-submit" type="button" value="">
+            <input class="ui basic fluid button" id="btn-submit" type="button" value="Submit">
         </div>
     </div>
 </div>
@@ -187,6 +180,29 @@
         $("#btn-save").click(function() {
             $("#form-challenge").submit();
         });
+        $("#btn-submit").click(function() {
+            var flag = $("#detail-flag").val().trim();
+            var challengeId = $("#detail-id").val().trim();
+            $.ajax({
+                "url": "{{ url('flag') }}",
+                "type": "POST",
+                "dataType": "json",
+                "data": {
+                    "challengeId": challengeId,
+                    "flag": flag
+                },
+                "success": function (response) {
+                    if(response.success) {
+                        if(response.correct) {
+                            alert("flag 正确");
+                            location.reload();
+                        }else{
+                            alert("flag 错误")
+                        }
+                    }
+                }
+            });
+        });
     });
 
     function challengeClear() {
@@ -198,11 +214,11 @@
     function challengeDetail(id) {
         $.ajax({
             "type": "GET",
-            "url": "{{ url('challenge/info') }}?id=" + id,
+            "url": "{{ url('challenge/detail') }}?id=" + id,
             "async": false,
             "success": function(response) {
                 if(response.success) {
-                    fillForm(response.data);
+                    fillDetail(response.data);
                     $("#challenge-detail").modal('show');
                 }
             }
@@ -260,7 +276,9 @@
     }
 
     function fillDetail(data) {
-
+        $("#detail-id").val(data.id);
+        $("#detail-title").html(data.title);
+        $("#detail-description").html(data.description);
     }
 
     function challengeEdit(id) {

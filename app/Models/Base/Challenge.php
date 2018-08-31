@@ -91,6 +91,23 @@ class Challenge extends Model
             ->get();
     }
 
+    public function detail($id)
+    {
+        return $this
+            ->select(
+                'id',
+                'title',
+                'description',
+                'category',
+                'points'
+            )
+            ->where('id', '=', $id)
+            ->where('is_hidden', '=', false)
+            ->with('tags:challenge,name')
+            ->limit(1)
+            ->get();
+    }
+
     public function saveWithTags(array $data)
     {
         foreach($data['tags'] as $value) {

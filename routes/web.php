@@ -20,6 +20,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('challenge/add', 'Admin\\ChallengeController@add');
     Route::put('challenge/edit', 'Admin\\ChallengeController@edit');
     Route::post('challenge/remove', 'Admin\\ChallengeController@remove');
+    Route::get('challenge/detail', 'Base\\ChallengeController@detail');
+    Route::post('flag', 'Base\\ChallengeController@submitFlag');
 });
 
 Route::group(['middleware' => 'auth'], function () {
@@ -29,7 +31,7 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('bank', 'Admin\\BankController@index');
+    Route::get('bank', 'Base\\BankController@index');
     Route::post('bank/add', 'Admin\\BankController@add');
     Route::get('bank/list', 'Admin\\BankController@list');
 });
