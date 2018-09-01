@@ -15,4 +15,12 @@ class Tag extends Model
     {
         return $this->belongsTo('App\\Models\\Base\\Challenge', 'challenge');
     }
+
+    public function findTags($challengeId)
+    {
+        return $this
+            ->select()
+            ->where('challenge', '=', $challengeId)
+            ->get();
+    }
 }

@@ -40,7 +40,7 @@
             <div class="description">
                 <form class="ui form" id="form-challenge" name="challenge-add" method="post">
                     @csrf
-                    <input id="challenge-id" name="id" type="hidden">
+                    <input id="id" name="id" type="hidden">
                     <div class="field">
                         <label for="title">{{ __('Title') }}</label>
                         <input name="title" type="text" id="title" maxlength="32" value="">
@@ -154,23 +154,54 @@
         loadBanks();
         $("#form-challenge").validate({
             "submitHandler": function(form) {
-                if($("#challenge-id").val()) {
+                var type = '';
+                if($("#id").val()) {
                     form.action = "{{ url('challenge/edit') }}";
+                    type = "PUT";
                 }else{
                     form.action = "{{ url('challenge/add') }}";
+                    type = "POST";
                 }
-                $(form).ajaxSubmit();
+                $(form).ajaxSubmit({
+                    "type": type,
+                    "success": function(data) {
+                        if(data.success) {
+                            alert("成功");
+                            location.reload();
+                        }else{
+                            alert("失败");
+                        }
+                    }
+                });
             },
             "rules": {
                 "title": {
                     "required": true,
                     "maxlength": 32
+                },
+                "description": {
+                    "maxlength": 1000
+                },
+                "points": {
+                    "required": true,
+                    "digits": true,
+                    "range": [0, 10000]
+                },
+                "flag": {
+                    "required": true,
+                    "rangelength": [10, 200]
+                },
+                "tags": {
+                    "maxlength": 200
+                },
+                "bank": {
+                    "required": true
                 }
             }
         });
         $("select[name=category]").dropdown();
         $('#challenge-modify').modal({
-            "onShow": function() {
+            "onHide": function() {
                 challengeClear();
             }
         });
@@ -218,8 +249,8 @@
             "async": false,
             "success": function(response) {
                 if(response.success) {
-                    fillDetail(response.data);
                     $("#challenge-detail").modal('show');
+                    fillDetail(response.data);
                 }
             }
         });
