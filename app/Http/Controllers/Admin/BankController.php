@@ -34,7 +34,7 @@ class BankController extends Controller
 
     }
 
-    public function remove()
+    public function delete()
     {
 
     }

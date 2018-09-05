@@ -23,9 +23,11 @@
     <img class="ui medium circular centered image" src="{{ asset('img/logo.png') }}">
 </div>
 <div class="ui container">
+    @can('addChallenge')
     <div class="ui basic vertical clearing segment">
         <button id="challenge-add" class="ui primary right floated button"><i class="add circle icon"></i> Add</button>
     </div>
+    @endcan
     <div id="challenges-list"></div>
     <div class="ui paging" id="pagination">
         <a class="huge ui button" id="pg-prev" href="#"><i class="chevron left icon"></i></a>

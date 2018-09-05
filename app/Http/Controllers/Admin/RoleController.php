@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class RoleController extends Controller
+{
+    public function index()
+    {
+
+    }
+
+    public function list()
+    {
+
+    }
+
+    public function add()
+    {
+
+    }
+
+    public function delete()
+    {
+
+    }
+}

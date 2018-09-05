@@ -92,7 +92,7 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function remove(Request $request, Challenge $challenges)
+    public function delete(Request $request, Challenge $challenges)
     {
         //TODO Only administer
         $this->validate($request, [
