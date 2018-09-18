@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "efb6a742b50d703252bcf0e3326196fe",
+    "content-hash": "82089532828ce77ba5b135853a66c089",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1266,35 +1266,34 @@
         },
         {
             "name": "silber/bouncer",
-            "version": "v1.0.0-rc.1",
+            "version": "v1.0.0-rc.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JosephSilber/bouncer.git",
-                "reference": "658fca6169b3426ca5be6168b13fde7b3c0e9069"
+                "reference": "6294ad6f8768460135d4aad60ffb5ca78adfe4c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JosephSilber/bouncer/zipball/658fca6169b3426ca5be6168b13fde7b3c0e9069",
-                "reference": "658fca6169b3426ca5be6168b13fde7b3c0e9069",
+                "url": "https://api.github.com/repos/JosephSilber/bouncer/zipball/6294ad6f8768460135d4aad60ffb5ca78adfe4c5",
+                "reference": "6294ad6f8768460135d4aad60ffb5ca78adfe4c5",
                 "shasum": ""
             },
             "require": {
-                "illuminate/auth": "5.1.20 - 5.6",
-                "illuminate/container": "5.1.20 - 5.6",
-                "illuminate/contracts": "5.1.20 - 5.6",
-                "illuminate/database": "5.1.20 - 5.6"
+                "illuminate/auth": "5.1.20 - 5.7",
+                "illuminate/cache": "5.1.20 - 5.7",
+                "illuminate/container": "5.1.20 - 5.7",
+                "illuminate/contracts": "5.1.20 - 5.7",
+                "illuminate/database": "5.1.20 - 5.7"
             },
             "require-dev": {
-                "illuminate/cache": "5.1.20 - 5.6",
-                "illuminate/console": "5.1.20 - 5.6",
-                "illuminate/events": "5.1.20 - 5.6",
+                "illuminate/console": "5.1.20 - 5.7",
+                "illuminate/events": "5.1.20 - 5.7",
                 "larapack/dd": "^1.1",
                 "mockery/mockery": "^0.9.5",
                 "phpunit/phpunit": "^4.8.35"
             },
             "suggest": {
-                "illuminate/cache": "Allows caching bouncer's database queries",
-                "illuminate/console": "Allows running registered bouncer seeders via artisan",
+                "illuminate/console": "Allows running the bouncer:clean artisan command",
                 "illuminate/events": "Required for multi-tenancy support"
             },
             "type": "library",
@@ -1333,7 +1332,7 @@
                 "permissions",
                 "roles"
             ],
-            "time": "2018-02-01T03:05:24+00:00"
+            "time": "2018-09-09T14:03:20+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
