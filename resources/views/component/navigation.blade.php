@@ -15,9 +15,9 @@
         <div class="ui simple dropdown item">
             Submissions <i class="dropdown icon"></i>
             <div class="menu">
-                <a href="#" class="item">Correct</a>
-                <a href="#" class="item">Wrong</a>
-                <a href="#" class="item">All</a>
+                <a href="{{ url('submission') }}?correct" class="item">Correct</a>
+                <a href="{{ url('submission') }}?incorrect" class="item">Wrong</a>
+                <a href="{{ url('submission') }}" class="item">All</a>
             </div>
         </div>
         <a href="#" class="item">Users</a>

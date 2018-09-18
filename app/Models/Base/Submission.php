@@ -2,6 +2,7 @@
 
 namespace App\Models\Base;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -24,8 +25,13 @@ class Submission extends Model
 	
 	public function submitter()
     {
-		return $this->belongsTo('App\Models\Base\User', 'submitter');
+		return $this->belongsTo('App\User', 'submitter');
 	}
+
+    public function getUpdatedAtAttribute($date)
+    {
+        return Carbon::parse($date)->diffForHumans();
+    }
 
 	public function add($challengeId, $submitterId, $content, $isCorrect)
     {
@@ -63,5 +69,24 @@ class Submission extends Model
         }else{
             return true;
         }
+    }
+
+    public static function submissions($search = null)
+    {
+        $builder = self::select()
+            ->orderBy('created_at', 'desc')
+            ->with([
+                'submitter:id,nickname',
+                'challenge:id,title'
+            ]);
+
+        if($search['correct'] && !$search['incorrect']) {
+            $builder->where('is_correct', '=', true);
+        }
+        if(!$search['correct'] && $search['incorrect']){
+            $builder->Where('is_correct', '=', false);
+        }
+
+        return $builder->paginate(10, ['*'], 'p');
     }
 }

@@ -35,3 +35,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::post('bank/add', 'Admin\\BankController@add');
     Route::get('bank/list', 'Admin\\BankController@list');
 });
+
+Route::group([], function() {
+    Route::get('submission', 'Admin\\SubmissionController@index');
+    Route::get('submissions', 'Admin\\SubmissionController@list');
+    Route::post('submission', 'Admin\\SubmissionContoller@add');
+    Route::delete('submission', 'Admin\\SubmissionController@delete');
+});

@@ -25,7 +25,7 @@
         @yield('content')
     </div>
     @yield('footer')
-    <script src="{{ asset('js/arttemplate.js') }}"></script>
+    <script src="{{ asset('js/art-template.js') }}"></script>
     <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('js/semantic.min.js') }}"></script>
     <script>
