@@ -11,7 +11,7 @@
             Banks <i class="dropdown icon"></i>
             <div class=" menu" id="bank-menu"></div>
         </div>
-        <a href="#" class="item">Ranking</a>
+        <a href="{{ url('ranking') }}" class="item">Ranking</a>
         <div class="ui simple dropdown item">
             Submissions <i class="dropdown icon"></i>
             <div class="menu">
@@ -20,7 +20,7 @@
                 <a href="{{ url('submission') }}" class="item">All</a>
             </div>
         </div>
-        <a href="#" class="item">Users</a>
+        <a href="{{ url('users') }}" class="item">Users</a>
         <div class="right menu">
             @guest
                 <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -43,7 +43,7 @@
 </div>
 <script id="bank-menu-template" type="text/html">
     @{{each banks bank index}}
-    <a href="{{ url('challenge') }}?bank=@{{  bank.id }}" class="item">@{{ bank.name }}</a>
+    <a href="{{ url('challenge') }}?bank=@{{ bank.id }}" class="item">@{{ bank.name }}</a>
     @{{/each}}
     <div class="ui fitted divider"></div>
     <a href="{{ url('bank') }}" class="item">更多</a>
