@@ -46,6 +46,7 @@ Route::group([], function() {
 
 Route::group([], function() {
     Route::get('users', 'Admin\\UserController@index');
+    Route::get('adm1n/users', 'Admin\\UserController@list');
 });
 
 Route::group([], function() {
