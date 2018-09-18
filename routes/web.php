@@ -45,5 +45,9 @@ Route::group([], function() {
 });
 
 Route::group([], function() {
+    Route::get('users', 'Admin\\UserController@index');
+});
 
+Route::group([], function() {
+    Route::get('ranking', 'Base\\RankingController@index');
 });
