@@ -6,21 +6,22 @@
             <img class="logo" src="{{ asset('img/logo.png') }}">
             {{ config('app.name', 'GCTF') }}
         </a>
-        <a href="{{ url('challenge') }}" class="item">Challenge</a>
+        <a href="{{ url('challenge') }}" class="item">{{ __('Challenges') }}</a>
         <div class="ui simple dropdown item">
-            Banks <i class="dropdown icon"></i>
+            {{ __('Banks') }} <i class="dropdown icon"></i>
             <div class=" menu" id="bank-menu"></div>
         </div>
-        <a href="{{ url('ranking') }}" class="item">Ranking</a>
+        <a href="{{ url('ranking') }}" class="item">{{ __('Ranking') }}</a>
         <div class="ui simple dropdown item">
-            Submissions <i class="dropdown icon"></i>
+            {{ __('Submission') }} <i class="dropdown icon"></i>
             <div class="menu">
-                <a href="{{ url('submission') }}?correct" class="item">Correct</a>
-                <a href="{{ url('submission') }}?incorrect" class="item">Wrong</a>
-                <a href="{{ url('submission') }}" class="item">All</a>
+                <a href="{{ url('submission') }}?correct" class="item">{{ __('Correct') }}</a>
+                <a href="{{ url('submission') }}?incorrect" class="item">{{ __('Wrong') }}</a>
+                <a href="{{ url('submission') }}" class="item">{{ __('All') }}</a>
             </div>
         </div>
-        <a href="{{ url('users') }}" class="item">Users</a>
+        <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
+        <a href="{{ url('roles') }}" class="item">{{ __('Roles') }}</a>
         <div class="right menu">
             @guest
                 <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -29,9 +30,9 @@
                 <div class="ui simple dropdown item">
                     {{ Auth::user()->nickname }} <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item" href="{{ url('user') }}">Profile</a>
-                        <a class="item" href="#">Change Password</a>
-                        <a class="item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">Logout</a>
+                        <a class="item" href="{{ url('user') }}">{{ __('Profile') }}</a>
+                        <a class="item" href="#">{{ __('Change Password') }}</a>
+                        <a class="item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
@@ -46,7 +47,7 @@
     <a href="{{ url('challenge') }}?bank=@{{ bank.id }}" class="item">@{{ bank.name }}</a>
     @{{/each}}
     <div class="ui fitted divider"></div>
-    <a href="{{ url('bank') }}" class="item">更多</a>
+    <a href="{{ url('bank') }}" class="item">{{ __('More') }}</a>
 </script>
 @endsection
 
