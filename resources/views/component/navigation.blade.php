@@ -20,8 +20,15 @@
                 <a href="{{ url('submission') }}" class="item">{{ __('All') }}</a>
             </div>
         </div>
-        <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
-        <a href="{{ url('roles') }}" class="item">{{ __('Roles') }}</a>
+        <div class="ui simple dropdown item">
+            {{ __('Admin') }} <i class="dropdown icon"></i>
+            <div class="menu">
+                <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
+                <a href="{{ url('roles') }}" class="item">{{ __('Roles') }}</a>
+                <a href="{{ url('privileges') }}" class="item">{{ __('Privileges') }}</a>
+                <a href="{{ url('permissions') }}" class="item">{{ __('Permissions') }}</a>
+            </div>
+        </div>
         <div class="right menu">
             @guest
                 <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>
@@ -31,7 +38,7 @@
                     {{ Auth::user()->nickname }} <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" href="{{ url('user') }}">{{ __('Profile') }}</a>
-                        <a class="item" href="#">{{ __('Change Password') }}</a>
+                        <a class="item" href="{{ url('password/change') }}">{{ __('Change Password') }}</a>
                         <a class="item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf

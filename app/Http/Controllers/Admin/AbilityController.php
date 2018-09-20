@@ -9,7 +9,7 @@ class AbilityController extends Controller
 {
     public function index()
     {
-
+        return view('admin.ability.index');
     }
 
     public function list()

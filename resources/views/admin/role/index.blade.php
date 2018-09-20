@@ -13,30 +13,24 @@
         <table class="ui single line table">
             <thead>
             <tr>
-                <th>{{ __('Nickname') }}</th>
-                <th>{{ __('Student Number') }}</th>
-                <th>{{ __('Email') }}</th>
-                <th>{{ __('Group') }}</th>
+                <th>{{ __('ID') }}</th>
+                <th>{{ __('Name') }}</th>
+                <th>{{ __('Title') }}</th>
                 <th>{{ __('Operation') }}</th>
             </tr>
             </thead>
-            <tbody id="table-users"></tbody>
+            <tbody id="table-roles"></tbody>
         </table>
     </div>
-    <script id="tpl-table-users" type="text/html">
-        @{{each users user index}}
+    <script id="tpl-table-roles" type="text/html">
+        @{{each roles role index}}
         <tr>
-            <td>@{{user.nickname}}</td>
-            <td>@{{user.sid}}</td>
-            <td>@{{user.email}}</td>
+            <td>@{{role.id}}</td>
+            <td>@{{role.name}}</td>
+            <td>@{{role.title}}</td>
             <td>
-                @{{each user.roles role index}}
-                <a href="{{ url('role') }}/@{{role.id}}">@{{role.name}}</a>@{{if index !== 1}},@{{/if}}
-                @{{/each}}
-            </td>
-            <td>
-                <button class="ui primary button" onclick="editUser('@{{user.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
-                <button class="ui negative button" onclick="deleteUser('@{{user.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                <button class="ui primary button" onclick="editRole('@{{role.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
+                <button class="ui negative button" onclick="deleteRole('@{{role.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
             </td>
         </tr>
         @{{/each}}
@@ -48,7 +42,7 @@
     <script>
         function loadUsers(page) {
             $.ajax({
-                "url": "{{ url('adm1n/users') }}",
+                "url": "{{ url('adm1n/roles') }}",
                 "type": "GET",
                 "data": {
                     "p": page
@@ -56,9 +50,9 @@
                 "success": function(response, status) {
                     if(status === "success" && response && response.status === 200) {
                         if(response.success) {
-                            render('tpl-table-users', 'table-users', {
+                            render('tpl-table-roles', 'table-roles', {
                                 "success": true,
-                                "users": response.data
+                                "roles": response.data
                             });
                         }else{
 

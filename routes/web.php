@@ -52,3 +52,21 @@ Route::group([], function() {
 Route::group([], function() {
     Route::get('ranking', 'Base\\RankingController@index');
 });
+
+Route::group([], function() {
+    Route::get('roles', 'Admin\\RoleController@index');
+    Route::get('role/{id}', 'Admin\\RoleController@index');
+    Route::get('adm1n/roles', 'Admin\\RoleController@list');
+});
+
+Route::group([], function() {
+    Route::get('privileges', 'Admin\\AbilityController@index');
+});
+
+Route::group([], function() {
+    Route::get('permissions', 'Admin\\PermissionController@index');
+});
+
+Route::group([], function() {
+    Route::get('password/change', 'Auth\\ChangePasswordController@index');
+});
