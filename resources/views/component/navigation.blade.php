@@ -26,7 +26,6 @@
                 <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
                 <a href="{{ url('roles') }}" class="item">{{ __('Roles') }}</a>
                 <a href="{{ url('privileges') }}" class="item">{{ __('Privileges') }}</a>
-                <a href="{{ url('permissions') }}" class="item">{{ __('Permissions') }}</a>
             </div>
         </div>
         <div class="right menu">
