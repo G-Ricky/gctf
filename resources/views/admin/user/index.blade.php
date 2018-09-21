@@ -16,7 +16,7 @@
                 <th>{{ __('Nickname') }}</th>
                 <th>{{ __('Student Number') }}</th>
                 <th>{{ __('Email') }}</th>
-                <th>{{ __('Group') }}</th>
+                <th>{{ __('Roles') }}</th>
                 <th>{{ __('Operation') }}</th>
             </tr>
             </thead>
@@ -44,7 +44,6 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/art-template.js') }}"></script>
     <script>
         function loadUsers(page) {
             $.ajax({
