@@ -26,7 +26,7 @@
         @{{each roles role index}}
         <tr>
             <td>@{{role.id}}</td>
-            <td>@{{role.name}}</td>
+            <td><a href="{{ url('permissions') }}/@{{role.id}}">@{{role.name}}</a></td>
             <td>@{{role.title}}</td>
             <td>
                 <button class="ui primary button" onclick="editRole('@{{role.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
@@ -38,7 +38,6 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ asset('js/art-template.js') }}"></script>
     <script>
         function loadUsers(page) {
             $.ajax({
