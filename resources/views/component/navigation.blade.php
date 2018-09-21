@@ -1,6 +1,5 @@
 @section('navigation')
-<div class="ui menu"></div>
-<div class="ui inverted fixed stackable borderless menu">
+<div class="ui inverted stackable borderless menu">
     <div class="ui container">
         <a href="javascript:void(0)" class="header item">
             <img class="logo" src="{{ asset('img/logo.png') }}">
