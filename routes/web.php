@@ -55,16 +55,18 @@ Route::group([], function() {
 
 Route::group([], function() {
     Route::get('roles', 'Admin\\RoleController@index');
-    Route::get('role/{id}', 'Admin\\RoleController@index');
+    Route::get('role/{id}', 'Admin\\RoleController@role');
     Route::get('adm1n/roles', 'Admin\\RoleController@list');
 });
 
 Route::group([], function() {
     Route::get('privileges', 'Admin\\AbilityController@index');
+    Route::get('api/privileges', 'Admin\\AbilityController@list');
 });
 
 Route::group([], function() {
-    Route::get('permissions', 'Admin\\PermissionController@index');
+    Route::get('permissions/{roleId}', 'Admin\\PermissionController@index');
+    Route::get('api/permissions/{roleId}', 'Admin\\PermissionController@list');
 });
 
 Route::group([], function() {
