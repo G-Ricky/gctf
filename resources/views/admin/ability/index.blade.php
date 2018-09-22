@@ -22,6 +22,7 @@
             <button class="ui primary right floated button" onclick="addPrivilege()"><i class="add circle icon"></i> {{ __('Add') }}</button>
         </div>
         <div class="ui basic vertical segment" id="table-privileges">
+            @{{if privileges && privileges.length > 0}}
             <table class="ui single line table">
                 <thead>
                 <tr>
@@ -45,6 +46,13 @@
                 @{{/each}}
                 </tbody>
             </table>
+            @{{else}}
+            <div class="ui warning message">
+                <div class="content">
+                    <p>暂无数据</p>
+                </div>
+            </div>
+            @{{/if}}
         </div>
         <div class="ui vertical clearing segment">
             <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadSubmissions('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>

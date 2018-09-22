@@ -19,6 +19,7 @@
     <div class="ui container" id="container-submissions"></div>
     <script id="tpl-container-submissions" type="text/html">
         <div class="ui basic vertical segment" id="table-submissions">
+            @{{if submissions && submissions.length > 0}}
             <table class="ui fixed selectable single line compact table">
                 <thead>
                 <tr>
@@ -45,6 +46,13 @@
                 <tfoot>
                 </tfoot>
             </table>
+            @{{else}}
+            <div class="ui warning message">
+                <div class="content">
+                    <p>暂无数据</p>
+                </div>
+            </div>
+            @{{/if}}
         </div>
         <div class="ui vertical clearing segment">
             <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadSubmissions('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
