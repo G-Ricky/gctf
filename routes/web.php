@@ -37,9 +37,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('bank/list', 'Admin\\BankController@list');
 });
 
-Route::group([], function() {
-    Route::get('submission', 'Admin\\SubmissionController@index');
-    Route::get('submissions', 'Admin\\SubmissionController@list');
+Route::group(['middleware' => 'auth'], function() {
+    Route::get('submissions', 'Admin\\SubmissionController@index');
+    Route::get('submissions/correct', 'Admin\\SubmissionController@index');
+    Route::get('submissions/incorrect', 'Admin\\SubmissionController@index');
     Route::post('submission', 'Admin\\SubmissionContoller@add');
     Route::delete('submission', 'Admin\\SubmissionController@delete');
 });
@@ -49,26 +50,36 @@ Route::group([], function() {
     Route::get('adm1n/users', 'Admin\\UserController@list');
 });
 
-Route::group([], function() {
+Route::group(['middleware' => 'auth'], function() {
     Route::get('ranking', 'Base\\RankingController@index');
 });
 
-Route::group([], function() {
+Route::group(['middleware' => 'auth'], function() {
     Route::get('roles', 'Admin\\RoleController@index');
     Route::get('role/{id}', 'Admin\\RoleController@role');
     Route::get('adm1n/roles', 'Admin\\RoleController@list');
 });
 
-Route::group([], function() {
+Route::group(['middleware' => 'auth'], function() {
     Route::get('privileges', 'Admin\\AbilityController@index');
     Route::get('api/privileges', 'Admin\\AbilityController@list');
 });
 
-Route::group([], function() {
+Route::group(['middleware' => 'auth'], function() {
     Route::get('permissions/{roleId}', 'Admin\\PermissionController@index');
-    Route::get('api/permissions/{roleId}', 'Admin\\PermissionController@list');
 });
 
-Route::group([], function() {
+Route::group(['middleware' => 'auth'], function() {
     Route::get('password/change', 'Auth\\ChangePasswordController@index');
+});
+
+Route::group(
+    [
+        'middleware' => 'auth',
+        'prefix'     => 'api'
+    ], function() {
+        Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
+        Route::get('submissions', 'Admin\\SubmissionController@listAll');
+
+        Route::get('permissions/{roleId}', 'Admin\\PermissionController@list');
 });

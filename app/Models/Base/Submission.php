@@ -71,7 +71,7 @@ class Submission extends Model
         }
     }
 
-    public static function submissions($search = null)
+    public static function search($type = null)
     {
         $builder = self::select()
             ->orderBy('created_at', 'desc')
@@ -80,13 +80,15 @@ class Submission extends Model
                 'challenge:id,title'
             ]);
 
-        if($search['correct'] && !$search['incorrect']) {
+        if($type === 'correct') {
             $builder->where('is_correct', '=', true);
         }
-        if(!$search['correct'] && $search['incorrect']){
+        if($type === 'incorrect'){
             $builder->Where('is_correct', '=', false);
         }
 
-        return $builder->paginate(10, ['*'], 'p');
+        return $builder
+            ->paginate(13, ['*'], 'p')
+            ->jsonSerialize();
     }
 }
