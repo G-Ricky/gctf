@@ -4,21 +4,21 @@
 
 @push('stylesheets')
     <style>
-        #table-submissions {
+        #container-submissions {
             display: flex;
             flex-direction: column;
             min-height: 100%;
         }
-        #table-submissions>*:first-child {
+        #container-submissions #table-submissions {
             flex: 1;
         }
     </style>
 @endpush
 
 @section('content')
-    <div class="ui container" id="table-submissions"></div>
-    <script id="tpl-table-submissions" type="text/html">
-        <div>
+    <div class="ui container" id="container-submissions"></div>
+    <script id="tpl-container-submissions" type="text/html">
+        <div class="ui basic vertical segment" id="table-submissions">
             <table class="ui fixed selectable single line compact table">
                 <thead>
                 <tr>
@@ -61,16 +61,16 @@
             "url": url,
             "success": function(response, status, jqXHR) {
                 if(status === "success" && response && response.status === 200 && response.success) {
-                    html = template('tpl-table-submissions', {
+                    html = template('tpl-container-submissions', {
                         "submissions": response.data,
                         "paginate": response.paginate
                     });
                 }else{
-                    html = template('tpl-table-submissions', {});
+                    html = template('tpl-container-submissions', {});
                 }
             },
             "complete": function(jqXHR, textStatus) {
-                $("#table-submissions").html(html);
+                $("#container-submissions").html(html);
             }
         });
     }
