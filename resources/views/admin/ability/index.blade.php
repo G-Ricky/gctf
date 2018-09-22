@@ -83,8 +83,8 @@
             @{{/if}}
         </div>
         <div class="ui vertical clearing segment">
-            <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadSubmissions('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
-            <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadSubmissions('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
+            <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadPrivileges('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
+            <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadPrivileges('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
         </div>
     </script>
 @endsection
@@ -94,9 +94,12 @@
     <script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
     <script>
         let privilegesDict = {};
-        function loadPrivileges() {
+        function loadPrivileges(url) {
+            if(url == null) {
+                url = "{{ url('api/privileges') }}";
+            }
             $.ajax({
-                "url": "{{ url('api/privileges') }}",
+                "url": url,
                 "type": "GET",
                 "success": function(response, status) {
                     if(status === "success" && response && response.status === 200) {
