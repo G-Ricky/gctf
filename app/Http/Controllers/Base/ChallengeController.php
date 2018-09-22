@@ -19,6 +19,8 @@ class ChallengeController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('listChallenges');
+
         return view('base.challenge.index', [
             'bank' => $request->query('bank', 1)
         ]);
@@ -50,6 +52,8 @@ class ChallengeController extends Controller
 
     public function list(Request $request)
     {
+        $this->authorize('listChallenges');
+
         $bank = $request->query('bank', 1);
         $page = $request->query('page', 1);
         $page_size = $request->query('pageSize', 20);

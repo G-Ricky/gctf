@@ -17,7 +17,7 @@ class ChallengeController extends Controller
 
     public function add(Request $request, Challenge $challenges)
     {
-        //TODO Only administer
+        $this->authorize('addChallenge');
 
         $this->validate($request, [
             'title'       => 'required|string|max:32',
@@ -51,7 +51,8 @@ class ChallengeController extends Controller
 
     public function edit(Request $request, Challenge $challenges, Tag $tags)
     {
-        //TODO Only administer
+        $this->authorize('editChallenge');
+
         $this->validate($request, [
             'id'          => 'required|integer|exists:challenges,id',
             'title'       => 'required|string|max:32',
@@ -94,7 +95,8 @@ class ChallengeController extends Controller
 
     public function delete(Request $request, Challenge $challenges)
     {
-        //TODO Only administer
+        $this->authorize('deleteChallenge');
+
         $this->validate($request, [
             'id' => 'required|integer|exists:challenges,id'
         ]);
@@ -109,6 +111,8 @@ class ChallengeController extends Controller
 
     public function info(Request $request, Challenge $challenges)
     {
+        $this->authorize('seeChallengeDetail');
+
         $id = $request->query('id', 0);
         $result = $challenges->info($id)->toArray();
         foreach($result as &$challenge) {

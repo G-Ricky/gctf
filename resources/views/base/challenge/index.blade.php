@@ -33,6 +33,7 @@
         <a class="huge ui button" id="pg-prev" href="#"><i class="chevron left icon"></i></a>
         <a class="huge ui button" id="pg-next" href="#"><i class="chevron right icon"></i></a>
     </div>
+    @canany(['addChallenge', 'editChallenge'])
     <div class="ui tiny basic flat modal" id="challenge-modify">
         <i class="close icon"></i>
         <div class="header">
@@ -97,6 +98,7 @@
             <input class="ui basic fluid button" id="btn-save" type="button" value="{{ __('Save') }}">
         </div>
     </div>
+    @endcanany
     <div class="ui tiny basic flat modal" id="challenge-detail">
         <i class="close icon"></i>
         <div class="header" id="detail-title"></div>
@@ -131,8 +133,12 @@
                     <div class="point">@{{ challenge.points }} pt</div>
                 </div>
                 <div class="ui two bottom attached buttons">
+                    @can('editChallenge')
                     <div class="ui button" onclick="challengeEdit('@{{ challenge.id }}')"><i class="edit icon"></i></div>
+                    @endcan
+                    @can('deleteChallenge')
                     <div class="ui button" onclick="confirm('是否删除') &amp;&amp; challengeDelete('@{{ challenge.id }}')"><i class="trash icon"></i></div>
+                    @endcan
                 </div>
             </div>
             @{{/each}}
@@ -154,6 +160,7 @@
     $(document).ready(function() {
         loadChallenges();
         loadBanks();
+        @canany(['addChallenge', 'editChallenge'])
         $("#form-challenge").validate({
             "submitHandler": function(form) {
                 var type = '';
@@ -201,18 +208,25 @@
                 }
             }
         });
+        @endcanany
         $("select[name=category]").dropdown();
+        @canany(['addChallenge', 'editChallenge'])
         $('#challenge-modify').modal({
             "onHide": function() {
                 challengeClear();
             }
         });
+        @endcanany
+        @can('addChallenge')
         $("#challenge-add").click(function() {
             $("#challenge-modify").modal('show');
         });
+        @endcan
+        @canany(['addChallenge', 'editChallenge'])
         $("#btn-save").click(function() {
             $("#form-challenge").submit();
         });
+        @endcanany
         $("#btn-submit").click(function() {
             var flag = $("#detail-flag").val().trim();
             var challengeId = $("#detail-id").val().trim();
@@ -237,13 +251,13 @@
             });
         });
     });
-
+    @canany(['addChallenge', 'editChallenge'])
     function challengeClear() {
         $("#challenge-modify input[type=text]").val("");
         $("#challenge-modify textarea").val("");
         $("#challenge-modify select").dropdown("clear");
     }
-
+    @endcanany
     function challengeDetail(id) {
         $.ajax({
             "type": "GET",
@@ -257,7 +271,7 @@
             }
         });
     }
-
+    @can('deleteChallenge')
     function challengeDelete(id) {
         $.ajax({
             "type": "POST",
@@ -274,7 +288,8 @@
             }
         });
     }
-
+    @endcan
+    @canany(['addChallenge', 'editChallenge'])
     function sendChallengeAction(data, action) {
         let url = "";
         if(action === "add") {
@@ -296,7 +311,8 @@
             }
         });
     }
-
+    @endcanany
+    @canany(['addChallenge', 'editChallenge'])
     function fillForm(data) {
         $("#id").val(data.id);
         $("#title").val(data.title);
@@ -307,13 +323,13 @@
         $("#tags").val(data.tags);
         $("#bank").dropdown("set selected", data.bank);
     }
-
+    @endcanany
     function fillDetail(data) {
         $("#detail-id").val(data.id);
         $("#detail-title").html(data.title);
         $("#detail-description").html(data.description);
     }
-
+    @can('editChallenge')
     function challengeEdit(id) {
         $.ajax({
             "type": "GET",
@@ -327,7 +343,7 @@
             }
         });
     }
-
+    @endcan
     function loadBanks() {
         let data = [];
         $.ajax({
