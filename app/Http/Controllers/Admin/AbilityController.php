@@ -15,12 +15,20 @@ class AbilityController extends Controller
 
     public function list()
     {
-        $abilities = Ability::select('id', 'name', 'title')->get()->toArray();
+        $paginate = Ability
+            ::select('id', 'name', 'title')
+            ->paginate(15, ['*'], 'p')
+            ->jsonSerialize();
+
+        $abilities = $paginate['data'];
+
+        unset($paginate['data']);
 
         return [
-            'status'  => 200,
-            'success' => true,
-            'data'    => $abilities
+            'status'   => 200,
+            'success'  => true,
+            'data'     => $abilities,
+            'paginate' => $paginate
         ];
     }
 
