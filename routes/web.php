@@ -82,4 +82,8 @@ Route::group(
         Route::get('submissions', 'Admin\\SubmissionController@listAll');
 
         Route::get('permissions/{roleId}', 'Admin\\PermissionController@list');
+
+        Route::post('privilege', 'Admin\\AbilityController@add');
+        Route::put('privilege', 'Admin\\AbilityController@edit');
+        Route::delete('privilege', 'Admin\\AbilityController@delete');
 });

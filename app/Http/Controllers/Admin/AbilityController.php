@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Admin\Ability;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Silber\Bouncer\Bouncer;
 
 class AbilityController extends Controller
 {
@@ -32,18 +33,54 @@ class AbilityController extends Controller
         ];
     }
 
-    public function add()
+    public function add(Bouncer $bouncer, Request $request)
     {
+        $data = $this->validate($request, [
+            'name'  => 'bail|required|string|alpha_dash|unique:abilities|max:100',
+            'title' => 'bail|string|max:200',
+        ]);
 
+        $ability = $bouncer->ability()->create($data);
+
+        return [
+            'status'  => 200,
+            'success' => !!$ability
+        ];
     }
 
-    public function edit()
+    public function edit(Bouncer $bouncer, Request $request)
     {
+        $data = $this->validate($request, [
+            'id'    => 'bail|required|integer',
+            'name'  => 'bail|required|string|alpha_dash|max:100',
+            'title' => 'bail|string|max:200',
+        ]);
 
+        $affectedRow = $bouncer->ability()
+            ->where('id', '=',
+                $data['id']
+            )
+            ->update($data);
+
+        return [
+            'status'  => 200,
+            'success' => !!$affectedRow
+        ];
     }
 
-    public function delete()
+    public function delete(Bouncer $bouncer, Request $request)
     {
-        
+        $data = $this->validate($request, [
+            'id' => 'bail|required|integer',
+        ]);
+
+        $success = $bouncer->ability()
+            ->where('id', '=', $data['id'])
+            ->delete();
+
+        return [
+            'status'  => 200,
+            'success' => $success
+        ];
     }
 }
