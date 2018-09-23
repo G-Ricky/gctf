@@ -57,7 +57,6 @@ Route::group(['middleware' => 'auth'], function() {
 Route::group(['middleware' => 'auth'], function() {
     Route::get('roles', 'Admin\\RoleController@index');
     Route::get('role/{id}', 'Admin\\RoleController@role');
-    Route::get('adm1n/roles', 'Admin\\RoleController@list');
 });
 
 Route::group(['middleware' => 'auth'], function() {
@@ -88,4 +87,9 @@ Route::group(
         Route::delete('privilege', 'Admin\\AbilityController@delete');
         Route::get('privileges', 'Admin\\AbilityController@list');
         Route::get('privileges/all', 'Admin\\AbilityController@listAll');
+
+        Route::get('roles', 'Admin\\RoleController@list');
+        Route::post('role', 'Admin\\RoleController@add');
+        Route::put('role', 'Admin\\RoleController@edit');
+        Route::delete('role', 'Admin\\RoleController@delete');
 });
