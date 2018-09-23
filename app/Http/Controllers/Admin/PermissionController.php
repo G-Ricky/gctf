@@ -13,6 +13,9 @@ class PermissionController extends Controller
 {
     public function index($roleId)
     {
+        $this->authorize('listPermissions');
+        $this->authorize('listPrivileges');
+
         return view('admin.permission.index', [
             'roleId' => $roleId
         ]);
@@ -20,6 +23,8 @@ class PermissionController extends Controller
 
     public function list($roleId, Bouncer $bouncer)
     {
+        $this->authorize('listPermissions');
+
         $role = $bouncer->role()->where('id', '=', $roleId)->firstOrFail();
 
         $abilities = $role->abilities()->get()->toArray();
@@ -34,6 +39,8 @@ class PermissionController extends Controller
 
     public function modify($roleId, Request $request, Bouncer $bouncer)
     {
+        $this->authorize('modifyPermission');
+
         $data = $this->validate($request, [
             'grants'  => 'bail|required_without:revokes|array',
             'revokes' => 'bail|required_without:grants|array',
@@ -63,5 +70,15 @@ class PermissionController extends Controller
             'status'  => 200,
             'success' => true
         ];
+    }
+
+    public function grant()
+    {
+        $this->authorize('grantPermission');
+    }
+
+    public function revoke()
+    {
+        $this->authorize('revokePermission');
     }
 }

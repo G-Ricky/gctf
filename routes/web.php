@@ -62,7 +62,6 @@ Route::group(['middleware' => 'auth'], function() {
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('privileges', 'Admin\\AbilityController@index');
-    Route::get('api/privileges', 'Admin\\AbilityController@list');
 });
 
 Route::group(['middleware' => 'auth'], function() {
@@ -87,4 +86,6 @@ Route::group(
         Route::post('privilege', 'Admin\\AbilityController@add');
         Route::put('privilege', 'Admin\\AbilityController@edit');
         Route::delete('privilege', 'Admin\\AbilityController@delete');
+        Route::get('privileges', 'Admin\\AbilityController@list');
+        Route::get('privileges/all', 'Admin\\AbilityController@listAll');
 });

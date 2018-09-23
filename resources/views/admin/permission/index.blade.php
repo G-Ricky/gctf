@@ -7,9 +7,11 @@
 
 @section('content')
     <div class="ui container">
+        @can('modifyPermission')
         <div class="ui basic vertical clearing segment">
             <button class="ui primary right floated button" onclick="savePermissions()"><i class="add circle icon"></i> {{ __('Save') }}</button>
         </div>
+        @endcan
         <div class="ui basic vertical segment" id="list-privileges"></div>
     </div>
     <script id="tpl-list-privileges" type="text/html">
@@ -48,7 +50,7 @@
         }
         function loadPrivileges() {
             $.get(
-                "{{ url('api/privileges') }}",
+                "{{ url('api/privileges/all') }}",
                 function(response, status) {
                     if(status === "success" && response && response.status === 200) {
                         $("#list-privileges").html(
@@ -61,6 +63,7 @@
                 }
             );
         }
+        @can('modifyPermission')
         function savePermissions() {
             let grants = [];
             let revokes = [];
@@ -114,6 +117,7 @@
                 }
             })
         }
+        @endcan
         $(document).ready(function() {
             loadPrivileges();
         });
