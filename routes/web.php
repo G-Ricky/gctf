@@ -101,3 +101,5 @@ Route::group(
         Route::put('user/unban', 'Admin\\UserController@unban');
         Route::delete('user', 'Admin\\UserController@delete');
 });
+
+Route::get('install', 'Admin\\InstallController@install');
