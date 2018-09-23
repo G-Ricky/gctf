@@ -18,6 +18,7 @@
 
 @section('content')
     <div class="ui container" id="container-privileges"></div>
+    @canany(['addPrivilege', 'editPrivilege'])
     <div class="ui tiny basic flat modal" id="privilege-save">
         <i class="close icon"></i>
         <div class="header">
@@ -45,10 +46,13 @@
             <input class="ui basic fluid button" form="form-privilege" type="submit" value="{{ __('Save') }}">
         </div>
     </div>
+    @endcanany
     <script id="tpl-container-privileges" type="text/html">
+        @can('addPrivilege')
         <div class="ui basic vertical clearing segment">
             <button class="ui primary right floated button" onclick="addPrivilege()"><i class="add circle icon"></i> {{ __('Add') }}</button>
         </div>
+        @endcan
         <div class="ui basic vertical segment" id="table-privileges">
             @{{if privileges && privileges.length > 0}}
             <table class="ui single line table">
@@ -67,8 +71,12 @@
                     <td>@{{privilege.name}}</td>
                     <td>@{{privilege.title}}</td>
                     <td>
+                        @can('editPrivilege')
                         <button class="ui primary button" onclick="editPrivilege('@{{privilege.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
+                        @endcan
+                        @can('deletePrivilege')
                         <button class="ui negative button" onclick="confirm('确定删除？') &amp;&amp; deletePrivilege('@{{privilege.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        @endcan
                     </td>
                 </tr>
                 @{{/each}}
@@ -125,6 +133,7 @@
                 }
             });
         }
+        @can('addPrivilege')
         function addPrivilege() {
             $("#form-method").val("POST");
             $("#privilege-id").val("");
@@ -132,6 +141,8 @@
             $("#privilege-title").val("");
             $("#privilege-save").modal('show');
         }
+        @endcan
+        @can('editPrivilege')
         function editPrivilege(id) {
             let privilege = privilegesDict[id];
             $("#form-method").val("PUT");
@@ -140,6 +151,8 @@
             $("#privilege-title").val(privilege.title);
             $("#privilege-save").modal('show');
         }
+        @endcan
+        @can('deletePrivilege')
         function deletePrivilege(id) {
             $.ajax({
                 "url": "{{ url('api/privilege') }}",
@@ -161,8 +174,10 @@
                 }
             });
         }
+        @endcan
         $(document).ready(function() {
             loadPrivileges();
+            @canany(['addPrivilege'])
             $("#form-privilege").validate({
                 "submitHandler": function(form) {
                     $(form).ajaxSubmit({
@@ -190,6 +205,7 @@
                     }
                 }
             });
-        })
+            @endcanany
+        });
     </script>
 @endpush
