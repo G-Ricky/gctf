@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin\User;
+use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Silber\Bouncer\BouncerFacade as Bouncer;
@@ -229,16 +229,6 @@ class InstallController extends Controller
             abort(500);
         }
         DB::transaction(function() {
-            //Grant All Privileges For Roles
-            foreach($this->permitEverything() as $roleName) {
-                Bouncer::allow($roleName)->everything();
-            }
-
-            //Forbid All Privileges For Roles
-            foreach($this->prohibitEverything() as $roleName) {
-                Bouncer::forbid($roleName)->everything();
-            }
-
             //Create Roles
             foreach($this->roles() as $role) {
                 Bouncer::role()->create($role);
@@ -248,6 +238,26 @@ class InstallController extends Controller
             foreach($this->abilities() as $ability) {
                 Bouncer::ability()->create($ability);
             }
+
+            //Grant All Privileges For Roles
+            foreach($this->permitEverything() as $roleName) {
+                Bouncer::allow($roleName)->everything();
+            }
+            //foreach($this->permitEverything() as $roleName) {
+            //    foreach($this->abilities() as $ability) {
+            //        Bouncer::allow($roleName)->to($ability['name']);
+            //    }
+            //}
+
+            //Forbid All Privileges For Roles
+            foreach($this->prohibitEverything() as $roleName) {
+                Bouncer::forbid($roleName)->everything();
+            }
+            //foreach($this->prohibitEverything() as $roleName) {
+            //    foreach($this->abilities() as $ability) {
+            //        Bouncer::forbid($roleName)->to($ability['name']);
+            //    }
+            //}
 
             //Grant Privileges
             foreach($this->permissions() as $permission) {
@@ -269,10 +279,10 @@ class InstallController extends Controller
             $users = [];
             foreach($this->assigedRoles() as $roleName => $userIds) {
                 foreach($userIds as $userId) {
-                    if(!isset($users[$userId])) {
-                        $users[$userId] = $user = User::find(1)->first();
-                    }else{
+                    if(isset($users[$userId])) {
                         $user = $users[$userId];
+                    }else{
+                        $users[$userId] = $user = User::find(1)->first();
                     }
                 }
                 if($user) {
