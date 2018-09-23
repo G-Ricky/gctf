@@ -181,7 +181,7 @@
         @endcan
         $(document).ready(function() {
             loadRoles();
-            @canany(['addRole', 'deleteRole'])
+            @canany(['addRole', 'editRole'])
             $("#form-role").validate({
                 "submitHandler": function(form) {
                     $(form).ajaxSubmit({

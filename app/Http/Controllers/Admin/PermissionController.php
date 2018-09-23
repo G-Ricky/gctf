@@ -42,8 +42,8 @@ class PermissionController extends Controller
         $this->authorize('modifyPermission');
 
         $data = $this->validate($request, [
-            'grants'  => 'bail|required_without:revokes|array',
-            'revokes' => 'bail|required_without:grants|array',
+            'grants'  => 'required_without:revokes|array',
+            'revokes' => 'required_without:grants|array',
         ]);
 
         DB::transaction(function() use ($roleId, $data, $bouncer) {

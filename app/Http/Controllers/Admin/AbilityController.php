@@ -67,8 +67,8 @@ class AbilityController extends Controller
         $this->authorize('addPrivilege');
 
         $data = $this->validate($request, [
-            'name'  => 'bail|required|string|alpha_dash|unique:abilities|max:100',
-            'title' => 'bail|string|max:200',
+            'name'  => 'required|string|alpha_dash|unique:abilities|max:100',
+            'title' => 'nullable|string|max:200',
         ]);
 
         $ability = $bouncer->ability()->create($data);
@@ -84,20 +84,18 @@ class AbilityController extends Controller
         $this->authorize('editPrivilege');
 
         $data = $this->validate($request, [
-            'id'    => 'bail|required|integer',
-            'name'  => 'bail|required|string|alpha_dash|max:100',
-            'title' => 'bail|string|max:200',
+            'id'    => 'required|integer',
+            'name'  => 'required|string|alpha_dash|max:100',
+            'title' => 'nullable|string|max:200',
         ]);
 
-        $affectedRow = $bouncer->ability()
-            ->where('id', '=',
-                $data['id']
-            )
+        $affectedRows = $bouncer->ability()
+            ->where('id', '=', $data['id'])
             ->update($data);
 
         return [
             'status'  => 200,
-            'success' => !!$affectedRow
+            'success' => !!$affectedRows
         ];
     }
 
@@ -106,7 +104,7 @@ class AbilityController extends Controller
         $this->authorize('deletePrivilege');
 
         $data = $this->validate($request, [
-            'id' => 'bail|required|integer',
+            'id' => 'required|integer',
         ]);
 
         $success = $bouncer->ability()

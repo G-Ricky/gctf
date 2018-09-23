@@ -42,8 +42,8 @@ class RoleController extends Controller
         $this->authorize('addRole');
 
         $data = $this->validate($request, [
-            'name'  => 'bail|required|string|alpha_dash|unique:roles|max:100',
-            'title' => 'bail|string|max:200',
+            'name'  => 'required|string|alpha_dash|unique:roles|max:100',
+            'title' => 'nullable|string|max:200',
         ]);
 
         $role = $bouncer->role()->create($data);
@@ -59,9 +59,9 @@ class RoleController extends Controller
         $this->authorize('editRole');
 
         $data = $this->validate($request, [
-            'id'    => 'bail|required|integer',
-            'name'  => 'bail|required|string|alpha_dash|max:100',
-            'title' => 'bail|string|max:200',
+            'id'    => 'required|integer',
+            'name'  => 'required|string|alpha_dash|max:100',
+            'title' => 'nullable|string|max:200',
         ]);
 
         $affectedRow = $bouncer->role()
@@ -81,7 +81,7 @@ class RoleController extends Controller
         $this->authorize('deleteRole');
 
         $data = $this->validate($request, [
-            'id' => 'bail|required|integer',
+            'id' => 'required|integer',
         ]);
 
         $success = $bouncer->role()

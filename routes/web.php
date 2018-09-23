@@ -47,7 +47,6 @@ Route::group(['middleware' => 'auth'], function() {
 
 Route::group([], function() {
     Route::get('users', 'Admin\\UserController@index');
-    Route::get('adm1n/users', 'Admin\\UserController@list');
 });
 
 Route::group(['middleware' => 'auth'], function() {
@@ -82,14 +81,23 @@ Route::group(
         Route::get('permissions/{roleId}', 'Admin\\PermissionController@list');
         Route::put('permissions/{roleId}', 'Admin\\PermissionController@modify');
 
+        Route::get('privileges', 'Admin\\AbilityController@list');
+        Route::get('privileges/all', 'Admin\\AbilityController@listAll');
         Route::post('privilege', 'Admin\\AbilityController@add');
         Route::put('privilege', 'Admin\\AbilityController@edit');
         Route::delete('privilege', 'Admin\\AbilityController@delete');
-        Route::get('privileges', 'Admin\\AbilityController@list');
-        Route::get('privileges/all', 'Admin\\AbilityController@listAll');
 
         Route::get('roles', 'Admin\\RoleController@list');
         Route::post('role', 'Admin\\RoleController@add');
         Route::put('role', 'Admin\\RoleController@edit');
         Route::delete('role', 'Admin\\RoleController@delete');
+
+        Route::get('users', 'Admin\\UserController@list');
+        Route::post('user', 'Admin\\UserController@add');
+        Route::put('user', 'Admin\\UserController@edit');
+        Route::put('user/hide', 'Admin\\UserController@hide');
+        Route::put('user/unhide', 'Admin\\UserController@unhide');
+        Route::put('user/ban', 'Admin\\UserController@ban');
+        Route::put('user/unban', 'Admin\\UserController@unban');
+        Route::delete('user', 'Admin\\UserController@delete');
 });
