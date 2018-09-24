@@ -41,8 +41,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('submissions', 'Admin\\SubmissionController@index');
     Route::get('submissions/correct', 'Admin\\SubmissionController@index');
     Route::get('submissions/incorrect', 'Admin\\SubmissionController@index');
-    Route::post('submission', 'Admin\\SubmissionContoller@add');
-    Route::delete('submission', 'Admin\\SubmissionController@delete');
 });
 
 Route::group([], function() {
@@ -77,6 +75,7 @@ Route::group(
     ], function() {
         Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
         Route::get('submissions', 'Admin\\SubmissionController@listAll');
+        Route::delete('submission', 'Admin\\SubmissionController@delete');
 
         Route::get('permissions/{roleId}', 'Admin\\PermissionController@list');
         Route::put('permissions/{roleId}', 'Admin\\PermissionController@modify');

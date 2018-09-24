@@ -27,7 +27,7 @@ class InstallController extends Controller
             ],
             [
                 'name'  => 'guest',
-                'title' => '未注册用户',
+                'title' => '未验证用户',
             ],
             [
                 'name'  => 'banned',
@@ -62,6 +62,14 @@ class InstallController extends Controller
             [
                 'name'  => 'submitFlag',
                 'title' => '提交 flag',
+            ],
+            [
+                'name'  => 'listSubmissions',
+                'title' => '查看已提交 flag 列表',
+            ],
+            [
+                'name'  => 'deleteSubmission',
+                'title' => '删除已提交的 flag',
             ],
             [
                 'name'  => 'listUsers',
@@ -138,6 +146,10 @@ class InstallController extends Controller
             [
                 'name'  => 'retractRole',
                 'title' => '回收用户角色',
+            ],
+            [
+                'name'  => 'changeRelation',
+                'title' => '授予与回收用户角色',
             ]
         ];
     }
@@ -234,11 +246,6 @@ class InstallController extends Controller
                 Bouncer::role()->create($role);
             }
 
-            //Create Privileges
-            foreach($this->abilities() as $ability) {
-                Bouncer::ability()->create($ability);
-            }
-
             //Grant All Privileges For Roles
             foreach($this->permitEverything() as $roleName) {
                 Bouncer::allow($roleName)->everything();
@@ -247,6 +254,11 @@ class InstallController extends Controller
             //Forbid All Privileges For Roles
             foreach($this->prohibitEverything() as $roleName) {
                 Bouncer::forbid($roleName)->everything();
+            }
+
+            //Create Privileges
+            foreach($this->abilities() as $ability) {
+                Bouncer::ability()->create($ability);
             }
 
             //Grant Privileges

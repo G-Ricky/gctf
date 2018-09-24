@@ -27,7 +27,9 @@
                     <th>{{ __('Content') }}</th>
                     <th>{{ __('Submitter') }}</th>
                     <th>{{ __('Time') }}</th>
+                    @canany(['deleteSubmission'])
                     <th>{{ __('Operation') }}</th>
+                    @endcanany
                 </tr>
                 </thead>
                 <tbody>
@@ -37,9 +39,13 @@
                     <td>@{{submission.content}}</td>
                     <td>@{{submission.submitter}}</td>
                     <td>@{{submission.updateTime}}</td>
+                    @canany(['deleteSubmission'])
                     <td>
-                        <button class="ui negative button" onclick="deleteSubmission('@{{submission.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        @can('deleteSubmission')
+                        <button class="ui negative button" onclick="confirm('{{ __('Are you sure to delete it ?') }}') &amp;&amp; deleteSubmission('@{{submission.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        @endcan
                     </td>
+                    @endcanany
                 </tr>
                 @{{/each}}
                 </tbody>
@@ -65,6 +71,9 @@
 <script>
     function loadSubmissions(url) {
         let html = "";
+        if(url == null) {
+            url = "{{ url('api/submissions') }}";
+        }
         $.ajax({
             "url": url,
             "success": function(response, status, jqXHR) {
@@ -82,6 +91,25 @@
             }
         });
     }
+    @can('deleteSubmission')
+    function deleteSubmission(id) {
+        $.ajax({
+            "url": "{{ url('api/submission') }}",
+            "type": "POST",
+            "data": {
+                "id": id,
+                "_method": "DELETE"
+            },
+            "success": function(response, status) {
+                if(response.success) {
+                    loadSubmissions();
+                }else{
+
+                }
+            }
+        });
+    }
+    @endcan
     $(document).ready(function() {
         loadSubmissions("{{ $apiUrl }}");
     });

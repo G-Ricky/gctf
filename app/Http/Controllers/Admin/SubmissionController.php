@@ -27,6 +27,9 @@ class SubmissionController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorize('viewFlag');
+        $this->authorize('listSubmissions');
+
         return view('admin.submission.index', [
             'apiUrl' => url('api/' . $request->path())
         ]);
@@ -34,6 +37,9 @@ class SubmissionController extends Controller
 
     public function listAll()
     {
+        $this->authorize('viewFlag');
+        $this->authorize('listSubmissions');
+
         $paginate = Submission::search();
 
         $result = $this->submissionsFilter($paginate['data']);
@@ -50,6 +56,9 @@ class SubmissionController extends Controller
 
     public function list($type)
     {
+        $this->authorize('viewFlag');
+        $this->authorize('listSubmissions');
+
         if(!in_array($type, ['correct', 'incorrect'])) {
             abort(404);
         }
@@ -68,8 +77,21 @@ class SubmissionController extends Controller
         ];
     }
 
-    public function delete()
+    public function delete(Request $request)
     {
+        $this->authorize('deleteSubmission');
 
+        $data = $this->validate($request, [
+            'id' => 'required|integer'
+        ]);
+
+        $success = Submission
+            ::where('id', '=', $data['id'])
+            ->delete();
+
+        return [
+            'status'  => 200,
+            'success' => !!$success
+        ];
     }
 }
