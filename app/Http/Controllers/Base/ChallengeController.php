@@ -97,7 +97,8 @@ class ChallengeController extends Controller
             ->toArray();
 
         $flag = Submission
-            ::where('submitter', '=', Auth::id())
+            ::where('challenge', '=', $data['challengeId'])
+            ->where('submitter', '=', Auth::id())
             ->where('is_correct', '=', true)
             ->first();
 
