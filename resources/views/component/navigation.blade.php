@@ -1,16 +1,23 @@
 @section('navigation')
 <div class="ui inverted stackable borderless menu">
     <div class="ui container">
-        <a href="javascript:void(0)" class="header item">
+        <a href="{{ url('/') }}" class="header item">
             <img class="logo" src="{{ asset('img/logo.png') }}">
             {{ config('app.name', 'GCTF') }}
         </a>
+        @can('listChallenges')
         <a href="{{ url('challenge') }}" class="item">{{ __('Challenges') }}</a>
+        @endcan
+        @can('listBanks')
         <div class="ui simple dropdown item">
             {{ __('Banks') }} <i class="dropdown icon"></i>
             <div class=" menu" id="bank-menu"></div>
         </div>
+        @endcan
+        @can('viewRanking')
         <a href="{{ url('ranking') }}" class="item">{{ __('Ranking') }}</a>
+        @endcan
+        @can('listSubmissions')
         <div class="ui simple dropdown item">
             {{ __('Submission') }} <i class="dropdown icon"></i>
             <div class="menu">
@@ -19,14 +26,23 @@
                 <a href="{{ url('submissions') }}" class="item">{{ __('All') }}</a>
             </div>
         </div>
+        @endcan
+        @canany(['listUsers', 'listRoles', 'listPrivileges'])
         <div class="ui simple dropdown item">
             {{ __('Admin') }} <i class="dropdown icon"></i>
             <div class="menu">
+                @can('listUsers')
                 <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
+                @endcan
+                @can('listRoles')
                 <a href="{{ url('roles') }}" class="item">{{ __('Roles') }}</a>
+                @endcan
+                @can('listPrivileges')
                 <a href="{{ url('privileges') }}" class="item">{{ __('Privileges') }}</a>
+                @endcan
             </div>
         </div>
+        @endcanany
         <div class="right menu">
             @guest
                 <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>

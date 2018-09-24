@@ -72,6 +72,26 @@ class InstallController extends Controller
                 'title' => '删除已提交的 flag',
             ],
             [
+                'name'  => 'viewRanking',
+                'title' => '查看排行',
+            ],
+            [
+                'name'  => 'listBanks',
+                'title' => '查看题库列表'
+            ],
+            [
+                'name'  => 'addBank',
+                'title' => '添加题库'
+            ],
+            [
+                'name'  => 'editBank',
+                'title' => '编辑题库'
+            ],
+            [
+                'name'  => 'deleteBank',
+                'title' => '删除题库'
+            ],
+            [
                 'name'  => 'listUsers',
                 'title' => '查看注册用户列表',
             ],
