@@ -16,6 +16,7 @@
                 <thead>
                 <tr>
                     <th>{{ __('Range') }}</th>
+                    <th>{{ __('Username') }}</th>
                     <th>{{ __('Nickname') }}</th>
                     <th>{{ __('Points') }}</th>
                     <th>{{ __('Total') }}</th>
@@ -26,13 +27,14 @@
                 @{{each rankings ranking index}}
                 <tr>
                     <td>@{{index + 1}}</td>
+                    <td>@{{ranking.username}}</td>
                     <td>@{{ranking.nickname}}</td>
                     <td>@{{ranking.points}}</td>
                     <td>@{{ranking.solutions_count}}</td>
                     <td>
-                        <% for (i in ranking.solutions) { %>
-                        <% if (index != 0) { %>, <% } %>
-                        <% if (index >= 3){ break; } %>
+                        <% for (let i = 0;i < ranking.solutions.length;++i) { %>
+                        <% if (i != 0) { %>, <% } %>
+                        <% if (i >= 3){ break; } %>
                         @{{ranking.solutions[i].title}}
                         <% } %>
                     </td>
