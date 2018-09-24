@@ -243,21 +243,11 @@ class InstallController extends Controller
             foreach($this->permitEverything() as $roleName) {
                 Bouncer::allow($roleName)->everything();
             }
-            //foreach($this->permitEverything() as $roleName) {
-            //    foreach($this->abilities() as $ability) {
-            //        Bouncer::allow($roleName)->to($ability['name']);
-            //    }
-            //}
 
             //Forbid All Privileges For Roles
             foreach($this->prohibitEverything() as $roleName) {
                 Bouncer::forbid($roleName)->everything();
             }
-            //foreach($this->prohibitEverything() as $roleName) {
-            //    foreach($this->abilities() as $ability) {
-            //        Bouncer::forbid($roleName)->to($ability['name']);
-            //    }
-            //}
 
             //Grant Privileges
             foreach($this->permissions() as $permission) {

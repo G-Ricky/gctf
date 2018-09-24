@@ -78,6 +78,39 @@
     <!-- end modal-->
     @endcanany
 
+    @can('changeRelation')
+    <!-- modal -->
+    <div class="ui tiny basic flat modal" id="user-relation">
+        <i class="close icon"></i>
+        <div class="header">
+            {{ __('Assign Role') }}
+        </div>
+        <div class="scrolling content">
+            <div class="ui dimmer" id="loading-relation">
+                <div class="ui text loader">加载</div>
+            </div>
+            <div class="description">
+                <form class="ui form" id="form-relation" name="relation" action="{{ url('api/relation') }}" method="post">
+                    @csrf
+                    <input id="relation-user-id" name="id" type="hidden" value="">
+                    <input id="relation-form-method" name="_method" type="hidden" value="PUT">
+
+                    <div class="field">
+                        <label for="user-roles">{{ __('Roles') }}</label>
+                        <select class="ui dropdown" id="select-roles" name="roles" multiple data-origin="[]"></select>
+                    </div>
+
+                    <div style="height: 120px;text-align: center;font-size: 90px;"><i class="angellist icon"></i><!-- 占位 --></div>
+                </form>
+            </div>
+        </div>
+        <div class="actions">
+            <input class="ui basic fluid button" form="form-relation" type="submit" value="{{ __('Save') }}">
+        </div>
+    </div>
+    <!-- end modal-->
+    @endcanany
+
     <!-- template -->
     <script id="tpl-container-users" type="text/html">
         @can('addUser')
@@ -105,10 +138,19 @@
                     <td>@{{user.sid}}</td>
                     <td>@{{user.email}}</td>
                     <td>
+                        @canany(['changeRelation'])
+                        <a href="javascript:changeRelation('@{{user.id}}')">
+                        @endcanany
+                        @{{if user.roles && user.roles.length > 0}}
                         @{{each user.roles role index}}
-                        @{{if index !== 0}},@{{/if}}
-                        <a href="{{ url('role') }}/@{{role.id}}">@{{role.name}}</a>
+                        @{{if index !== 0}},@{{/if}} @{{role.name}}
                         @{{/each}}
+                        @{{else}}
+                            None
+                        @{{/if}}
+                        @canany(['changeRelation'])
+                        </a>
+                        @endcanany
                     </td>
                     <td>
                         @can('editUser')
@@ -143,6 +185,14 @@
         </div>
     </script>
     <!-- end template-->
+
+    <!-- template -->
+    <script id="tpl-select-roles" type="text/html">
+        @{{each roles role index}}
+        <option value="@{{role.id}}">@{{role.name}} （@{{role.title}}）</option>
+        @{{/each}}
+    </script>
+    <!-- end template -->
 @endsection
 
 @push('scripts')
@@ -186,6 +236,32 @@
                 }
             });
         }
+        @can('listRoles')
+        function loadRoles() {
+            $.ajax({
+                "url": "{{ url('api/roles/all') }}",
+                "success": function(response, status) {
+                    if(response && response.status === 200) {
+                        if(response.success) {
+                            $("#select-roles").html(
+                                template('tpl-select-roles', {
+                                    "roles": response.data
+                                })
+                            );
+                        }else{
+                            alert("加载角色失败");
+                        }
+                    }
+                },
+                "error": function() {
+                    alert("加载角色失败");
+                },
+                "complete": function() {
+                    $("#loading-relation").removeClass("active");
+                }
+            });
+        }
+        @endcan
         @can('addUser')
         function addUser() {
             $("#form-method").val("POST");
@@ -322,6 +398,20 @@
             });
         }
         @endcan
+        @can('changeRelation')
+        function changeRelation(id) {
+            let user = usersDict[id];
+            $("#user-relation").modal('show');
+            $("#relation-user-id").val(id);
+            $("#select-roles").dropdown("clear");
+            $("#select-roles").data("origin", JSON.stringify(user.roles));
+            let roleIds = [];
+            for(let i = 0;i < user.roles.length;++i) {
+                roleIds.push(user.roles[i].id.toString());
+            }
+            $("#select-roles").dropdown("set selected", roleIds);
+        }
+        @endcan
         @canany(['addUser', 'editUser'])
         function requiredIfAdd() {
             return $("#user-id").val().length === 0
@@ -329,6 +419,7 @@
         @endcanany
         $(document).ready(function() {
             loadUsers();
+            loadRoles();
             @canany(['addUser', 'editUser'])
             $("#user-gender").dropdown();
             @endcanany
@@ -388,6 +479,59 @@
                 }
             });
             @endcanany
+            @can('changeRelation')
+            let relationValidator = $("#form-relation").validate({
+                "submitHandler": function (form) {
+                    $("[name='assigns[]'], [name='assigns[]']").each(function() {
+                        this.remove();
+                    });
+
+                    let origins = JSON.parse($("#select-roles").data("origin"));
+                    let originIds = [];
+                    let roleIds = $("#select-roles").dropdown("get value");
+                    let assigns = [], retracts = [];
+
+                    for(let i = 0;i < origins.length;++i) {
+                        originIds.push(String(origins[i].id));
+                    }
+                    //差集
+                    for(let i = 0;i < roleIds.length;++i) {
+                        if(originIds.indexOf(roleIds[i]) === -1) {
+                            assigns.push(roleIds[i]);
+                        }
+                    }
+
+                    for(let i = 0;i < originIds.length;++i) {
+                        if(roleIds.indexOf(originIds[i]) === -1) {
+                            retracts.push(originIds[i]);
+                        }
+                    }
+
+                    if(assigns.length !== 0 || retracts.length !== 0) {
+                        $.each(assigns, function(i, value) {
+                            $("#relation-user-id").after('<input type="hidden" name="assigns[]" value="' + value + '">');
+                        });
+                        $.each(retracts, function(i, value) {
+                            $("#relation-user-id").after('<input type="hidden" name="retracts[]" value="' + value + '">');
+                        });
+
+                        $(form).ajaxSubmit({
+                            "success": function(response, status) {
+                                if(response.success) {
+                                    $("#user-relation").modal('hide');
+                                    loadUsers();
+                                }
+                            },
+                            "error": function(jqXHR, status) {
+                                alert(status);
+                            }
+                        });
+                    }else{
+                        alert("{{ __('Nothing changed') }}");
+                    }
+                }
+            });
+            @endcan
         })
     </script>
 @endpush

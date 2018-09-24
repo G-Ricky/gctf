@@ -88,6 +88,7 @@ Route::group(
         Route::delete('privilege', 'Admin\\AbilityController@delete');
 
         Route::get('roles', 'Admin\\RoleController@list');
+        Route::get('roles/all', 'Admin\\RoleController@listAll');
         Route::post('role', 'Admin\\RoleController@add');
         Route::put('role', 'Admin\\RoleController@edit');
         Route::delete('role', 'Admin\\RoleController@delete');
@@ -100,6 +101,8 @@ Route::group(
         Route::put('user/ban', 'Admin\\UserController@ban');
         Route::put('user/unban', 'Admin\\UserController@unban');
         Route::delete('user', 'Admin\\UserController@delete');
+
+        Route::put('relation', 'Admin\\RoleController@change');
 });
 
 Route::get('install', 'Admin\\InstallController@install');
