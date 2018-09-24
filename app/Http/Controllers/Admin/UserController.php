@@ -32,7 +32,7 @@ class UserController extends Controller
 
         $paginate = User
             ::select([
-                'id', 'name', 'nickname', 'email', 'sid', 'is_hidden'
+                'id', 'username', 'nickname', 'name', 'email', 'sid', 'is_hidden'
             ])
             ->with('roles')
             ->paginate(20, ['*'], 'p')

@@ -15,47 +15,49 @@ class UserController extends Controller
         return view('base.user.index');
     }
 
-    public function info(User $user)
+    public function info()
     {
-        $data = $user->info(Auth::user()->id);
-        if($data) {
-            $response = [
-                'status'  => 200,
-                'success' => true,
-                'data'    => $data[0]
-            ];
-        }else{
-            $response = [
-                'status'  => 200,
-                'success' => false
-            ];
-        }
-        return $response;
+        $user = User
+            ::where('id', '=', Auth::id())
+            ->firstOrFail([
+                'id', 'sid', 'username', 'nickname', 'name', 'gender', 'email'
+            ])
+            ->toArray();
+
+        return [
+            'status'  => 200,
+            'success' => true,
+            'data'    => $user
+        ];
     }
 
     public function edit(Request $request, User $user)
     {
-        $this->validate($request, [
-            'sid'    => [
+        $data = $this->validate($request, [
+            'sid'      => [
                 'required', 'string', 'max:10',
-                Rule::unique('users')->ignore(Auth::user()->id)
+                Rule::unique('users')->ignore(Auth::id())
             ],
-            'gender' => 'required|string|in:UNKNOWN,MALE,FEMALE',
-            'email'  => [
+            'nickname' => [
+                'nullable', 'string', 'max:16',
+                Rule::unique('users')->ignore(Auth::id())
+            ],
+            'name'     => 'nullable|string|max:16',
+            'gender'   => 'required|string|in:UNKNOWN,MALE,FEMALE',
+            'email'    => [
                 'required', 'string', 'email',
-                Rule::unique('users')->ignore(Auth::user()->id)
+                Rule::unique('users')->ignore(Auth::id())
             ]
         ]);
 
-        $data = $request->all();
-        $data['id'] = Auth::user()->id;
-
-        $success = $user->edit($data);
+        $affectedRows = User
+            ::where('id', '=', Auth::id())
+            ->update($data);
 
         return [
             'status' => 200,
-            'success' => $success,
-            'message' => $success ? '修改成功' : '修改失败'
+            'success' => !!$affectedRows,
+            'message' => $affectedRows ? '修改成功' : '修改失败'
         ];
     }
 }

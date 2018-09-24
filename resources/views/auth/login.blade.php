@@ -42,9 +42,9 @@
             @csrf
             <div class="ui stacked segment">
                 <div class="field">
-                    <div class="ui left icon input{{ $errors->has('nickname') ? ' error' : '' }}">
+                    <div class="ui left icon input{{ $errors->has('username') ? ' error' : '' }}">
                         <i class="user icon"></i>
-                        <input type="text" name="nickname" placeholder="{{ __('Nickname') }}" required autofocus>
+                        <input type="text" name="username" placeholder="{{ __('Username') }}" required autofocus>
                     </div>
                 </div>
                 <div class="field">
@@ -64,9 +64,9 @@
             </div>
 
             <div class="ui error message{{ count($errors) > 0?' visible':'' }}">
-                @if ($errors->has('nickname'))
+                @if ($errors->has('username'))
                 <span class="invalid-feedback">
-                    <strong>{{ $errors->first('nickname') }}</strong>
+                    <strong>{{ $errors->first('username') }}</strong>
                 </span>
                 @endif
                 @if ($errors->has('password'))
@@ -79,7 +79,7 @@
 
         <div class="ui message">
             <ul>
-                <li>New to us? <a href="#">Sign Up</a></li>
+                <li>New to us? <a href="{{ route('register') }}">Sign Up</a></li>
                 <li>
                     <a class="btn btn-link" href="{{ route('password.request') }}">
                         {{ __('Forgot Your Password?') }}

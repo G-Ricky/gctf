@@ -13,39 +13,43 @@
     <div class="ui basic vertical clearing segment">
         <div class="ui right floated main menu">
             <a class="icon item" id="btn-edit" href="javascript:edit();">
-                <i class="edit icon"></i>&nbsp;<span>编辑</span>
+                <i class="edit icon"></i>&nbsp;<span>{{ __('Edit') }}</span>
             </a>
             <a class="icon item" id="btn-cancel" href="javascript:cancel();" style="display: none;">
-                <i class="edit icon"></i>&nbsp;<span>取消</span>
+                <i class="edit icon"></i>&nbsp;<span>{{ __('Cancel') }}</span>
             </a>
             <a class="icon item disabled" id="btn-save" href="javascript:save();" style="display: none;">
-                <i class="edit icon"></i>&nbsp;<span>保存</span>
+                <i class="edit icon"></i>&nbsp;<span>{{ __('Save') }}</span>
             </a>
         </div>
     </div>
     <div class="ui form" id="form">
         <div class="field">
-            <label>学号</label>
-            <input id="sid" type="text" value="" readonly>
+            <label>{{ __('Username') }}</label>
+            <input id="username" type="text" value="" readonly disabled>
         </div>
         <div class="field">
-            <label>姓名</label>
-            <input id="name" type="text" value="" readonly>
-        </div>
-        <div class="field">
-            <label>昵称</label>
+            <label>{{ __('Nickname') }}</label>
             <input id="nickname" type="text" value="" readonly>
         </div>
         <div class="field">
-            <label>性别</label>
+            <label>{{ __('Student Number') }}</label>
+            <input id="sid" type="text" value="" readonly>
+        </div>
+        <div class="field">
+            <label>{{ __('Name') }}</label>
+            <input id="name" type="text" value="" readonly>
+        </div>
+        <div class="field">
+            <label>{{ __('Gender') }}</label>
             <select class="ui dropdown" id="gender" disabled>
-                <option value="UNKNOWN" selected>未知</option>
-                <option value="MALE">男</option>
-                <option value="FEMALE">女</option>
+                <option value="UNKNOWN" selected>{{ __('Unknown') }}</option>
+                <option value="MALE">{{ __('Male') }}</option>
+                <option value="FEMALE">{{ __('Female') }}</option>
             </select>
         </div>
         <div class="field">
-            <label>邮箱</label>
+            <label>{{ __('Email') }}</label>
             <input id="email" type="text" value="" readonly>
         </div>
     </div>
@@ -58,25 +62,26 @@
 <script>
     window.info = {
         "sid"     : "",
-        "name"    : "",
         "nickname": "",
+        "name"    : "",
         "gender"  : "",
         "email"   : ""
     };
     function fill(info) {
         $("#sid").val(info.sid);
-        $("#name").val(info.name);
+        $("#username").val(info.username);
         $("#nickname").val(info.nickname);
+        $("#name").val(info.name);
         $("#gender").dropdown("clear").dropdown("set selected", info.gender);
         $("#email").val(info.email);
     }
     function getInfo() {
         return {
-            "sid"     : $("#sid").val(),
-            "name"    : $("#name").val(),
-            "nickname": $("#nickname").val(),
+            "sid"     : $("#sid").val().trim() || undefined,
+            "name"    : $("#name").val().trim() || undefined,
+            "nickname": $("#nickname").val().trim() || undefined,
             "gender"  : $("#gender").dropdown("get value"),
-            "email"   : $("#email").val()
+            "email"   : $("#email").val().trim() || undefined
         };
     }
     function isSameInfo(info1, info2) {
@@ -147,8 +152,9 @@
                 "success": function(response) {
                     if(response.success) {
                         window.info.sid = response.data.sid || "";
-                        window.info.name = response.data.name || "";
+                        window.info.username = response.data.username || "";
                         window.info.nickname = response.data.nickname || "";
+                        window.info.name = response.data.name || "";
                         window.info.gender = response.data.gender || "UNKNOWN";
                         window.info.email = response.data.email || "";
                         fill(window.info);
@@ -165,11 +171,6 @@
             });
             openLoader("正在载入...");
         })();
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
         $("#form input").keyup(changeSaveButtonStatus);
         $("#form select").change(changeSaveButtonStatus);
     });

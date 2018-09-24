@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Silber\Bouncer\BouncerFacade as Bouncer;
 
 class RegisterController extends Controller
 {
@@ -49,9 +50,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'nickname' => 'required|string|max:255|unique:users',
-            'sid'      => 'required|string|max:10|unique:users',
-            'password' => 'required|string|min:6|max:16|confirmed'
+            'username' => 'required|string|max:16|unique:users',
+            'password' => 'required|string|min:6|max:16|confirmed',
         ]);
     }
 
@@ -63,11 +63,13 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'nickname' => $data['nickname'],
-            'sid'      => $data['sid'],
+        $user = User::create([
+            'username' => $data['username'],
             'password' => Hash::make($data['password']),
-            'role'     => 'USER'
         ]);
+
+        Bouncer::assign('guest')->to($user);
+
+        return $user;
     }
 }

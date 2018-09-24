@@ -33,7 +33,7 @@
                 <a class="item" href="{{ route('register') }}">{{ __('Register') }}</a>
             @else
                 <div class="ui simple dropdown item">
-                    {{ Auth::user()->nickname }} <i class="dropdown icon"></i>
+                    {{ Auth::user()->username }} <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" href="{{ url('user') }}">{{ __('Profile') }}</a>
                         <a class="item" href="{{ url('password/change') }}">{{ __('Change Password') }}</a>

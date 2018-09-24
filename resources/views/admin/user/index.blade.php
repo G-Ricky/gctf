@@ -122,6 +122,7 @@
             <table class="ui single line compact table">
                 <thead>
                 <tr>
+                    <th>{{ __('Username') }}</th>
                     <th>{{ __('Nickname') }}</th>
                     <th>{{ __('Name') }}</th>
                     <th>{{ __('Student Number') }}</th>
@@ -133,6 +134,7 @@
                 <tbody>
                 @{{each users user index}}
                 <tr>
+                    <td>@{{user.username}}</td>
                     <td>@{{user.nickname}}</td>
                     <td>@{{user.name}}</td>
                     <td>@{{user.sid}}</td>
