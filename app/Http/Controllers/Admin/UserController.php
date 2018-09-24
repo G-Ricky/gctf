@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Admin\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Silber\Bouncer\Bouncer;
 
@@ -78,6 +79,8 @@ class UserController extends Controller
             'password' => 'required|string|min:6|max:16',
         ]);
 
+        $data['password'] = Hash::make($data['password']);
+
         $user = User::create($data);
 
         return [
@@ -115,6 +118,10 @@ class UserController extends Controller
             if($value === '' || is_null($data[$key])) {
                 unset($data[$key]);
             }
+        }
+
+        if(isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
         }
 
         $affectedRows = User

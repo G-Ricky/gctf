@@ -6,27 +6,36 @@
 @endpush
 
 @section('content')
-    <div class="ui container"></div>
+    <div class="ui container" id="container-rankings"></div>
 
     <!-- template -->
     <script id="tpl-container-rankings" type="text/html">
         <div class="ui basic vertical segment" id="table-rankings">
+            @{{if rankings && rankings.length > 0}}
             <table class="ui fixed selectable single line compact table">
                 <thead>
                 <tr>
                     <th>{{ __('Range') }}</th>
                     <th>{{ __('Nickname') }}</th>
                     <th>{{ __('Points') }}</th>
-                    <th>{{ __('Solutions') }}</th>
+                    <th>{{ __('Total') }}</th>
+                    <th>{{ __('Some Solutions') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 @{{each rankings ranking index}}
-                <tr class="@{{if submission.isCorrect}}positive@{{else}}negative@{{/if}}">
-                    <td>@{{ranking.range}}</td>
+                <tr>
+                    <td>@{{index + 1}}</td>
                     <td>@{{ranking.nickname}}</td>
                     <td>@{{ranking.points}}</td>
-                    <td>@{{ranking.solutions}}</td>
+                    <td>@{{ranking.solutions_count}}</td>
+                    <td>
+                        <% for (i in ranking.solutions) { %>
+                        <% if (index != 0) { %>, <% } %>
+                        <% if (index >= 3){ break; } %>
+                        @{{ranking.solutions[i].title}}
+                        <% } %>
+                    </td>
                 </tr>
                 @{{/each}}
                 </tbody>
@@ -41,10 +50,6 @@
             </div>
             @{{/if}}
         </div>
-        <div class="ui vertical clearing segment">
-            <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadRankings('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
-            <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadRankings('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
-        </div>
     </script>
     <!-- end template -->
 @endsection
@@ -52,7 +57,33 @@
 @push('scripts')
     <script>
         function loadRankings() {
-            
+            $.ajax({
+                "url": "{{ url('api/rankings') }}",
+                "type": "GET",
+                "success": function(response, status) {
+                    if(status === "success" && response && response.status === 200) {
+                        if(response.success) {
+                            for(let i = 0;i < response.data.length;++i) {
+                                response.data[i].points = parseInt(response.data[i].points);
+                            }
+                            $("#container-rankings").html(
+                                template("tpl-container-rankings", {
+                                    "rankings": response.data
+                                })
+                            );
+                        }
+                    }
+                },
+                "error": function(XmlHttpRequest, textStatus, error) {
+
+                },
+                "complete": function() {
+
+                }
+            });
         }
+        $(document).ready(function() {
+            loadRankings();
+        });
     </script>
 @endpush

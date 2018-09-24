@@ -20,4 +20,9 @@ class User extends Model
     {
         return $this->belongsToMany('App\\Models\\Admin\\Role', 'assigned_roles', 'entity_id', 'role_id');
     }
+
+    public function submissions()
+    {
+        return $this->hasMany('App\\Models\\Base\\Submission', 'submitter', 'id');
+    }
 }

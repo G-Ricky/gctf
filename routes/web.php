@@ -102,6 +102,8 @@ Route::group(
         Route::delete('user', 'Admin\\UserController@delete');
 
         Route::put('relation', 'Admin\\RoleController@change');
+
+        Route::get('rankings', 'Base\\RankingController@list');
 });
 
 Route::get('install', 'Admin\\InstallController@install');

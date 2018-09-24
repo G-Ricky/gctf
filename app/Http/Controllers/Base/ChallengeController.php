@@ -84,36 +84,41 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function submitFlag(Request $request, Challenge $challenges, Submission $submissions)
+    public function submitFlag(Request $request)
     {
-        $this->validate($request, [
+        $data = $this->validate($request, [
             'challengeId' => 'required|integer',
             'flag'        => 'required'
         ]);
-        $challengeId = $request->input('challengeId', '');
-        $flag = $request->input('flag', '');
 
-        $challengeModel = $challenges->info($challengeId)->first();
+        $challenge = Challenge
+            ::where('id', '=', $data['challengeId'])
+            ->firstOrFail()
+            ->toArray();
 
-        if(is_null($challengeModel)) {
-            return [
-                'status' => 200,
-                'success' => false,
-                'message' => '题目不存在'
-            ];
+        $flag = Submission
+            ::where('submitter', '=', Auth::id())
+            ->where('is_correct', '=', true)
+            ->first();
+
+        if($flag) {
+            return $this->fail('先前已提交过正确的 flag', 200);
         }
 
-        $challenge = $challengeModel->toArray();
+        $data = [
+            'challenge'  => $data['challengeId'],
+            'content'    => $data['flag'],
+            'is_correct' => $challenge['flag'] === $data['flag'],
+            'submitter'  => Auth::id(),
+        ];
 
-        $isCorrect = $challenge['flag'] === $flag;
-
-        $success = (bool)$submissions->add($challengeId, Auth::user()->id, $flag, $isCorrect);
+        $submission = Submission::create($data);
 
         return [
             'status' => 200,
-            'success' => $success,
-            'correct' => $isCorrect,
-            'message' => $success ? '提交成功' : '提交失败'
+            'success' => !!$submission,
+            'correct' => $data['is_correct'],
+            'message' => !!$submission ? '提交成功' : '提交失败'
         ];
     }
 }
