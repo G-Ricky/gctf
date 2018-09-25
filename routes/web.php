@@ -32,7 +32,6 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::group(['middleware' => 'auth'], function() {
-    Route::get('bank', 'Base\\BankController@index');
     Route::post('bank/add', 'Admin\\BankController@add');
     Route::get('bank/list', 'Admin\\BankController@list');
 });
@@ -69,10 +68,21 @@ Route::group(['middleware' => 'auth'], function() {
 });
 
 Route::group(
+    ['middleware' => 'auth'],
+    function() {
+
+        Route::get('banks', 'Base\\BankController@index');
+
+    }
+);
+
+Route::group(
     [
         'middleware' => 'auth',
         'prefix'     => 'api'
-    ], function() {
+    ],
+    function() {
+
         Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
         Route::get('submissions', 'Admin\\SubmissionController@listAll');
         Route::delete('submission', 'Admin\\SubmissionController@delete');
@@ -104,6 +114,8 @@ Route::group(
         Route::put('relation', 'Admin\\RoleController@change');
 
         Route::get('rankings', 'Base\\RankingController@list');
-});
+        
+    }
+);
 
 Route::get('install', 'Admin\\InstallController@install');

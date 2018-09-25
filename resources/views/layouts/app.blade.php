@@ -12,11 +12,6 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/semantic.min.css') }}" rel="stylesheet">
-    <style>
-        html {height: 100%;}
-        body {min-height: 100%;display: flex;flex-direction: column;}
-        #app {flex: 1;}
-    </style>
     @stack('stylesheets')
 </head>
 <body>

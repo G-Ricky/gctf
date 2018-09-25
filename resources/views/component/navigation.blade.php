@@ -1,5 +1,54 @@
+@push('stylesheets')
+<style>
+    @media only screen and (max-width: 992px) {
+        .ui[class*="mobile only"].menu > .container {
+            margin-left: 0em !important;
+            margin-right: 0em !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
+    }
+    @media only screen and (min-width: 650px) {
+        #app {
+            padding-top: 54px;
+        }
+        .ui[class*="mobile only"].menu {
+            display: none;
+        }
+        .ui[class*="mobile banner"].menu {
+            display: block;
+        }
+    }
+    @media only screen and (max-width: 650px) {
+        #app {
+            padding-top: 40px;
+        }
+        .ui[class*="mobile banner"].menu {
+            display: none;
+        }
+        .ui[class*="mobile only"].menu {
+            display: block;
+        }
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+    #app {
+        flex: 1;
+    }
+</style>
+@endpush
+
 @section('navigation')
-<div class="ui inverted stackable borderless menu">
+<div class="ui mobile only fixed inverted main menu">
+    <div class="ui container">
+        <a class="launch icon item">
+            <i class="content icon"></i>
+        </a>
+    </div>
+</div>
+<div class="ui mobile banner inverted borderless fixed menu">
     <div class="ui container">
         <a href="{{ url('/') }}" class="header item">
             <img class="logo" src="{{ asset('img/logo.png') }}">
@@ -8,14 +57,11 @@
         @can('listChallenges')
         <a href="{{ url('challenge') }}" class="item">{{ __('Challenges') }}</a>
         @endcan
-        @can('listBanks')
-        <div class="ui simple dropdown item">
-            {{ __('Banks') }} <i class="dropdown icon"></i>
-            <div class=" menu" id="bank-menu"></div>
-        </div>
-        @endcan
         @can('viewRanking')
         <a href="{{ url('ranking') }}" class="item">{{ __('Ranking') }}</a>
+        @endcan
+        @can('listBanks')
+        <a href="{{ url('banks') }}" class="item">{{ __('Banks') }}</a>
         @endcan
         @can('listSubmissions')
         <div class="ui simple dropdown item">
@@ -74,19 +120,21 @@
 
 @push('nav-scripts')
 <script>
-    $(document).ready(function() {
-        $.ajax({
-            "url": "{{ url('bank/list') }}?page=1&pageSize=3",
-            "method": "GET",
-            "success": function(response) {
-                if(response.success) {
-                    let html = template("bank-menu-template", {
-                        'banks': response.data
-                    });
-                    $("#bank-menu").html(html);
-                }
+    (function($) {
+        let lastCardsSize = $(".challenge.cards").outerWidth();
+        let self = function() {
+            let jqCards = $(".challenge.cards");
+            let cardsSize = jqCards.outerWidth();
+            if(lastCardsSize == null || Math.abs(lastCardsSize - cardsSize) > 1) {
+                let childSize = jqCards.children(":first").outerWidth(true);
+                let count = parseInt((cardsSize + 10) / childSize);
+                let paddingLeft = (cardsSize - count * childSize) / 2;
+                jqCards.css("padding-left", paddingLeft);
             }
-        });
-    });
+            lastCardsSize = cardsSize;
+            return self;
+        };
+        setInterval(self(), 100);
+    })(jQuery);
 </script>
 @endpush

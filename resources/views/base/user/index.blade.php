@@ -23,34 +23,36 @@
             </a>
         </div>
     </div>
-    <div class="ui form" id="form">
-        <div class="field">
-            <label>{{ __('Username') }}</label>
-            <input id="username" type="text" value="" readonly disabled>
-        </div>
-        <div class="field">
-            <label>{{ __('Nickname') }}</label>
-            <input id="nickname" type="text" value="" readonly>
-        </div>
-        <div class="field">
-            <label>{{ __('Student Number') }}</label>
-            <input id="sid" type="text" value="" readonly>
-        </div>
-        <div class="field">
-            <label>{{ __('Name') }}</label>
-            <input id="name" type="text" value="" readonly>
-        </div>
-        <div class="field">
-            <label>{{ __('Gender') }}</label>
-            <select class="ui dropdown" id="gender" disabled>
-                <option value="UNKNOWN" selected>{{ __('Unknown') }}</option>
-                <option value="MALE">{{ __('Male') }}</option>
-                <option value="FEMALE">{{ __('Female') }}</option>
-            </select>
-        </div>
-        <div class="field">
-            <label>{{ __('Email') }}</label>
-            <input id="email" type="text" value="" readonly>
+    <div class="ui basic vertical segment">
+        <div class="ui form" id="form">
+            <div class="field">
+                <label>{{ __('Username') }}</label>
+                <input id="username" type="text" value="" readonly disabled>
+            </div>
+            <div class="field">
+                <label>{{ __('Nickname') }}</label>
+                <input id="nickname" type="text" value="" readonly>
+            </div>
+            <div class="field">
+                <label>{{ __('Student Number') }}</label>
+                <input id="sid" type="text" value="" readonly>
+            </div>
+            <div class="field">
+                <label>{{ __('Name') }}</label>
+                <input id="name" type="text" value="" readonly>
+            </div>
+            <div class="field">
+                <label>{{ __('Gender') }}</label>
+                <select class="ui dropdown" id="gender" disabled>
+                    <option value="UNKNOWN" selected>{{ __('Unknown') }}</option>
+                    <option value="MALE">{{ __('Male') }}</option>
+                    <option value="FEMALE">{{ __('Female') }}</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>{{ __('Email') }}</label>
+                <input id="email" type="text" value="" readonly>
+            </div>
         </div>
     </div>
 </div>
