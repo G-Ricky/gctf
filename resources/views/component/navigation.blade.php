@@ -21,7 +21,7 @@
     }
     @media only screen and (max-width: 650px) {
         #app {
-            padding-top: 40px;
+            padding-top: 57px;
         }
         .ui[class*="mobile banner"].menu {
             display: none;
@@ -41,11 +41,27 @@
 @endpush
 
 @section('navigation')
-<div class="ui mobile only fixed inverted main menu">
-    <div class="ui container">
-        <a class="launch icon item">
-            <i class="content icon"></i>
-        </a>
+<div class="ui mobile only vertical fluid fixed massive inverted accordion menu">
+    <div class="item">
+        <a class="title"><i class="content icon"></i>&nbsp;</a>
+        <div class="content">
+            <div class="ui vertical fluid massive inverted menu">
+                @can('listChallenges')
+                <a class="horizontally fitted item" href="{{ url('challenge') }}">{{ __('Challenges') }}</a>
+                @endcan
+                @can('viewRanking')
+                <a class="horizontally fitted item" href="{{ url('ranking') }}">{{ __('ranking') }}</a>
+                @endcan
+                @can('listBanks')
+                <a class="horizontally fitted item" href="{{ url('banks') }}">{{ __('Banks') }}</a>
+                @endcan
+                @can('listSubmissions')
+                <a class="horizontally fitted item" href="{{ url('submissions') }}">{{ __('Submissions') }}</a>
+                @endcan
+                <a class="horizontally fitted item" href="{{ url('user') }}">{{ __('Profile') }}</a>
+                <a class="horizontally fitted item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
+            </div>
+        </div>
     </div>
 </div>
 <div class="ui mobile banner inverted borderless fixed menu">
@@ -136,5 +152,8 @@
         };
         setInterval(self(), 100);
     })(jQuery);
+    $(document).ready(function() {
+        $(".ui.accordion.menu").accordion();
+    });
 </script>
 @endpush
