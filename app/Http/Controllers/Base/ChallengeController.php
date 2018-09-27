@@ -7,6 +7,8 @@ use App\Models\Base\Challenge;
 use App\Models\Base\Submission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class ChallengeController extends Controller
 {
@@ -28,6 +30,8 @@ class ChallengeController extends Controller
 
     public function detail(Request $request, Challenge $challenges)
     {
+        $this->authorize('viewFlag');
+
         $challengeId = $request->query('id', 1);
         $result = $challenges->detail($challengeId)->toArray();
         if($result) {
@@ -54,33 +58,54 @@ class ChallengeController extends Controller
     {
         $this->authorize('listChallenges');
 
-        $bank = $request->query('bank', 1);
-        $page = $request->query('page', 1);
-        $page_size = $request->query('pageSize', 20);
-        $result = $this->challenges->list($bank, $page, min($page_size, 30));
+        $data = $this->validate($request, [
+            'bank' => 'nullable|integer|min:1',
+        ]);
 
-        $data = &$result['data'];
-        foreach($data as &$challenge) {
-            $tags = [];
-            foreach($challenge['tags'] as &$tag) {
-                $tags[] = $tag['name'];
+        $bank = $data['bank'] ?? 1;
+
+        $paginate = Challenge
+            ::select([
+                'id', 'title', 'description', 'category', 'points', 'created_at', 'updated_at'
+            ])
+            ->where('is_hidden', '=', false)
+            ->where('bank', '=', $bank)
+            ->whereNotNull('flag')
+            ->orderBy('updated_at', 'desc')
+            ->with('tags:challenge,name')
+            ->paginate(20, ['*'], 'p')
+            ->jsonSerialize();
+
+        $challenges = $paginate['data'];
+        unset($paginate['data']);
+
+        $challengeIds = array_column($challenges, 'id');
+
+        $submissionsMap = Submission
+            ::where('is_correct', '=', true)
+            ->where('submitter', '=', Auth::id())
+            ->whereIn('challenge', $challengeIds)
+            ->get()
+            ->mapWithKeys(function($item, $key) {
+                return [$item['challenge'] => $item];
+            })
+            ->toArray();
+
+        foreach($challenges as &$challenge) {
+            foreach($challenge['tags'] as $i => $tag) {
+                $challenge['tags'][$i] = $tag['name'];
             }
-            $challenge['tags'] = $tags;
+            $challenge['is_solved'] = (bool)($submissionsMap[$challenge['id']]['is_correct'] ?? 0);
             $challenge['description'] = str_limit($challenge['description'], 40);
+            $challenge['created_time'] = strtotime($challenge['created_at']);
+            $challenge['updated_time'] = strtotime($challenge['updated_at']);
         }
 
-        $result['status'] = 200;
-        $result['success'] = true;
-        unset($result['total']);
-
         return [
-            'status' => 200,
-            'success' => true,
-            'data' => $result['data'],
-            'page' => array_only($result, [
-                'current_page', 'first_page_url', 'from', 'last_page', 'last_page_url', 'next_page_url', 'path',
-                'per_page', 'prev_page_url', 'to'
-            ])
+            'status'   => 200,
+            'success'  => true,
+            'data'     => $challenges,
+            'paginate' => $paginate
         ];
     }
 

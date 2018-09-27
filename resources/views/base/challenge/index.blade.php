@@ -15,142 +15,155 @@
         min-height: 500px;
         margin-bottom: 40px;
     }
-
+    .ui.basic.segments {
+        border: none;
+    }
 </style>
 @endpush
 @section('content')
 <div class="ui vertical masthead center aligned segment logo">
     <img class="ui medium circular centered image" src="{{ asset('img/logo.png') }}">
 </div>
-<div class="ui container">
+<div class="ui container" id="container-challenges"></div>
+
+@canany(['addChallenge', 'editChallenge'])
+<!-- modal -->
+<div class="ui tiny basic flat modal" id="challenge-modify">
+    <i class="close icon"></i>
+    <div class="header">
+        {{ __('Add challenge') }}
+    </div>
+    <div class="scrolling content">
+        <div class="description">
+            <form class="ui form" id="form-challenge" name="challenge-add" method="post">
+                @csrf
+                <input id="id" name="id" type="hidden">
+                <div class="field">
+                    <label for="title">{{ __('Title') }}</label>
+                    <input name="title" type="text" id="title" maxlength="32" value="">
+                </div>
+
+                <div class="field">
+                    <label for="description">{{ __('Description') }}</label>
+                    <textarea name="description" type="text" id="description" rows="5" maxlength="1024"></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="points">{{ __('Points') }}</label>
+                    <input name="points" type="text" id="points" value="">
+                </div>
+
+                <div class="field">
+                    <label for="flag">{{ __('Flag') }}</label>
+                    <input name="flag" type="text" id="flag" value="">
+                </div>
+
+                <div class="field">
+                    <label for="category">{{ __('Category') }}</label>
+                    <select id="category" name="category">
+                        <option value="CRYPTO">CRYPTO</option>
+                        <option value="MISC">MISC</option>
+                        <option value="PWN">PWN</option>
+                        <option value="REVERSE">REVERSE</option>
+                        <option value="WEB">WEB</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="tags">{{ __('Tags') }}</label>
+                    <input name="tags" type="text" id="tags" value="">
+                </div>
+
+                <div class="field">
+                    <label for="bank">{{ __('Bank') }}</label>
+                    <select name="bank" id="bank"></select>
+                </div>
+
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input name="is_hidden" type="checkbox" tabindex="0">
+                        <label>{{ __('Hide') }}</label>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="actions">
+        <input class="ui basic fluid button" id="btn-save" type="button" value="{{ __('Save') }}">
+    </div>
+</div>
+<!-- end modal -->
+@endcanany
+<!-- modal -->
+<div class="ui tiny basic flat modal" id="challenge-detail">
+    <i class="close icon"></i>
+    <div class="header" id="detail-title"></div>
+    <div class="scrolling content">
+        <div class="description">
+            <div class="ui segment" id="detail-description"></div>
+            @can('submitFlag')
+            <div class="ui form">
+                <div class="field">
+                    <input id="detail-id" type="hidden" value="">
+                    <input id="detail-flag" type="text" value="">
+                </div>
+            </div>
+            @endcan
+        </div>
+    </div>
+    @can('submitFlag')
+    <div class="actions">
+        <input class="ui basic fluid button" id="btn-submit" type="button" value="Submit">
+    </div>
+    @endcan
+</div>
+<!-- end modal -->
+<!-- template -->
+<script id="tpl-container-challenges" type="text/html">
     @can('addChallenge')
     <div class="ui basic vertical clearing segment">
         <button id="challenge-add" class="ui primary right floated button"><i class="add circle icon"></i> Add</button>
     </div>
     @endcan
-    <div id="challenges-list"></div>
-    <div class="ui paging" id="pagination">
-        <a class="huge ui button" id="pg-prev" href="#"><i class="chevron left icon"></i></a>
-        <a class="huge ui button" id="pg-next" href="#"><i class="chevron right icon"></i></a>
-    </div>
-    @canany(['addChallenge', 'editChallenge'])
-    <div class="ui tiny basic flat modal" id="challenge-modify">
-        <i class="close icon"></i>
-        <div class="header">
-            {{ __('Add challenge') }}
-        </div>
-        <div class="scrolling content">
-            <div class="description">
-                <form class="ui form" id="form-challenge" name="challenge-add" method="post">
-                    @csrf
-                    <input id="id" name="id" type="hidden">
-                    <div class="field">
-                        <label for="title">{{ __('Title') }}</label>
-                        <input name="title" type="text" id="title" maxlength="32" value="">
+    <div class="ui basic segments" id="cards-challenges">
+        @{{each categories challenges category}}
+        <div class="ui basic vertical segment">
+            <h1>@{{category}}</h1>
+            <div class="ui link challenge cards">
+                @{{each challenges challenge i}}
+                <div class="ui card">
+                    @{{if challenge.is_solved}}
+                    <a class="ui blue corner label">
+                        <i class="checkmark icon"></i>
+                    </a>
+                    @{{/if}}
+                    <div class="content" onclick="challengeDetail('@{{ challenge.id }}')">
+                        <div class="header">@{{ challenge.title }}</div>
                     </div>
-
-                    <div class="field">
-                        <label for="description">{{ __('Description') }}</label>
-                        <textarea name="description" type="text" id="description" rows="5" maxlength="1024"></textarea>
+                    <div class="content" onclick="challengeDetail('@{{ challenge.id }}')">
+                        <div class="description">@{{ challenge.description }}</div>
+                        <div class="point">@{{ challenge.points }} pt</div>
                     </div>
-
-                    <div class="field">
-                        <label for="points">{{ __('Points') }}</label>
-                        <input name="points" type="text" id="points" value="">
+                    <div class="ui two bottom attached buttons">
+                        @can('editChallenge')
+                        <div class="ui button" onclick="challengeEdit('@{{ challenge.id }}')"><i class="edit icon"></i></div>
+                        @endcan
+                        @can('deleteChallenge')
+                        <div class="ui button" onclick="confirm('是否删除') &amp;&amp; challengeDelete('@{{ challenge.id }}')"><i class="trash icon"></i></div>
+                        @endcan
                     </div>
-
-                    <div class="field">
-                        <label for="flag">{{ __('Flag') }}</label>
-                        <input name="flag" type="text" id="flag" value="">
-                    </div>
-
-                    <div class="field">
-                        <label for="category">{{ __('Category') }}</label>
-                        <select id="category" name="category">
-                            <option value="CRYPTO">CRYPTO</option>
-                            <option value="MISC">MISC</option>
-                            <option value="PWN">PWN</option>
-                            <option value="REVERSE">REVERSE</option>
-                            <option value="WEB">WEB</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <label for="tags">{{ __('Tags') }}</label>
-                        <input name="tags" type="text" id="tags" value="">
-                    </div>
-
-                    <div class="field">
-                        <label for="bank">{{ __('Bank') }}</label>
-                        <select name="bank" id="bank"></select>
-                    </div>
-
-                    <div class="field">
-                        <div class="ui checkbox">
-                            <input name="is_hidden" type="checkbox" tabindex="0">
-                            <label>{{ __('Hide') }}</label>
-                        </div>
-                    </div>
-                </form>
+                </div>
+                @{{/each}}
             </div>
         </div>
-        <div class="actions">
-            <input class="ui basic fluid button" id="btn-save" type="button" value="{{ __('Save') }}">
-        </div>
+        @{{/each}}
     </div>
-    @endcanany
-    <div class="ui tiny basic flat modal" id="challenge-detail">
-        <i class="close icon"></i>
-        <div class="header" id="detail-title"></div>
-        <div class="scrolling content">
-            <div class="description">
-                <div class="ui segment" id="detail-description"></div>
-                <div class="ui form">
-                    <div class="field">
-                        <input id="detail-id" type="hidden" value="">
-                        <input id="detail-flag" type="text" value="">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="actions">
-            <input class="ui basic fluid button" id="btn-submit" type="button" value="Submit">
-        </div>
+    <div class="ui vertical clearing segment">
+        <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadChallenges('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
+        <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadChallenges('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
     </div>
-</div>
-<script id="tpl-challenge-cards" type="text/html">
-    @{{each categories challenges category}}
-    <div class="ui basic vertical segment">
-        <h1>@{{category}}</h1>
-        <div class="ui link challenge cards">
-            @{{each challenges challenge i}}
-            <div class="ui card">
-                <div class="content" onclick="challengeDetail('@{{ challenge.id }}')">
-                    <div class="header">@{{ challenge.title }}</div>
-                </div>
-                <div class="content" onclick="challengeDetail('@{{ challenge.id }}')">
-                    <div class="description">@{{ challenge.description }}</div>
-                    <div class="point">@{{ challenge.points }} pt</div>
-                </div>
-                <div class="ui two bottom attached buttons">
-                    @can('editChallenge')
-                    <div class="ui button" onclick="challengeEdit('@{{ challenge.id }}')"><i class="edit icon"></i></div>
-                    @endcan
-                    @can('deleteChallenge')
-                    <div class="ui button" onclick="confirm('是否删除') &amp;&amp; challengeDelete('@{{ challenge.id }}')"><i class="trash icon"></i></div>
-                    @endcan
-                </div>
-            </div>
-            @{{/each}}
-        </div>
-    </div>
-    @{{/each}}
 </script>
-<script id="tpl-banks" type="text/html">
-    @{{each banks bank index}}
-    <option value="@{{bank.id}}">@{{bank.name}}</option>
-    @{{/each}}
-</script>
+<!-- end template -->
 @endsection
 @push('scripts')
 <script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
@@ -217,16 +230,12 @@
             }
         });
         @endcanany
-        @can('addChallenge')
-        $("#challenge-add").click(function() {
-            $("#challenge-modify").modal('show');
-        });
-        @endcan
         @canany(['addChallenge', 'editChallenge'])
         $("#btn-save").click(function() {
             $("#form-challenge").submit();
         });
         @endcanany
+        @can('submitFlag')
         $("#btn-submit").click(function() {
             var flag = $("#detail-flag").val().trim();
             var challengeId = $("#detail-id").val().trim();
@@ -250,7 +259,15 @@
                 }
             });
         });
+        @endcan
     });
+    function bindEvents() {
+        @can('addChallenge')
+        $("#challenge-add").unbind("click").bind("click", function() {
+            $("#challenge-modify").modal('show');
+        });
+        @endcan
+    }
     @canany(['addChallenge', 'editChallenge'])
     function challengeClear() {
         $("#challenge-modify input[type=text]").val("");
@@ -275,10 +292,10 @@
     function challengeDelete(id) {
         $.ajax({
             "type": "POST",
-            "url": "{{ url('challenge/remove') }}",
-            "async": false,
+            "url": "{{ url('api/challenge') }}",
             "data": {
-                "id": id
+                "id": id,
+                "_method": "DELETE"
             },
             "success": function (response) {
                 if(response.success) {
@@ -345,56 +362,49 @@
     }
     @endcan
     function loadBanks() {
-        let data = [];
         $.ajax({
             "type": "GET",
             "url": "{{ url('bank/list') }}",
-            "async": false,
             "success": function(response) {
-                if(response.success) {
-                    data = response.data;
+                if(response.status === 200 && response.success) {
+                    let banks = response.data;
+                    let html = "";
+                    for(let i = 0;i < banks.length;++i) {
+                        html += `<option value="${banks[i].id}">${banks[i].name}</option>`
+                    }
+                    $("#bank").html(html);
+                    $("#bank").dropdown();
                 }
             }
         });
-        let html = template('tpl-banks', {
-            "banks": data
-        });
-        $("#bank").html(html);
-        $("#bank").dropdown();
     }
-
-    function loadChallenges(page = 1) {
-        var pagination;
+    function loadChallenges(url) {
+        if(url == null) {
+            url = "{{ url('api/challenges') }}?bank={{$bank}}";
+        }
         $.ajax({
             "type": "GET",
-            "url": "{{ url('challenge/list') }}?page=" + page + "&bank={{$bank}}",
+            "url": url,
             "async": false,
-            "success": function(data) {
-                pagination = data;
+            "success": function(response, status) {
+                if(response.status === 200 && response.success) {
+                    let challenges = response.data;
+                    let categories = {};
+                    for(let i = 0;i < challenges.length;++i) {
+                        let category = challenges[i].category;
+                        categories[category] = categories[category] || [];
+                        categories[category].push(challenges[i]);
+                    }
+                    $("#container-challenges").html(
+                        template("tpl-container-challenges", {
+                            "categories": categories,
+                            "paginate": response.paginate
+                        })
+                    );
+                    bindEvents();
+                }
             }
         });
-        if(pagination.prev_page_url == null) {
-            $("#pg-prev").addClass("disabled");
-        }
-        if(pagination.next_page_url == null) {
-            $("#pg-next").addClass("disabled");
-        }
-        var data = pagination.data;
-        var categories = {};
-        for(var i = 0;i < data.length;++i) {
-            var category = data[i].category;
-            categories[category] = categories[category] || [];
-            categories[category].push({
-                "id": data[i].id,
-                "title": data[i].title,
-                "description": data[i].description,
-                "points": data[i].points
-            });
-        }
-        var html = template("tpl-challenge-cards", {
-            "categories": categories
-        });
-        $("#challenges-list").html(html);
     }
 </script>
 @endpush

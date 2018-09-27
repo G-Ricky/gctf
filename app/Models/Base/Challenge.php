@@ -35,6 +35,16 @@ class Challenge extends Model
         return $this->hasMany('App\\Models\\Base\\Tag', 'challenge');
     }
 
+    public function submissions()
+    {
+        return $this->hasMany('App\\Models\\Base\\Submission', 'challenge');
+    }
+
+    public function submitters()
+    {
+        return $this->belongsToMany('App\\Models\\Base\\User', 'submissions', 'challenge', 'submitter');
+    }
+
     public function hints()
     {
 

@@ -16,11 +16,9 @@ Auth::routes();
 Route::group(['middleware' => 'auth'], function () {
     Route::get('', 'Base\\ChallengeController@index');
     Route::get('challenge', 'Base\\ChallengeController@index');
-    Route::get('challenge/list', 'Base\\ChallengeController@list');
     Route::get('challenge/info', 'Admin\\ChallengeController@info');
     Route::post('challenge/add', 'Admin\\ChallengeController@add');
     Route::put('challenge/edit', 'Admin\\ChallengeController@edit');
-    Route::post('challenge/remove', 'Admin\\ChallengeController@remove');
     Route::get('challenge/detail', 'Base\\ChallengeController@detail');
     Route::post('flag', 'Base\\ChallengeController@submitFlag');
 });
@@ -83,6 +81,9 @@ Route::group(
     ],
     function() {
 
+        Route::get('challenges', 'Base\\ChallengeController@list');
+        Route::delete('challenge', 'Admin\\ChallengeController@delete');
+
         Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
         Route::get('submissions', 'Admin\\SubmissionController@listAll');
         Route::delete('submission', 'Admin\\SubmissionController@delete');
@@ -95,6 +96,10 @@ Route::group(
         Route::post('privilege', 'Admin\\AbilityController@add');
         Route::put('privilege', 'Admin\\AbilityController@edit');
         Route::delete('privilege', 'Admin\\AbilityController@delete');
+
+        Route::get('rankings', 'Base\\RankingController@list');
+
+        Route::put('relation', 'Admin\\RoleController@change');
 
         Route::get('roles', 'Admin\\RoleController@list');
         Route::get('roles/all', 'Admin\\RoleController@listAll');
@@ -110,11 +115,6 @@ Route::group(
         Route::put('user/ban', 'Admin\\UserController@ban');
         Route::put('user/unban', 'Admin\\UserController@unban');
         Route::delete('user', 'Admin\\UserController@delete');
-
-        Route::put('relation', 'Admin\\RoleController@change');
-
-        Route::get('rankings', 'Base\\RankingController@list');
-        
     }
 );
 
