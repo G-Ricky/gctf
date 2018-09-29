@@ -5,7 +5,12 @@
 @push('stylesheets')
 <link href="{{ asset('css/g2uc/challenge.css') }}" rel="stylesheet">
 <link href="{{ asset('css/extends/modal.flat.css') }}" rel="stylesheet">
+<link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+<link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
 <style>
+    .wu-toast.wu-animate-in {
+        z-index: 1002;
+    }
     .ui.right.aligned.object>* {
         margin-top: 20px;
         margin-bottom: 20px;
@@ -40,7 +45,7 @@
                 <input id="id" name="id" type="hidden">
                 <div class="field">
                     <label for="title">{{ __('Title') }}</label>
-                    <input name="title" type="text" id="title" maxlength="32" value="">
+                    <input name="title" type="text" id="title" value="" maxlength="32" required>
                 </div>
 
                 <div class="field">
@@ -125,6 +130,7 @@
         <button id="challenge-add" class="ui primary right floated button"><i class="add circle icon"></i> Add</button>
     </div>
     @endcan
+    @{{if count > 0}}
     <div class="ui basic segments" id="cards-challenges">
         @{{each categories challenges category}}
         <div class="ui basic vertical segment">
@@ -158,21 +164,33 @@
         </div>
         @{{/each}}
     </div>
+    @{{else}}
+    <div class="ui warning message">
+        <div class="content">
+            <p>暂无数据</p>
+        </div>
+    </div>
+    @{{/if}}
+    @{{if count > 0}}
     <div class="ui vertical clearing segment">
         <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadChallenges('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
         <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadChallenges('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
     </div>
+    @{{/if}}
 </script>
 <!-- end template -->
 @endsection
 @push('scripts')
 <script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
 <script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
+<script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+<script src="{{ asset('js/common/tip.js') }}"></script>
 <script>
 
     $(document).ready(function() {
         loadChallenges();
         loadBanks();
+        $("select[name=category]").dropdown();
         @canany(['addChallenge', 'editChallenge'])
         $("#form-challenge").validate({
             "submitHandler": function(form) {
@@ -222,7 +240,6 @@
             }
         });
         @endcanany
-        $("select[name=category]").dropdown();
         @canany(['addChallenge', 'editChallenge'])
         $('#challenge-modify').modal({
             "onHide": function() {
@@ -239,6 +256,10 @@
         $("#btn-submit").click(function() {
             var flag = $("#detail-flag").val().trim();
             var challengeId = $("#detail-id").val().trim();
+            if(flag.length === 0) {
+                tip.error("flag 为空！");
+                return;
+            }
             $.ajax({
                 "url": "{{ url('flag') }}",
                 "type": "POST",
@@ -250,11 +271,13 @@
                 "success": function (response) {
                     if(response.success) {
                         if(response.correct) {
-                            alert("flag 正确");
+                            tip.success("flag 正确");
                             location.reload();
                         }else{
-                            alert("flag 错误")
+                            tip.error("flag 错误");
                         }
+                    }else{
+                        tip.error(response.message);
                     }
                 }
             });
@@ -265,6 +288,7 @@
         @can('addChallenge')
         $("#challenge-add").unbind("click").bind("click", function() {
             $("#challenge-modify").modal('show');
+            fillForm();
         });
         @endcan
     }
@@ -331,14 +355,15 @@
     @endcanany
     @canany(['addChallenge', 'editChallenge'])
     function fillForm(data) {
-        $("#id").val(data.id);
-        $("#title").val(data.title);
-        $("#description").val(data.description);
-        $("#points").val(data.points);
-        $("#flag").val(data.flag);
-        $("#category").dropdown("set selected", data.category);
-        $("#tags").val(data.tags);
-        $("#bank").dropdown("set selected", data.bank);
+        data = data || {};
+        $("#id").val(data.id || "");
+        $("#title").val(data.title || "");
+        $("#description").val(data.description || "");
+        $("#points").val(data.points || "");
+        $("#flag").val(data.flag || "");
+        $("#category").dropdown("set selected", data.category || 'CRYPTO');
+        $("#tags").val(data.tags || "");
+        $("#bank").dropdown("set selected", {{$bank}});
     }
     @endcanany
     function fillDetail(data) {
@@ -372,8 +397,7 @@
                     for(let i = 0;i < banks.length;++i) {
                         html += `<option value="${banks[i].id}">${banks[i].name}</option>`
                     }
-                    $("#bank").html(html);
-                    $("#bank").dropdown();
+                    $("#bank").html(html).dropdown("set selected", {{$bank}});
                 }
             }
         });
@@ -398,7 +422,8 @@
                     $("#container-challenges").html(
                         template("tpl-container-challenges", {
                             "categories": categories,
-                            "paginate": response.paginate
+                            "paginate": response.paginate,
+                            "count": challenges.length
                         })
                     );
                     bindEvents();

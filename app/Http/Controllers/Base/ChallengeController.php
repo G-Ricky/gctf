@@ -30,7 +30,7 @@ class ChallengeController extends Controller
 
     public function detail(Request $request, Challenge $challenges)
     {
-        $this->authorize('viewFlag');
+        $this->authorize('listChallenges');
 
         $challengeId = $request->query('id', 1);
         $result = $challenges->detail($challengeId)->toArray();

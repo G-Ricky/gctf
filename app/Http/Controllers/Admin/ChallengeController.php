@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Base\Challenge;
+use App\Models\Admin\Challenge;
 use App\Models\Base\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ChallengeController extends Controller
 {
@@ -15,33 +16,26 @@ class ChallengeController extends Controller
 
     }
 
-    public function add(Request $request, Challenge $challenges)
+    public function add(Request $request, Challenge $challenge)
     {
         $this->authorize('addChallenge');
 
-        $this->validate($request, [
+        $data = $this->validate($request, [
             'title'       => 'required|string|max:32',
-            'description' => 'required|string|max:1024',
-            'points'      => 'required|integer',
+            'description' => 'nullable|string|max:1024',
+            'points'      => 'required|integer|max:10000',
             'category'    => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
-            'tags'        => 'string|max:256',
+            'tags'        => 'nullable|string|max:256',
             'flag'        => 'required|string|max:256',
             'bank'        => 'required|integer|exists:banks,id'
         ]);
-        $data = $request->all([
-            'title', 'description', 'points', 'poster', 'category', 'tags', 'flag', 'bank'
-        ]);
 
-        //TODO validate competition id here
-
-        $data['poster'] = Auth::user()->id;
+        $data['poster'] = Auth::id();
         $data['tags'] = str_replace(' ', '', $data['tags']);
         $data['tags'] = explode(',', $data['tags']);
 
-        // Remove extra data
-
         // Multiple saving
-        $success = (bool)$challenges->saveWithTags($data);
+        $success = (bool)$challenge->createWithTags($data);
 
         return [
             'status'  => 200,
@@ -49,43 +43,34 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function edit(Request $request, Challenge $challenges, Tag $tags)
+    public function edit(Request $request, Challenge $challenge)
     {
         $this->authorize('editChallenge');
 
-        $this->validate($request, [
-            'id'          => 'required|integer|exists:challenges,id',
+        $data = $this->validate($request, [
+            'id'          => 'required|integer',
             'title'       => 'required|string|max:32',
             'description' => 'required|string|max:1024',
             'points'      => 'required|integer',
             'category'    => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
-            'tags'        => 'string|max:256',
+            'tags'        => 'nullable|string|max:256',
             'flag'        => 'required|string|max:256',
             'bank'        => 'required|integer|exists:banks,id'
         ]);
 
-        $data = $request->all([
-            'id', 'title', 'description', 'points', 'category', 'tags', 'flag', 'bank'
-        ]);
-
-        //$data['poster'] = Auth::user()->id;
+        if(array_key_exists('poster', $data)) {
+            unset($data['poster']);
+        }
         $data['tags'] = str_replace(' ', '', $data['tags']);
         $data['tags'] = explode(',', $data['tags']);
 
-        $tags->select()->where('challenge', '=', $data['id'])->delete();
+        $success = false;
+        DB::transaction(function() use($data, $challenge, &$success) {
+            Tag::where('challenge', '=', $data['id'])
+                ->delete();
 
-        $tagModels = [];
-        foreach($data['tags'] as $tag) {
-            $tagModels[] = new Tag([
-                'name'      => $tag,
-                'challenge' => $data['id']
-            ]);
-        }
-        unset($data['tags']);
-        $success = (bool)$challenges->where('id', '=', $data['id'])->update($data);
-
-        $challenges->setAttribute('id', $data['id']);
-        $challenges->tags()->saveMany($tagModels);
+            $success = (bool)$challenge->updateWithTags($data);
+        });
 
         return [
             'status'  => 200,
@@ -93,41 +78,50 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function delete(Request $request, Challenge $challenges)
+    public function delete(Request $request)
     {
         $this->authorize('deleteChallenge');
 
-        $this->validate($request, [
-            'id' => 'required|integer|exists:challenges,id'
+        $data = $this->validate($request, [
+            'id' => 'required|integer'
         ]);
-        $id = $request->input('id');
-        $success = $challenges->remove($id);
+
+        $success = Challenge
+            ::where('id', '=', $data['id'])
+            ->firstOrFail()
+            ->delete();
+
         return [
             'status'  => 200,
-            'success' => $success,
-            'id' => $id
+            'success' => $success
         ];
     }
 
-    public function info(Request $request, Challenge $challenges)
+    public function info(Request $request)
     {
-        $this->authorize('seeChallengeDetail');
+        $this->authorize('viewFlag');
 
-        $id = $request->query('id', 0);
-        $result = $challenges->info($id)->toArray();
-        foreach($result as &$challenge) {
-            if(array_key_exists('tags', $challenge)) {
-                $tags = [];
-                foreach($challenge['tags'] as &$tag) {
-                    $tags[] = $tag['name'];
-                }
-                $challenge['tags'] = $tags;
+        $data = $this->validate($request, [
+            'id' => 'required|integer'
+        ]);
+
+        $challenge = Challenge
+            ::where('id', '=', $data['id'])
+            ->where('is_hidden', '=', false)
+            ->with('tags:challenge,name')
+            ->firstOrFail()
+            ->toArray();
+
+        if(array_key_exists('tags', $challenge)) {
+            foreach($challenge['tags'] as $i => $tag) {
+                $challenge['tags'][$i] = $tag['name'];
             }
         }
+
         return [
             'status'  => 200,
-            'success' => (bool)$result[0],
-            'data'    => $result[0]
+            'success' => true,
+            'data'    => $challenge
         ];
     }
 }

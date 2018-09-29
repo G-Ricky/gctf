@@ -119,17 +119,6 @@ class Challenge extends Model
             ->get();
     }
 
-    public function saveWithTags(array $data)
-    {
-        foreach($data['tags'] as $value) {
-            $tags[] = new Tag(['name' => $value]);
-        }
-        unset($data['tags']);
-        //Create a record of new challenge and create records of tag related to the same challenge
-        $success = $this->create($data)->tags()->saveMany($tags);
-        return $success;
-    }
-
     public function remove($id)
     {
         return $this

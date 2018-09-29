@@ -40,10 +40,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('submissions/incorrect', 'Admin\\SubmissionController@index');
 });
 
-Route::group([], function() {
-    Route::get('users', 'Admin\\UserController@index');
-});
-
 Route::group(['middleware' => 'auth'], function() {
     Route::get('ranking', 'Base\\RankingController@index');
 });
@@ -70,6 +66,8 @@ Route::group(
     function() {
 
         Route::get('banks', 'Base\\BankController@index');
+
+        Route::get('users', 'Admin\\UserController@index');
 
     }
 );
