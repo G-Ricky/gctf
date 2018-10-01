@@ -8,6 +8,7 @@ use App\Models\Base\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class ChallengeController extends Controller
 {
@@ -21,16 +22,17 @@ class ChallengeController extends Controller
         $this->authorize('addChallenge');
 
         $data = $this->validate($request, [
-            'title'       => 'required|string|max:32',
-            'description' => 'nullable|string|max:1024',
-            'points'      => 'required|integer|max:10000',
-            'category'    => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
-            'tags'        => 'nullable|string|max:256',
-            'flag'        => 'required|string|max:256',
-            'bank'        => 'required|integer|exists:banks,id'
+            'title'        => 'required|string|max:32',
+            'description'  => 'nullable|string|max:1024',
+            'basic_points' => 'required|integer|max:10000',
+            'category'     => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
+            'tags'         => 'nullable|string|max:256',
+            'flag'         => 'required|string|max:256',
+            'bank'         => 'required|integer|exists:banks,id'
         ]);
 
         $data['poster'] = Auth::id();
+        $data['points'] = $data['basic_points'];
         $data['tags'] = str_replace(' ', '', $data['tags']);
         $data['tags'] = explode(',', $data['tags']);
 
@@ -48,14 +50,14 @@ class ChallengeController extends Controller
         $this->authorize('editChallenge');
 
         $data = $this->validate($request, [
-            'id'          => 'required|integer',
-            'title'       => 'required|string|max:32',
-            'description' => 'required|string|max:1024',
-            'points'      => 'required|integer',
-            'category'    => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
-            'tags'        => 'nullable|string|max:256',
-            'flag'        => 'required|string|max:256',
-            'bank'        => 'required|integer|exists:banks,id'
+            'id'           => 'required|integer',
+            'title'        => 'required|string|max:32',
+            'description'  => 'required|string|max:1024',
+            'basic_points' => 'required|integer',
+            'category'     => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
+            'tags'         => 'nullable|string|max:256',
+            'flag'         => 'required|string|max:256',
+            'bank'         => 'required|integer|exists:banks,id'
         ]);
 
         if(array_key_exists('poster', $data)) {
@@ -105,23 +107,23 @@ class ChallengeController extends Controller
             'id' => 'required|integer'
         ]);
 
-        $challenge = Challenge
+        $challenges = Challenge
             ::where('id', '=', $data['id'])
             ->where('is_hidden', '=', false)
             ->with('tags:challenge,name')
             ->firstOrFail()
             ->toArray();
 
-        if(array_key_exists('tags', $challenge)) {
-            foreach($challenge['tags'] as $i => $tag) {
-                $challenge['tags'][$i] = $tag['name'];
+        if(array_key_exists('tags', $challenges)) {
+            foreach($challenges['tags'] as $i => $tag) {
+                $challenges['tags'][$i] = $tag['name'];
             }
         }
 
         return [
             'status'  => 200,
             'success' => true,
-            'data'    => $challenge
+            'data'    => $challenges
         ];
     }
 }

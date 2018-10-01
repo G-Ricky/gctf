@@ -59,7 +59,7 @@ class Ranking extends Command
         $challengeIds = array_column($submissions, 'challenge');
         $challengeIds = array_keys(array_flip($challengeIds));
 
-        $challenges = Challenge
+        $originChallenges = $challenges = Challenge
             ::whereIn('id', $challengeIds)
             ->get()
             ->toArray();
@@ -179,9 +179,23 @@ class Ranking extends Command
             $points = array_column($bank['rankings'], 'points');
             array_multisort($points, SORT_DESC, $bank['rankings']);
         }
+        unset($bank);
 
         Redis::set('rankings', json_encode($banksDict));
         Redis::set('challenges', json_encode($challengesDict));
         Redis::set('users', json_encode($usersDict));
+
+        //更新动态分
+        foreach($originChallenges as $originChallenge) {
+            $challengeId = $originChallenge['id'];
+            $challenge = $challengesDict[$challengeId];
+            if($originChallenge['points'] !== intval($challenge['points'])) {
+                $affectedRows = Challenge
+                    ::where('id', '=', $challengeId)
+                    ->update([
+                        'points' => $challenge['points']
+                    ]);
+            }
+        }
     }
 }

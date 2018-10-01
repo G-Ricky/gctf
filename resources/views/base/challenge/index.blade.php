@@ -54,8 +54,8 @@
                 </div>
 
                 <div class="field">
-                    <label for="points">{{ __('Points') }}</label>
-                    <input name="points" type="text" id="points" value="">
+                    <label for="basic_points">{{ __('Points') }}</label>
+                    <input name="basic_points" type="text" id="basic_points" value="">
                 </div>
 
                 <div class="field">
@@ -222,7 +222,7 @@
                 "description": {
                     "maxlength": 1000
                 },
-                "points": {
+                "basic_points": {
                     "required": true,
                     "digits": true,
                     "range": [0, 10000]
@@ -359,7 +359,7 @@
         $("#id").val(data.id || "");
         $("#title").val(data.title || "");
         $("#description").val(data.description || "");
-        $("#points").val(data.points || "");
+        $("#basic_points").val(data.basic_points || "");
         $("#flag").val(data.flag || "");
         $("#category").dropdown("set selected", data.category || 'CRYPTO');
         $("#tags").val(data.tags || "");
