@@ -19,6 +19,7 @@ class CreateChallengesTable extends Migration
             $table->string('description', 1024)->comment('描述');
             $table->enum('category', ['CRYPTO', 'MISC', 'PWN', 'REVERSE', 'WEB'])->default('MISC')->comment('类型名');
             $table->unsignedInteger('poster')->comment('出题人');
+            $table->unsignedInteger('basic_points')->comment('基础分数');
             $table->unsignedInteger('points')->comment('分数');
             $table->string('flag', 256)->nullable()->comment('flag');
             $table->unsignedInteger('bank')->comment('题库id');

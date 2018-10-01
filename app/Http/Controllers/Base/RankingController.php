@@ -53,7 +53,7 @@ class RankingController extends Controller
             ]);
             foreach($rankings[$i]['solutions'] as $j => $solution) {
                 $rankings[$i]['solutions'][$j] = array_only($solution, [
-                    'id', 'title', 'description', 'solved_at'
+                    'id', 'title', 'description', 'points', 'basic_points', 'solved_at'
                 ]);
             }
         }

@@ -14,6 +14,7 @@ class Challenge extends Model
         'category',
         'poster',
         'points',
+        'basic_points',
         'flag',
         'bank',
         'is_hidden'
@@ -73,8 +74,10 @@ class Challenge extends Model
             throw new \Exception('Update fail');
         }
 
-        $this->setAttribute('id', $data['id']);
-        $success = $this->tags()->saveMany($tags);
+        if(count($tags) > 0) {
+            $this->setAttribute('id', $data['id']);
+            $success = $this->tags()->saveMany($tags);
+        }
 
         return !!$success;
     }

@@ -33,9 +33,12 @@ class ChallengeController extends Controller
 
         $data['poster'] = Auth::id();
         $data['points'] = $data['basic_points'];
-        $data['tags'] = str_replace(' ', '', $data['tags']);
-        $data['tags'] = explode(',', $data['tags']);
-
+        if(isset($data['tags'])) {
+            $data['tags'] = str_replace(' ', '', $data['tags']);
+            $data['tags'] = explode(',', $data['tags']);
+        }else{
+            $data['tags'] = [];
+        }
         // Multiple saving
         $success = (bool)$challenge->createWithTags($data);
 
@@ -63,8 +66,13 @@ class ChallengeController extends Controller
         if(array_key_exists('poster', $data)) {
             unset($data['poster']);
         }
-        $data['tags'] = str_replace(' ', '', $data['tags']);
-        $data['tags'] = explode(',', $data['tags']);
+
+        if(isset($data['tags'])) {
+            $data['tags'] = str_replace(' ', '', $data['tags']);
+            $data['tags'] = explode(',', $data['tags']);
+        }else{
+            $data['tags'] = [];
+        }
 
         $success = false;
         DB::transaction(function() use($data, $challenge, &$success) {
