@@ -13,18 +13,43 @@ class RankingController extends Controller
         return view('base.ranking.index');
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        $jsonText = Redis::get('rankings');
-        if(!isset($jsonText)) {
+        $data = $this->validate($request, [
+            'bank' => 'nullable|integer|exists:banks,id'
+        ]);
+
+        $rankingsJson = Redis::get('rankings');
+        $userDictJson = Redis::get('users');
+
+        if(!isset($rankingsJson)) {
             return $this->fail('加载数据失败');
         }
 
-        $rankings = json_decode($jsonText, true);
+        if(!isset($data['bank'])) {
+            $data['bank'] = 1;
+        }
+
+        $bankDict = json_decode($rankingsJson, true);
+        $bank = $bankDict[$data['bank']];
+        $rankings = $bank['rankings'];
+        $rankingIds = array_column($rankings, 'id');
+
+        $userDict = json_decode($userDictJson, true);
+
+        foreach($userDict as $user) {
+            $userId = $user['id'];
+            if(!in_array($userId, $rankingIds)) {
+                $user['points'] = 0;
+                $user['solutions_count'] = 0;
+                $user['solutions'] = [];
+                $rankings[] = $user;
+            }
+        }
 
         foreach($rankings as $i => $ranking) {
             $rankings[$i] = array_only($ranking, [
-                'id', 'sid', 'username', 'nickname', 'name', 'solutions', 'solutions_count', 'solved_at', 'points'
+                'id', 'sid', 'username', 'nickname', 'name', 'solutions', 'solutions_count', 'points'
             ]);
             foreach($rankings[$i]['solutions'] as $j => $solution) {
                 $rankings[$i]['solutions'][$j] = array_only($solution, [

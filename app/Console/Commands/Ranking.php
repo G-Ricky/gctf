@@ -3,10 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Models\Admin\User;
+use App\Models\Base\Bank;
 use App\Models\Base\Challenge;
 use App\Models\Base\Submission;
 use App\Plugins\Points\Points;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redis;
 
 class Ranking extends Command
@@ -42,85 +44,143 @@ class Ranking extends Command
      */
     public function handle()
     {
-        //TODO 按 Bank 区分
+        $banks = Bank::all()->toArray();
 
-        $usersDict = User
-            ::all()
-            ->mapWithKeys(function($item, $key) {
-                return [$item['id'] => $item];
-            })
-            ->toArray();
-        $userIds = array_column($usersDict, 'id');
+        $users = User::all()->toArray();
+        $userIds = array_column($users, 'id');
 
         $submissions = Submission
             ::where('is_correct', '=', true)
             ->whereIn('submitter', $userIds)
-            ->orderBy('created_at')
+            ->orderBy('created_at', 'DESC') // 主要是为了在后面的操作中覆盖掉重复的提交，以最早的为准
             ->get()
             ->toArray();
 
         $challengeIds = array_column($submissions, 'challenge');
         $challengeIds = array_keys(array_flip($challengeIds));
 
-        $challengesDict = Challenge
+        $challenges = Challenge
             ::whereIn('id', $challengeIds)
             ->get()
-            ->mapWithKeys(function($item, $key) {
-                return [$item['id'] => $item];
-            })
             ->toArray();
 
-        //
-        $solvers = [];
-        $solutions = [];
-        foreach($submissions as $submission) {
+        $usersDict = [];
+        $challengesDict = [];
+        $solutionsDict = [];
+        $solversDict = [];
+        $banksDict = [];
+
+        //生成字典
+        foreach($banks as &$bank) {
+            $bank['rankings'] = [];
+            $banksDict[$bank['id']] = &$bank;
+        }
+        unset($bank); //解除引用
+
+        foreach($challenges as &$challenge) {
+            $challenge['points'] = 0;
+            $challenge['solvers_count'] = 0;
+            $challenge['solvers'] = [];
+            $challengesDict[$challenge['id']] = &$challenge;
+        }
+        unset($challenge);
+
+        foreach($users as &$user) {
+            $usersDict[$user['id']] = &$user;
+        }
+        unset($user);
+
+        foreach($submissions as &$submission) {
             $submitterId = $submission['submitter'];
             $challengeId = $submission['challenge'];
-            $solvers[$challengeId] = $solvers[$challengeId] ?? [];
-            $solvers[$challengeId][$submitterId] = $usersDict[$submitterId];
-            $solutions[$submitterId] = $solutions[$submitterId] ?? [];
 
-            if(!isset($solutions[$submitterId][$challengeId])) {
-                $solutions[$submitterId][$challengeId] = $challengesDict[$challengeId];
-                $solutions[$submitterId][$challengeId]['solved_at'] = $submission['created_at'];
-                $solutions[$submitterId][$challengeId]['solved_time'] = strtotime($submission['created_at']);
+            if(!isset($usersDict[$submitterId])) {
+                continue; //排除被删除的用户 （以后可能会用到）
             }
-        }
 
-        //
-        $solversCount = [];
-        foreach($solvers as $challengeId => $solver) {
-            $solversCount[$challengeId] = count($solver);
-        }
+            if(!isset($challengesDict[$challengeId])) {
+                continue; //排除被删除的题目
+            }
 
-        //计算每一道题的分值
+            if(!isset($solutionsDict[$submitterId])) {
+                $solutionsDict[$submitterId] = [];
+            }
+
+            if(!isset($solversDict[$challengeId])) {
+                $solversDict[$challengeId] = [];
+            }
+
+            $solutionsDict[$submitterId][$challengeId] = &$submission;
+            $solversDict[$challengeId][$submitterId] = &$submission;
+        }
+        unset($submission);
+
+        //计算动态分
         foreach($challengesDict as &$challenge) {
             $challengeId = $challenge['id'];
-            $challenge['dynamic_points'] = Points::calculate($challenge['points'], $solversCount[$challengeId]);
+            $solvers = [];
+            foreach($solversDict[$challengeId] as $submission) {
+                $submitterId = $submission['submitter'];
+                $user = $usersDict[$submitterId];
+                $solvers[] = [
+                    'id'          => $submitterId,
+                    'nickname'    => $user['nickname'],
+                    'username'    => $user['username'],
+                    'solved_at'   => $submission['created_at'],
+                    'solved_time' => strtotime($submission['created_at']),
+                ];
+            }
+            $challenge['solvers'] = $solvers;
+            $challenge['solvers_count'] = count($challenge['solvers']);
+            $challenge['points'] = Points::calculate($challenge['basic_points'], $challenge['solvers_count']);
         }
+        unset($challenge);
 
-        //计算每个人的分数
+        //计算得分
         foreach($usersDict as &$user) {
             $userId = $user['id'];
-            $userSolutions = $solutions[$userId] ?? [];
-            $user['solutions_count'] = count($userSolutions);
-            $user['solutions'] = [];
-            $user['solved_time'] = 0;
-            $user['points'] = 0;
-            foreach($userSolutions as $challengeId => $userSolution) {
-                $user['solutions'][] = $userSolution;
-                $user['points'] += $challengesDict[$challengeId]['dynamic_points'];
-                $user['solved_time'] = max($user['solved_time'], $userSolution['solved_time']);
+            $userSolutions = $solutionsDict[$userId] ?? [];
+            foreach($userSolutions as $submission) {
+                $challengeId = $submission['challenge'];
+                $challenge = $challengesDict[$challengeId];
+                $bankId = $challenge['bank'];
+
+                $rankings = &$banksDict[$bankId]['rankings'];
+                $solver = $rankings[$userId] ?? [
+                    'id'              => $userId,
+                    'sid'             => $user['sid'],
+                    'nickname'        => $user['nickname'],
+                    'username'        => $user['username'],
+                    'name'            => $user['name'],
+                    'points'          => 0,
+                    'solutions_count' => 0,
+                    'solutions'       => [],
+                ];
+
+                $solver['points'] += $challenge['points'];
+                $solver['solutions_count']++;
+                $solver['solutions'][] = [
+                    'id'           => $challengeId,
+                    'title'        => $challenge['title'],
+                    'description'  => $challenge['description'],
+                    'points'       => $challenge['points'],
+                    'basic_points' => $challenge['basic_points'],
+                    'solved_date'  => $submission['created_at'],
+                    'solved_at'    => Carbon::parse($submission['created_at'])->diffForHumans(),
+                    'solved_time'  => strtotime($submission['created_at']),
+                ];
+
+                $rankings[$userId] = $solver;
             }
-            $user['solved_at'] = date('Y-m-d H:i:s', $user['solved_time']);
+        }
+        unset($user, $rankings);
+
+        foreach($banksDict as &$bank) {
+            $points = array_column($bank['rankings'], 'points');
+            array_multisort($points, SORT_DESC, $bank['rankings']);
         }
 
-        $rankings = $usersDict;
-        $scores = array_column($usersDict, 'points');
-        $solvedTimes = array_column($usersDict, 'solved_time');
-        array_multisort($scores, SORT_DESC, $solvedTimes, SORT_ASC, $rankings);
-
-        Redis::set('rankings', json_encode($rankings));
+        Redis::set('rankings', json_encode($banksDict));
         Redis::set('challenges', json_encode($challengesDict));
         Redis::set('users', json_encode($usersDict));
     }
