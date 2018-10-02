@@ -21,6 +21,7 @@
         margin-bottom: 40px;
     }
     .ui.basic.segments {
+        box-shadow: none;
         border: none;
     }
 </style>

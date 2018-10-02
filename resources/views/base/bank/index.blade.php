@@ -84,6 +84,8 @@
                         if(response.success) {
                             validator.resetForm();
                             enableBankForm();
+                            $("#bank-modify").modal('hide');
+                            location.reload(true);
                         }
                     },
                     "error": function() {

@@ -25,7 +25,7 @@ class BankController extends Controller
         $success = $banks->add($data);
         return [
             'status'  => 200,
-            'success' => $success
+            'success' => !!$success
         ];
     }
 
