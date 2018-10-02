@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
 use Silber\Bouncer\BouncerFacade as Bouncer;
 
@@ -197,6 +198,8 @@ class InstallController extends Controller
                 'role'      => 'user',
                 'abilities' => [
                     'listChallenges',
+                    'listBanks',
+                    'viewRanking',
                     'submitFlag',
                 ]
             ],
@@ -204,6 +207,7 @@ class InstallController extends Controller
                 'role'      => 'guest',
                 'abilities' => [
                     'listChallenges',
+                    'viewRanking',
                 ]
             ]
         ];
@@ -261,6 +265,11 @@ class InstallController extends Controller
             abort(500);
         }
         DB::transaction(function() {
+            User::create([
+                'username' => env('INSTALL_DEFAULT_NAME', 'admin'),
+                'password' => Hash::make(env('INSTALL_DEFAULT_PASSWORD', '123456')),
+            ]);
+
             //Create Roles
             foreach($this->roles() as $role) {
                 Bouncer::role()->create($role);
