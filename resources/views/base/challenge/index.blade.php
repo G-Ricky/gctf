@@ -24,6 +24,14 @@
         box-shadow: none;
         border: none;
     }
+    #container-challenges {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+    }
+    #container-challenges>#cards-challenges {
+        flex: 1;
+    }
 </style>
 @endpush
 @section('content')
