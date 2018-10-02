@@ -91,10 +91,14 @@
                 <td>@{{content.modifier.nickname || content.modifier.username}}</td>
                 <td>
                     @can('editContent')
-                    <button class="ui primary button" onclick="editContent('@{{content.id}}')"><i class="edit icon"></i></button>
+                    <button class="ui primary icon button" data-tooltip="{{ __('Edit content') }}" onclick="editContent('@{{content.id}}')">
+                        <i class="edit icon"></i>
+                    </button>
                     @endcan
                     @can('deleteContent')
-                    <button class="ui negative button" onclick="confirm('{{ __('Are you sure to delete it?') }}') &amp;&amp; deleteContent('@{{content.id}}')"><i class="trash icon"></i></button>
+                    <button class="ui negative icon button" data-tooltip="{{ __('Delete content') }}" onclick="confirm('{{ __('Are you sure to delete it?') }}') &amp;&amp; deleteContent('@{{content.id}}')">
+                        <i class="trash icon"></i>
+                    </button>
                     @endcan
                 </td>
             </tr>

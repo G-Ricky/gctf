@@ -62,7 +62,7 @@
             @endcan
         </div>
         <div class="ui basic vertical segment" id="table-roles">
-            <table class="ui fixed single line compact table">
+            <table class="ui single line compact table">
                 <thead>
                 <tr>
                     <th>{{ __('ID') }}</th>
@@ -79,10 +79,14 @@
                     <td>@{{role.title}}</td>
                     <td>
                         @can('editRole')
-                        <button class="ui primary button" onclick="editRole('@{{role.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
+                        <button class="ui primary icon button" data-tooltip="{{ __('Edit role') }}" onclick="editRole('@{{role.id}}')">
+                            <i class="edit icon"></i>
+                        </button>
                         @endcan
                         @can('deleteRole')
-                        <button class="ui negative button" onclick="confirm('{{ __('Are you sure to delete')}} @{{role.name}} ?') &amp;&amp; deleteRole('@{{role.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        <button class="ui negative icon button" data-tooltip="{{ __('Delete role') }}" onclick="confirm('{{ __('Are you sure to delete')}} @{{role.name}} ?') &amp;&amp; deleteRole('@{{role.id}}')">
+                            <i class="trash icon"></i>
+                        </button>
                         @endcan
                     </td>
                 </tr>

@@ -72,10 +72,14 @@
                     <td>@{{privilege.title}}</td>
                     <td>
                         @can('editPrivilege')
-                        <button class="ui primary button" onclick="editPrivilege('@{{privilege.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
+                        <button class="ui primary icon button" data-tooltip="{{ __('Edit privilege') }}" onclick="editPrivilege('@{{privilege.id}}')">
+                            <i class="edit icon"></i>
+                        </button>
                         @endcan
                         @can('deletePrivilege')
-                        <button class="ui negative button" onclick="confirm('确定删除？') &amp;&amp; deletePrivilege('@{{privilege.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        <button class="ui negative icon button" data-tooltip="{{ __('Delete privilege') }}" onclick="confirm('确定删除？') &amp;&amp; deletePrivilege('@{{privilege.id}}')">
+                            <i class="trash icon"></i>
+                        </button>
                         @endcan
                     </td>
                 </tr>
