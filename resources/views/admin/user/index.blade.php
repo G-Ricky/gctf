@@ -122,6 +122,7 @@
             <table class="ui single line compact table">
                 <thead>
                 <tr>
+                    <th>{{ __('ID') }}</th>
                     <th>{{ __('Username') }}</th>
                     <th>{{ __('Nickname') }}</th>
                     <th>{{ __('Name') }}</th>
@@ -134,6 +135,7 @@
                 <tbody>
                 @{{each users user index}}
                 <tr>
+                    <td>@{{user.id}}</td>
                     <td>@{{user.username}}</td>
                     <td>@{{user.nickname}}</td>
                     <td>@{{user.name}}</td>
@@ -193,10 +195,12 @@
                 </tbody>
             </table>
         </div>
+        @{{if paginate.last_page > 1}}
         <div class="ui vertical clearing segment">
             <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadUsers('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
             <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadUsers('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
         </div>
+        @{{/if}}
     </script>
     <!-- end template-->
 
