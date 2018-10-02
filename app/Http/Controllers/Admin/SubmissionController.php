@@ -12,10 +12,12 @@ class SubmissionController extends Controller
     {
         $result = [];
         foreach($submissions as &$submission) {
+            $challenge = $submission['challenge'] ?? [];
+            $submitter = $submission['submitter'] ?? [];
             $result[] = [
                 'id'         => $submission['id'],
-                'challenge'  => is_null($submission['challenge']) ? null : $submission['challenge']['title'],
-                'submitter'  => is_null($submission['submitter']) ? null : $submission['submitter']['nickname'],
+                'challenge'  => $challenge['title'] ?? '',
+                'submitter'  => $submitter['nickname'] ?? $submitter['username'] ?? '',
                 'content'    => $submission['content'],
                 'isCorrect'  => $submission['is_correct'],
                 'updateTime' => $submission['updated_at'],

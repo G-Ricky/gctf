@@ -76,7 +76,7 @@ class Submission extends Model
         $builder = self::select()
             ->orderBy('created_at', 'desc')
             ->with([
-                'submitter:id,nickname',
+                'submitter:id,nickname,username',
                 'challenge:id,title'
             ]);
 
