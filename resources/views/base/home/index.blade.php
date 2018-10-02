@@ -27,8 +27,8 @@
                     @endforeach
                     <p class="ui right aligned">
                         Last modified by
-                        <a href="">
-                            {{ $content['modifier']['nickname'] ?: $content['modifier']['username'] }}
+                        <a href="#">
+                            {{ $content['modifier']['nickname'] ?? $content['modifier']['username'] }}
                         </a>
                         at {{ $content['updated_at'] }}
                     </p>

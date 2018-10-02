@@ -24,6 +24,7 @@ class ContentController extends Controller
             ::select()
             ->with('poster:id,username,nickname')
             ->with('modifier:id,username,nickname')
+            ->orderBy('updated_at', 'DESC')
             ->paginate(20, ['*'], 'p')
             ->jsonSerialize();
 

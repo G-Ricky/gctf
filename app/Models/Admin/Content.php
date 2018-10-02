@@ -21,6 +21,6 @@ class Content extends Model
 
     public function modifier()
     {
-        return $this->belongsTo('App\\Models\\Admin\\User', 'mender', 'id');
+        return $this->belongsTo('App\\Models\\Admin\\User', 'modifier', 'id');
     }
 }
