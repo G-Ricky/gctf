@@ -14,7 +14,6 @@
 Auth::routes();
 
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('', 'Base\\ChallengeController@index');
     Route::get('challenge', 'Base\\ChallengeController@index');
     Route::get('challenge/info', 'Admin\\ChallengeController@info');
     Route::post('challenge/add', 'Admin\\ChallengeController@add');
@@ -61,11 +60,17 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('password/change', 'Auth\\ChangePasswordController@index');
 });
 
+Route::group([], function() {
+    Route::get('', 'Base\\HomeController@index');
+});
+
 Route::group(
     ['middleware' => 'auth'],
     function() {
 
         Route::get('banks', 'Base\\BankController@index');
+
+        Route::get('contents', 'Admin\\ContentController@index');
 
         Route::get('users', 'Admin\\UserController@index');
 
@@ -82,9 +87,10 @@ Route::group(
         Route::get('challenges', 'Base\\ChallengeController@list');
         Route::delete('challenge', 'Admin\\ChallengeController@delete');
 
-        Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
-        Route::get('submissions', 'Admin\\SubmissionController@listAll');
-        Route::delete('submission', 'Admin\\SubmissionController@delete');
+        Route::get('contents', 'Admin\\ContentController@list');
+        Route::post('content', 'Admin\\ContentController@add');
+        Route::put('content', 'Admin\\ContentController@edit');
+        Route::delete('content', 'Admin\\ContentController@delete');
 
         Route::get('permissions/{roleId}', 'Admin\\PermissionController@list');
         Route::put('permissions/{roleId}', 'Admin\\PermissionController@modify');
@@ -104,6 +110,10 @@ Route::group(
         Route::post('role', 'Admin\\RoleController@add');
         Route::put('role', 'Admin\\RoleController@edit');
         Route::delete('role', 'Admin\\RoleController@delete');
+
+        Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
+        Route::get('submissions', 'Admin\\SubmissionController@listAll');
+        Route::delete('submission', 'Admin\\SubmissionController@delete');
 
         Route::get('users', 'Admin\\UserController@list');
         Route::post('user', 'Admin\\UserController@add');

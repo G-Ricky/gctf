@@ -78,19 +78,35 @@ class InstallController extends Controller
             ],
             [
                 'name'  => 'listBanks',
-                'title' => '查看题库列表'
+                'title' => '查看题库列表',
             ],
             [
                 'name'  => 'addBank',
-                'title' => '添加题库'
+                'title' => '添加题库',
             ],
             [
                 'name'  => 'editBank',
-                'title' => '编辑题库'
+                'title' => '编辑题库',
             ],
             [
                 'name'  => 'deleteBank',
-                'title' => '删除题库'
+                'title' => '删除题库',
+            ],
+            [
+                'name'  => 'listContents',
+                'title' => '查看自定义内容列表',
+            ],
+            [
+                'name'  => 'addContent',
+                'title' => '添加自定义内容',
+            ],
+            [
+                'name'  => 'editContent',
+                'title' => '编辑自定义内容',
+            ],
+            [
+                'name'  => 'deleteContent',
+                'title' => '删除自定义内容',
             ],
             [
                 'name'  => 'listUsers',

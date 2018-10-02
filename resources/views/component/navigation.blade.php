@@ -89,10 +89,13 @@
             </div>
         </div>
         @endcan
-        @canany(['listUsers', 'listRoles', 'listPrivileges'])
+        @canany(['listContents', 'listUsers', 'listRoles', 'listPrivileges'])
         <div class="ui simple dropdown item">
             {{ __('Admin') }} <i class="dropdown icon"></i>
             <div class="menu">
+                @can('listContents')
+                <a href="{{ url('contents') }}" class="item">{{ __('Contents') }}</a>
+                @endcan
                 @can('listUsers')
                 <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
                 @endcan
@@ -153,7 +156,7 @@
         setInterval(self(), 100);
     })(jQuery);
     $(document).ready(function() {
-        $(".ui.accordion.menu").accordion();
+        $(".ui.accordion").accordion();
     });
 </script>
 @endpush

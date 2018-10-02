@@ -109,7 +109,7 @@
         </div>
     </div>
     <!-- end modal-->
-    @endcanany
+    @endcan
 
     <!-- template -->
     <script id="tpl-container-users" type="text/html">

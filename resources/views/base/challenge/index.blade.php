@@ -26,9 +26,6 @@
 </style>
 @endpush
 @section('content')
-<div class="ui vertical masthead center aligned segment logo">
-    <img class="ui medium circular centered image" src="{{ asset('img/logo.png') }}">
-</div>
 <div class="ui container" id="container-challenges"></div>
 
 @canany(['addChallenge', 'editChallenge'])
@@ -165,9 +162,11 @@
         @{{/each}}
     </div>
     @{{else}}
-    <div class="ui warning message">
-        <div class="content">
-            <p>暂无数据</p>
+    <div class="ui basic vertical segment">
+        <div class="ui warning message">
+            <div class="content">
+                <p>暂无数据</p>
+            </div>
         </div>
     </div>
     @{{/if}}
