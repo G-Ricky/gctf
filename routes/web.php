@@ -52,10 +52,6 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('permissions/{roleId}', 'Admin\\PermissionController@index');
 });
 
-Route::group(['middleware' => 'auth'], function() {
-    Route::get('password/change', 'Auth\\ChangePasswordController@index');
-});
-
 Route::group([], function() {
     Route::get('', 'Base\\HomeController@index');
 });
@@ -67,6 +63,8 @@ Route::group(
         Route::get('banks', 'Base\\BankController@index');
 
         Route::get('contents', 'Admin\\ContentController@index');
+
+        Route::get('password/change', 'Auth\\ChangePasswordController@index');
 
         Route::get('ranking', 'Base\\RankingController@index');
 
@@ -89,6 +87,8 @@ Route::group(
         Route::post('content', 'Admin\\ContentController@add');
         Route::put('content', 'Admin\\ContentController@edit');
         Route::delete('content', 'Admin\\ContentController@delete');
+
+        Route::put('password', 'Auth\\ChangePasswordController@change');
 
         Route::get('permissions/{roleId}', 'Admin\\PermissionController@list');
         Route::put('permissions/{roleId}', 'Admin\\PermissionController@modify');
