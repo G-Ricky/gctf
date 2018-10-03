@@ -53,6 +53,11 @@
                     {{ __('Send') }}
                 </button>
             </div>
+            <div class="ui message">
+                <ul>
+                    <li>Go to <a href="{{ route('login') }}">login</a> or <a href="{{ url('') }}">home</a></li>
+                </ul>
+            </div>
             <div class="ui error message {{ count($errors) > 0 ? ' visible':'' }}">
                 @if ($errors->has('email'))
                 <span class="invalid-feedback">
