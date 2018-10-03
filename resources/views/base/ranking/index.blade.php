@@ -3,6 +3,13 @@
 @extends('layouts/app')
 
 @push('stylesheets')
+    <style>
+        #time-refresh {
+            color: #c0c1c2;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -10,6 +17,8 @@
 
     <!-- template -->
     <script id="tpl-container-rankings" type="text/html">
+        <div class="ui basic vertical segment" id="chart-rankings" style="height: 350px;-ms-overflow-x: scroll;overflow-x: scroll;"></div>
+        <div class="ui basic right aligned segment" id="time-refresh">&nbsp;</div>
         <div class="ui basic vertical segment" id="table-rankings">
             @{{if rankings && rankings.length > 0}}
             <table class="ui fixed selectable single line compact table">
@@ -57,6 +66,7 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/echarts.min.js') }}"></script>
     <script>
         function loadRankings() {
             $.ajax({
@@ -73,6 +83,7 @@
                                     "rankings": response.data
                                 })
                             );
+                            makeChartRankings(response.data);
                         }
                     }
                 },
@@ -83,6 +94,78 @@
 
                 }
             });
+        }
+        function makeChartRankings(rankings) {
+            let userNames = [];
+            let seriesOption = [];
+            let rangeShown = Math.min(rankings.length, 10);
+
+
+            for(let i = 0;i < rangeShown;++i) {
+                userNames.push(rankings[i].username);
+                let solutions = rankings[i].solutions;
+                let data = [];
+                let userPoints = 0;
+                solutions.sort(function(a, b) {
+                    return a.solved_time - b.solved_time;
+                });
+                for(let j = 0;j < solutions.length;++j) {
+                    userPoints += solutions[j].points;
+                    data.push([
+                        solutions[j].solved_date, userPoints
+                    ]);
+                }
+
+                seriesOption.push({
+                    name: rankings[i].username,
+                    showAllSymbol: true,
+                    symbolSize: 10,
+                    type: "line",
+                    data: data
+                });
+            }
+
+            let chartRankings = echarts.init(document.getElementById('chart-rankings'));
+            chartRankings.setOption({
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        return params.seriesName + "(" + parseInt(params.value[1]) + ")";
+                    }
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        mark: {show: true},
+                        dataView: {show: true, readOnly: false},
+                        restore: {show: true},
+                        saveAsImage: {show: true}
+                    }
+                },
+                dataZoom: {
+                    show: true,
+                    start: 70
+                },
+                legend: {
+                    data: userNames
+                },
+                grid: {
+                    y2: 80
+                },
+                xAxis: [
+                    {
+                        type: 'time',
+                        splitNumber:10
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: seriesOption
+            });
+
         }
         $(document).ready(function() {
             loadRankings();

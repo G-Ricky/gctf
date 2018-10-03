@@ -166,7 +166,6 @@ class Ranking extends Command
                     'points'       => $challenge['points'],
                     'basic_points' => $challenge['basic_points'],
                     'solved_date'  => $submission['created_at'],
-                    'solved_at'    => Carbon::parse($submission['created_at'])->diffForHumans(),
                     'solved_time'  => strtotime($submission['created_at']),
                 ];
 

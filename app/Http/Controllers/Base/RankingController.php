@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Base;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -52,8 +53,9 @@ class RankingController extends Controller
                 'id', 'sid', 'username', 'nickname', 'name', 'solutions', 'solutions_count', 'points'
             ]);
             foreach($rankings[$i]['solutions'] as $j => $solution) {
+                $solution['solved_at'] = Carbon::parse($solution['solved_date'])->diffForHumans();
                 $rankings[$i]['solutions'][$j] = array_only($solution, [
-                    'id', 'title', 'description', 'points', 'basic_points', 'solved_at'
+                    'id', 'title', 'description', 'points', 'basic_points', 'solved_at', 'solved_time', 'solved_date'
                 ]);
             }
         }
