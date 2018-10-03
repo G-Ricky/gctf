@@ -20,7 +20,7 @@
     <script id="tpl-container-submissions" type="text/html">
         <div class="ui basic vertical segment" id="table-submissions">
             @{{if submissions && submissions.length > 0}}
-            <table class="ui fixed selectable single line compact table">
+            <table class="ui selectable single line compact table">
                 <thead>
                 <tr>
                     <th>{{ __('Challenge') }}</th>
@@ -42,7 +42,9 @@
                     @canany(['deleteSubmission'])
                     <td>
                         @can('deleteSubmission')
-                        <button class="ui negative button" onclick="confirm('{{ __('Are you sure to delete it ?') }}') &amp;&amp; deleteSubmission('@{{submission.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        <button class="ui negative icon button" data-tooltip="{{ __('Delete submission') }}" onclick="confirm('{{ __('Are you sure to delete it ?') }}') &amp;&amp; deleteSubmission('@{{submission.id}}')">
+                            <i class="trash icon"></i>
+                        </button>
                         @endcan
                     </td>
                     @endcanany
@@ -60,10 +62,12 @@
             </div>
             @{{/if}}
         </div>
+        @{{if paginate.last_page > 1}}
         <div class="ui vertical clearing segment">
             <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadSubmissions('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
             <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadSubmissions('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
         </div>
+        @{{/if}}
     </script>
 @endsection
 

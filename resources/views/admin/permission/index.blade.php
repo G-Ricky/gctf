@@ -9,7 +9,7 @@
     <div class="ui container">
         @can('modifyPermission')
         <div class="ui basic vertical clearing segment">
-            <button class="ui primary right floated button" onclick="savePermissions()"><i class="add circle icon"></i> {{ __('Save') }}</button>
+            <button class="ui primary right floated button" onclick="savePermissions()"><i class="file text outline icon"></i> {{ __('Save') }}</button>
         </div>
         @endcan
         <div class="ui basic vertical segment" id="list-privileges"></div>

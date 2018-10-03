@@ -122,6 +122,7 @@
             <table class="ui single line compact table">
                 <thead>
                 <tr>
+                    <th>{{ __('ID') }}</th>
                     <th>{{ __('Username') }}</th>
                     <th>{{ __('Nickname') }}</th>
                     <th>{{ __('Name') }}</th>
@@ -134,6 +135,7 @@
                 <tbody>
                 @{{each users user index}}
                 <tr>
+                    <td>@{{user.id}}</td>
                     <td>@{{user.username}}</td>
                     <td>@{{user.nickname}}</td>
                     <td>@{{user.name}}</td>
@@ -156,24 +158,36 @@
                     </td>
                     <td>
                         @can('editUser')
-                        <button class="ui primary button" onclick="editUser('@{{user.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
+                        <button class="ui primary icon button" data-tooltip="{{ __('Edit user') }}" onclick="editUser('@{{user.id}}')">
+                            <i class="edit icon"></i>
+                        </button>
                         @endcan
                         @can('hideUser')
                         @{{if user.is_hidden}}
-                        <button class="ui primary button" onclick="confirm('{{ __('Are you sure to show') }} @{{user.name}}?') &amp;&amp; unhideUser('@{{user.id}}')"><i class="eye icon"></i>{{ __('Show') }}</button>
+                        <button class="ui primary icon button" data-tooltip="{{ __('Show user') }}" onclick="confirm('{{ __('Are you sure to show') }} @{{user.name}}?') &amp;&amp; unhideUser('@{{user.id}}')">
+                            <i class="eye icon"></i>
+                        </button>
                         @{{else}}
-                        <button class="ui orange button" onclick="confirm('{{ __('Are you sure to hide') }} @{{user.name}}?') &amp;&amp; hideUser('@{{user.id}}')"><i class="hide icon"></i>{{ __('Hide') }}</button>
+                        <button class="ui orange icon button" data-tooltip="{{ __('Hide user') }}" onclick="confirm('{{ __('Are you sure to hide') }} @{{user.name}}?') &amp;&amp; hideUser('@{{user.id}}')">
+                            <i class="hide icon"></i>
+                        </button>
                         @{{/if}}
                         @endcan
                         @can('banUser')
                         @{{if user.is_ban}}
-                        <button class="ui primary button" onclick="confirm('{{ __('Are you sure to unban') }} @{{user.name}}?') &amp;&amp; unbanUser('@{{user.id}}')"><i class="undo icon"></i>{{ __('Unban') }}</button>
+                        <button class="ui primary icon button" data-tooltip="{{ __('Unban user') }}" onclick="confirm('{{ __('Are you sure to unban') }} @{{user.name}}?') &amp;&amp; unbanUser('@{{user.id}}')">
+                            <i class="undo icon"></i>
+                        </button>
                         @{{else}}
-                        <button class="ui orange button" onclick="confirm('{{ __('Are you sure to ban') }} @{{user.name}}?') &amp;&amp; banUser('@{{user.id}}')"><i class="ban icon"></i>{{ __('Ban') }}</button>
+                        <button class="ui orange icon button" data-tooltip="{{ __('Ban user') }}" onclick="confirm('{{ __('Are you sure to ban') }} @{{user.name}}?') &amp;&amp; banUser('@{{user.id}}')">
+                            <i class="ban icon"></i>
+                        </button>
                         @{{/if}}
                         @endcan
                         @can('deleteUser')
-                        <button class="ui negative button" onclick="confirm('{{ __('Are you sure to delete') }} @{{user.name}}?') &amp;&amp; deleteUser('@{{user.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        <button class="ui negative icon button" data-tooltip="{{ __('Delete user') }}" onclick="confirm('{{ __('Are you sure to delete') }} @{{user.name}}?') &amp;&amp; deleteUser('@{{user.id}}')">
+                            <i class="trash icon"></i>
+                        </button>
                         @endcan
                     </td>
                 </tr>
@@ -181,10 +195,12 @@
                 </tbody>
             </table>
         </div>
+        @{{if paginate.last_page > 1}}
         <div class="ui vertical clearing segment">
             <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadUsers('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
             <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadUsers('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
         </div>
+        @{{/if}}
     </script>
     <!-- end template-->
 

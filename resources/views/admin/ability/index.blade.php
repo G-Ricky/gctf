@@ -72,10 +72,14 @@
                     <td>@{{privilege.title}}</td>
                     <td>
                         @can('editPrivilege')
-                        <button class="ui primary button" onclick="editPrivilege('@{{privilege.id}}')"><i class="edit icon"></i>{{ __('Edit') }}</button>
+                        <button class="ui primary icon button" data-tooltip="{{ __('Edit privilege') }}" onclick="editPrivilege('@{{privilege.id}}')">
+                            <i class="edit icon"></i>
+                        </button>
                         @endcan
                         @can('deletePrivilege')
-                        <button class="ui negative button" onclick="confirm('确定删除？') &amp;&amp; deletePrivilege('@{{privilege.id}}')"><i class="trash icon"></i>{{ __('Delete') }}</button>
+                        <button class="ui negative icon button" data-tooltip="{{ __('Delete privilege') }}" onclick="confirm('确定删除？') &amp;&amp; deletePrivilege('@{{privilege.id}}')">
+                            <i class="trash icon"></i>
+                        </button>
                         @endcan
                     </td>
                 </tr>
@@ -90,10 +94,12 @@
             </div>
             @{{/if}}
         </div>
+        @{{if paginate.last_page > 1}}
         <div class="ui vertical clearing segment">
             <a class="huge ui button@{{if paginate.current_page === 1}} disabled@{{/if}}" href="javascript:@{{if paginate.prev_page_url}}loadPrivileges('@{{paginate.prev_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron left icon"></i></a>
             <a class="huge ui right floated button@{{if paginate.current_page === paginate.last_page}} disabled@{{/if}}" href="javascript:@{{if paginate.next_page_url}}loadPrivileges('@{{paginate.next_page_url}}')@{{else}}void(0);@{{/if}}"><i class="chevron right icon"></i></a>
         </div>
+        @{{/if}}
     </script>
 @endsection
 
