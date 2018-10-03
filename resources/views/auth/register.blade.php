@@ -47,6 +47,12 @@
                         <input type="text" name="username" placeholder="{{ __('Username') }}" required autofocus>
                     </div>
                 </div>
+                <!--div class="field">
+                    <div class="ui left icon input{{ $errors->has('email') ? ' error' : '' }}">
+                        <i class="mail icon"></i>
+                        <input type="email" name="email" placeholder="{{ __('Email') }}" required>
+                    </div>
+                </div-->
                 <div class="field">
                     <div class="ui left icon input{{ $errors->has('password') ? ' error' : '' }}">
                         <i class="lock icon"></i>
@@ -73,12 +79,18 @@
                 </span>
                 @endif
                 @if ($errors->has('password_confirmation'))
-                    <span class="invalid-feedback">
-                        <strong>{{ $errors->first('password_confirmation') }}</strong>
-                    </span>
+                <span class="invalid-feedback">
+                    <strong>{{ $errors->first('password_confirmation') }}</strong>
+                </span>
                 @endif
             </div>
         </form>
+
+        <div class="ui message">
+            <ul>
+                <li>Already has account? Please <a href="{{ route('login') }}">Sign In</a>.</li>
+            </ul>
+        </div>
     </div>
 </div>
 @endsection
