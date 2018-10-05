@@ -93,6 +93,9 @@
         <div class="ui simple dropdown item">
             {{ __('Admin') }} <i class="dropdown icon"></i>
             <div class="menu">
+                @can('listSettings')
+                <a href="{{ url('settings') }}" class="item">{{ __('Settings') }}</a>
+                @endcan
                 @can('listContents')
                 <a href="{{ url('contents') }}" class="item">{{ __('Contents') }}</a>
                 @endcan

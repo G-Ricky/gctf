@@ -187,6 +187,22 @@ class InstallController extends Controller
             [
                 'name'  => 'changeRelation',
                 'title' => '授予与回收用户角色',
+            ],
+            [
+                'name'  => 'listSettings',
+                'title' => '查看网站设置',
+            ],
+            [
+                'name'  => 'addSetting',
+                'title' => '添加网站设置',
+            ],
+            [
+                'name'  => 'editSetting',
+                'title' => '修改网站设置',
+            ],
+            [
+                'name'  => 'deleteSetting',
+                'title' => '删除网站设置',
             ]
         ];
     }
@@ -208,6 +224,7 @@ class InstallController extends Controller
                     'listRoles',
                     'listPrivileges',
                     'listPermissions',
+                    'listSettings',
                 ]
             ],
             [

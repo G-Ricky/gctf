@@ -68,6 +68,8 @@ Route::group(
 
         Route::get('ranking', 'Base\\RankingController@index');
 
+        Route::get('settings', 'Admin\\SettingController@index');
+
         Route::get('users', 'Admin\\UserController@index');
 
     }
@@ -108,6 +110,11 @@ Route::group(
         Route::post('role', 'Admin\\RoleController@add');
         Route::put('role', 'Admin\\RoleController@edit');
         Route::delete('role', 'Admin\\RoleController@delete');
+
+        Route::get('settings', 'Admin\\SettingController@list');
+        Route::post('setting', 'Admin\\SettingController@add');
+        Route::put('setting', 'Admin\\SettingController@edit');
+        Route::delete('setting', 'Admin\\SettingController@delete');
 
         Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
         Route::get('submissions', 'Admin\\SubmissionController@listAll');
