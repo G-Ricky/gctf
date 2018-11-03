@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Library\Setting\Facades\Setting;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
@@ -68,7 +69,9 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        Bouncer::assign('guest')->to($user);
+        Bouncer::assign(
+            Setting::get('user.default.role') ?? 'guest'
+        )->to($user);
 
         return $user;
     }
