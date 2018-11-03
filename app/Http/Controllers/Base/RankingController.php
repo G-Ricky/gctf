@@ -48,22 +48,29 @@ class RankingController extends Controller
             }
         }
 
+        $newRankings = [];
+
         foreach($rankings as $i => $ranking) {
-            $rankings[$i] = array_only($ranking, [
+            if($ranking['is_hidden']) {
+                continue;
+            }
+            $ranking = array_only($ranking, [
                 'id', 'sid', 'username', 'nickname', 'name', 'solutions', 'solutions_count', 'points'
             ]);
-            foreach($rankings[$i]['solutions'] as $j => $solution) {
+            foreach($ranking['solutions'] as $j => $solution) {
                 $solution['solved_at'] = Carbon::parse($solution['solved_date'])->diffForHumans();
-                $rankings[$i]['solutions'][$j] = array_only($solution, [
+                $ranking['solutions'][$j] = array_only($solution, [
                     'id', 'title', 'description', 'points', 'basic_points', 'solved_at', 'solved_time', 'solved_date'
                 ]);
             }
+
+            $newRankings[] = $ranking;
         }
 
         return [
             'status'  => 200,
             'success' => true,
-            'data'    => $rankings
+            'data'    => $newRankings
         ];
     }
 }

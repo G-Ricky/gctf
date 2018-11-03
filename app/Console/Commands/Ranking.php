@@ -152,6 +152,7 @@ class Ranking extends Command
                     'nickname'        => $user['nickname'],
                     'username'        => $user['username'],
                     'name'            => $user['name'],
+                    'is_hidden'       => $user['is_hidden'],
                     'points'          => 0,
                     'solutions_count' => 0,
                     'solutions'       => [],
