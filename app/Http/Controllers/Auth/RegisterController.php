@@ -70,7 +70,7 @@ class RegisterController extends Controller
         ]);
 
         Bouncer::assign(
-            Setting::get('user.default.role') ?? 'guest'
+            Setting::get('user.default_role') ?? 'guest'
         )->to($user);
 
         return $user;

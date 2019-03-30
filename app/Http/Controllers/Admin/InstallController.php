@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Setting;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -274,6 +275,36 @@ class InstallController extends Controller
         ];
     }
 
+    private function settings()
+    {
+        return [
+            [
+                'name'        => 'user.default_role',
+                'value'       => 'user',
+                'type'        => 'string',
+                'description' => '新注册用户的默认角色',
+            ],
+            [
+                'name'        => 'bank.start_time',
+                'value'       => '1997-01-01 00:00:00',
+                'type'        => 'string',
+                'description' => '开始时间',
+            ],
+            [
+                'name'        => 'bank.end_time',
+                'value'       => '1997-01-01 00:00:00',
+                'type'        => 'string',
+                'description' => '结束时间',
+            ],
+            [
+                'name'        => 'bank.current',
+                'value'       => '1',
+                'type'        => 'integer',
+                'description' => '当前题库',
+            ]
+        ];
+    }
+
     public function __construct()
     {
         $token = Request::get('token');
@@ -352,6 +383,10 @@ class InstallController extends Controller
                 if($user) {
                     Bouncer::assign($roleName)->to($user);
                 }
+            }
+
+            foreach($this->settings() as $setting) {
+                Setting::create($setting);
             }
         });
 

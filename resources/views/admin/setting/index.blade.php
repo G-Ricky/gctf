@@ -175,7 +175,7 @@
             $("#setting-id").val(setting.id);
             $("#setting-name").val(setting.name);
             $("#setting-value").val(setting.value);
-            $("#setting-type").dropdown("set selected", setting.type.toUpperCase());
+            $("#setting-type").dropdown("set selected", setting.type);
             $("#setting-description").val(setting.description);
             $("#setting-save").modal('show');
         }
