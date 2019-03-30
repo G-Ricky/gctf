@@ -186,6 +186,17 @@
     </div>
     @{{/if}}
 </script>
+<script id="tpl-challenge-errors" type="text/html">
+    @{{each errors error index}}
+    <div class="ui basic vertical segment">
+        <div class="ui negative message">
+            <div class="content">
+                <p>@{{error.message}}</p>
+            </div>
+        </div>
+    </div>
+    @{{/each}}
+</script>
 <!-- end template -->
 @endsection
 @push('scripts')
@@ -435,6 +446,18 @@
                         })
                     );
                     bindEvents();
+                }else{
+                    tip.error(response.message);
+                    $("#container-challenges").html(
+                        template("tpl-challenge-errors", {
+                            "errors": [
+                                {
+                                    "message": response.message,
+                                    "code": response.code
+                                }
+                            ]
+                        })
+                    );
                 }
             }
         });

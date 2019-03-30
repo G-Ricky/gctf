@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Base;
 
 use App\Http\Controllers\Controller;
+use App\Library\Setting\Facades\Setting;
+use App\Models\Base\Bank;
 use App\Models\Base\Challenge;
 use App\Models\Base\Submission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
@@ -13,10 +16,16 @@ use Illuminate\Support\Facades\Redis;
 class ChallengeController extends Controller
 {
     protected $challenges;
+    protected $bank;
+    protected $startTime;
+    protected $endTime;
 
     public function __construct(Challenge $challenges)
     {
         $this->challenges = $challenges;
+        $this->bank = Setting::get('bank.current') ?? false;
+        $this->startTime = Setting::get('bank.start_time') ?? '1970-01-01 00:00:00';
+        $this->endTime = Setting::get('bank.end_time') ?? '1970-01-01 00:00:00';
     }
 
     public function index(Request $request)
@@ -54,22 +63,32 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function list(Request $request)
+    public function list()
     {
         $this->authorize('listChallenges');
 
-        $data = $this->validate($request, [
-            'bank' => 'nullable|integer|min:1',
-        ]);
 
-        $bank = $data['bank'] ?? 1;
+        if(
+            !$this->bank ||
+            !Bank::where('id', $this->bank)->exists()
+        ) {
+            return $this->fail('请求的页面不存在', 403);
+        }
+
+        if(Carbon::parse($this->startTime)->gt(Carbon::now())) {
+            return $this->fail('比赛暂未开放', 403);
+        }
+
+        if(Carbon::parse($this->endTime)->lt(Carbon::now())) {
+            return $this->fail('比赛已结束', 403);
+        }
 
         $paginate = Challenge
             ::select([
                 'id', 'title', 'description', 'category', 'points', 'created_at', 'updated_at'
             ])
             ->where('is_hidden', '=', false)
-            ->where('bank', '=', $bank)
+            ->where('bank', '=', $this->bank)
             ->whereNotNull('flag')
             ->orderBy('updated_at', 'desc')
             ->with('tags:challenge,name')
