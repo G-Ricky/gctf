@@ -9,8 +9,18 @@
     color: #fff;
 }
 
+.ui.modal.basic input:not([type]),
+.ui.modal.basic input:not([type]):focus,
 .ui.modal.basic input[type=text],
-.ui.modal.basic input[type=text]:focus{
+.ui.modal.basic input[type=text]:focus,
+.ui.modal.basic input[type=number],
+.ui.modal.basic input[type=number]:focus,
+.ui.modal.basic input[type=password],
+.ui.modal.basic input[type=password]:focus,
+.ui.modal.basic input[type=email],
+.ui.modal.basic input[type=email]:focus,
+.ui.modal.basic input[type=date],
+.ui.modal.basic input[type=date]:focus {
     background-color: transparent;
     color: #fff;
 }
@@ -51,8 +61,18 @@
 
 .ui.modal.basic.positive label,
 .ui.modal.basic.positive label:focus,
+.ui.modal.basic.positive input:not([type]),
+.ui.modal.basic.positive input:not([type]):focus,
 .ui.modal.basic.positive input[type=text],
-.ui.modal.basic.positive input[type=text]:focus {
+.ui.modal.basic.positive input[type=text]:focus,
+.ui.modal.basic.positive input[type=number],
+.ui.modal.basic.positive input[type=number]:focus,
+.ui.modal.basic.positive input[type=password],
+.ui.modal.basic.positive input[type=password]:focus,
+.ui.modal.basic.positive input[type=email],
+.ui.modal.basic.positive input[type=email]:focus,
+.ui.modal.basic.positive input[type=date],
+.ui.modal.basic.positive input[type=date]:focus {
     color: #21ba45;
 }
 
@@ -90,10 +110,6 @@
     border: 1px solid #fff;
 }
 
-.ui.modal.basic .ui.form .field.field input:-webkit-autofill {
-
-}
-
 .ui.modal.basic .ui.segment {
     background-color: transparent;
     color: #fff;
@@ -104,27 +120,47 @@
 }
 
 /* Flat theme */
+.ui.modal.flat input:not([type]),
+.ui.modal.flat input:not([type]):focus,
 .ui.modal.flat input[type=text],
-.ui.modal.flat input[type=text]:focus {
-    border-radius: 0em;
+.ui.modal.flat input[type=text]:focus,
+.ui.modal.flat input[type=number],
+.ui.modal.flat input[type=number]:focus,
+.ui.modal.flat input[type=password],
+.ui.modal.flat input[type=password]:focus,
+.ui.modal.flat input[type=email],
+.ui.modal.flat input[type=email]:focus,
+.ui.modal.flat input[type=date],
+.ui.modal.flat input[type=date]:focus {
+    border-radius: 0;
     outline: none;
     border-left: none;
     border-right: none;
     border-top: none;
 }
 
-.ui.modal.flat input[type=text] {
+.ui.modal.flat input:not([type]),
+.ui.modal.flat input[type=text],
+.ui.modal.flat input[type=number],
+.ui.modal.flat input[type=password],
+.ui.modal.flat input[type=email],
+.ui.modal.flat input[type=date] {
     border-bottom: 1px solid #dddddd;
 }
 
-.ui.modal.flat input[type=text]:focus {
+.ui.modal.flat input:not([type]):focus,
+.ui.modal.flat input[type=text]:focus,
+.ui.modal.flat input[type=number]:focus,
+.ui.modal.flat input[type=password]:focus,
+.ui.modal.flat input[type=email]:focus,
+.ui.modal.flat input[type=date]:focus {
     border-bottom: 1px solid #85b7d9;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
 .ui.modal.flat textarea,
 .ui.modal.flat textarea:focus {
-    border-radius: 0em;
+    border-radius: 0;
 }
 
 .ui.modal.flat textarea:focus {
@@ -137,5 +173,5 @@
 }
 
 .ui.modal .actions>.fluid.button {
-    margin-left: 0em;
+    margin-left: 0;
 }
