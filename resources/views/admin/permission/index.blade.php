@@ -21,7 +21,7 @@
                 @{{each privileges privilege index}}
                 <div class="ui vertical segment">
                     <div class="ui toggle checkbox">
-                        <input id="privilege-@{{privilege.id}}" type="checkbox" name="privileges[@{{privilege.id}}]" data-origin="0" data-type="permission" data-id="@{{privilege.id}}" data-id="@{{privilege.name}}">
+                        <input id="privilege-@{{privilege.id}}" type="checkbox" name="privileges[@{{privilege.id}}]" data-origin="0" data-type="permission" data-id="@{{privilege.id}}" data-name="@{{privilege.name}}">
                         <label for="privilege-@{{privilege.id}}">@{{privilege.title}}</label>
                     </div>
                 </div>
