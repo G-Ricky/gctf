@@ -53,6 +53,26 @@
     background-color: transparent;
 }
 
+.ui.modal.basic .ui.toggle.checkbox input:checked~.box,
+.ui.modal.basic .ui.toggle.checkbox input:checked~label {
+    color: #ffffff!important;
+}
+
+.ui.modal.basic .ui.toggle.checkbox .box,
+.ui.modal.basic .ui.toggle.checkbox label {
+    color: #ffffff!important;
+}
+
+.ui.modal.basic .ui.toggle.checkbox input:checked~.box:before,
+.ui.modal.basic .ui.toggle.checkbox input:checked~label:before {
+    background-color: #85b7d9!important;
+}
+
+.ui.modal.basic .ui.toggle.checkbox .box:before,
+.ui.modal.basic .ui.toggle.checkbox label:before {
+    background-color: rgba(192, 192, 192, 0.2);
+}
+
 /* Basic positive */
 
 .ui.modal.basic.positive {

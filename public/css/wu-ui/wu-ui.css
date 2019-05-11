@@ -33,7 +33,7 @@
 	transition: transform .4s;
 	-webkit-transition: -webkit-transform .4s linear;
 	position: relative;
-	z-index: 899;
+	z-index: 1899;
 }
 
 /*白色满屏背景*/

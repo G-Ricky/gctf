@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\Setting\TypeException;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -53,6 +54,11 @@ class Handler extends ExceptionHandler
                 'title'   => 'Forbidden',
                 'message' => 'You have no access to this page.'
             ], 403);
+        }else if($exception instanceof TypeException) {
+            return response()->json([
+                'status'  => $exception->getCode(),
+                'message' => $exception->getMessage(),
+            ]);
         }
 
         return parent::render($request, $exception);
