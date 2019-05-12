@@ -47,19 +47,19 @@
         <div class="content">
             <div class="ui vertical fluid massive inverted menu">
                 @can('listChallenges')
-                <a class="horizontally fitted item" href="{{ url('challenge') }}">{{ __('Challenges') }}</a>
+                <a class="horizontally fitted item" href="{{ url('bank') }}">{{ __('navigation.view.challenges') }}</a>
                 @endcan
                 @can('viewRanking')
-                <a class="horizontally fitted item" href="{{ url('ranking') }}">{{ __('ranking') }}</a>
+                <a class="horizontally fitted item" href="{{ url('ranking') }}">{{ __('navigation.view.ranking') }}</a>
                 @endcan
                 @can('listBanks')
-                <a class="horizontally fitted item" href="{{ url('banks') }}">{{ __('Banks') }}</a>
+                <a class="horizontally fitted item" href="{{ url('banks') }}">{{ __('navigation.view.banks') }}</a>
                 @endcan
                 @can('listSubmissions')
-                <a class="horizontally fitted item" href="{{ url('submissions') }}">{{ __('Submissions') }}</a>
+                <a class="horizontally fitted item" href="{{ url('submissions') }}">{{ __('navigation.view.submissions') }}</a>
                 @endcan
-                <a class="horizontally fitted item" href="{{ url('user') }}">{{ __('Profile') }}</a>
-                <a class="horizontally fitted item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
+                <a class="horizontally fitted item" href="{{ url('user') }}">{{ __('navigation.view.profile') }}</a>
+                <a class="horizontally fitted item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('navigation.view.logout') }}</a>
             </div>
         </div>
     </div>
@@ -71,57 +71,57 @@
             {{ config('app.name', 'GCTF') }}
         </a>
         @can('listChallenges')
-        <a href="{{ url('challenge') }}" class="item">{{ __('Challenges') }}</a>
+        <a href="{{ url('bank') }}" class="item">{{ __('navigation.view.challenges') }}</a>
         @endcan
         @can('viewRanking')
-        <a href="{{ url('ranking') }}" class="item">{{ __('Ranking') }}</a>
+        <a href="{{ url('ranking') }}" class="item">{{ __('navigation.view.ranking') }}</a>
         @endcan
         @can('listBanks')
-        <a href="{{ url('banks') }}" class="item">{{ __('Banks') }}</a>
+        <a href="{{ url('banks') }}" class="item">{{ __('navigation.view.banks') }}</a>
         @endcan
         @can('listSubmissions')
         <div class="ui simple dropdown item">
-            {{ __('Submission') }} <i class="dropdown icon"></i>
+            {{ __('navigation.view.submissions') }} <i class="dropdown icon"></i>
             <div class="menu">
-                <a href="{{ url('submissions/correct') }}" class="item">{{ __('Correct') }}</a>
-                <a href="{{ url('submissions/incorrect') }}" class="item">{{ __('Wrong') }}</a>
-                <a href="{{ url('submissions') }}" class="item">{{ __('All') }}</a>
+                <a href="{{ url('submissions/correct') }}" class="item">{{ __('navigation.view.submissions.correct') }}</a>
+                <a href="{{ url('submissions/incorrect') }}" class="item">{{ __('navigation.view.submissions.incorrect') }}</a>
+                <a href="{{ url('submissions') }}" class="item">{{ __('navigation.view.submissions.all') }}</a>
             </div>
         </div>
         @endcan
         @canany(['listContents', 'listUsers', 'listRoles', 'listPrivileges'])
         <div class="ui simple dropdown item">
-            {{ __('Admin') }} <i class="dropdown icon"></i>
+            {{ __('navigation.view.admin') }} <i class="dropdown icon"></i>
             <div class="menu">
                 @can('listSettings')
-                <a href="{{ url('settings') }}" class="item">{{ __('Settings') }}</a>
+                <a href="{{ url('settings') }}" class="item">{{ __('navigation.view.settings') }}</a>
                 @endcan
                 @can('listContents')
-                <a href="{{ url('contents') }}" class="item">{{ __('Contents') }}</a>
+                <a href="{{ url('contents') }}" class="item">{{ __('navigation.view.contents') }}</a>
                 @endcan
                 @can('listUsers')
-                <a href="{{ url('users') }}" class="item">{{ __('Users') }}</a>
+                <a href="{{ url('users') }}" class="item">{{ __('navigation.view.users') }}</a>
                 @endcan
                 @can('listRoles')
-                <a href="{{ url('roles') }}" class="item">{{ __('Roles') }}</a>
+                <a href="{{ url('roles') }}" class="item">{{ __('navigation.view.roles') }}</a>
                 @endcan
                 @can('listPrivileges')
-                <a href="{{ url('privileges') }}" class="item">{{ __('Privileges') }}</a>
+                <a href="{{ url('privileges') }}" class="item">{{ __('navigation.view.privileges') }}</a>
                 @endcan
             </div>
         </div>
         @endcanany
         <div class="right menu">
             @guest
-                <a class="item" href="{{ route('login') }}">{{ __('Login') }}</a>
-                <a class="item" href="{{ route('register') }}">{{ __('Register') }}</a>
+                <a class="item" href="{{ route('login') }}">{{ __('navigation.view.login') }}</a>
+                <a class="item" href="{{ route('register') }}">{{ __('navigation.view.register') }}</a>
             @else
                 <div class="ui simple dropdown item">
                     {{ Auth::user()->username }} <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item" href="{{ url('user') }}">{{ __('Profile') }}</a>
-                        <a class="item" href="{{ url('password/change') }}">{{ __('Change Password') }}</a>
-                        <a class="item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('Logout') }}</a>
+                        <a class="item" href="{{ url('user') }}">{{ __('navigation.view.profile') }}</a>
+                        <a class="item" href="{{ url('password/change') }}">{{ __('navigation.view.changePassword') }}</a>
+                        <a class="item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">{{ __('navigation.view.logout') }}</a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
@@ -133,10 +133,10 @@
 </div>
 <script id="bank-menu-template" type="text/html">
     @{{each banks bank index}}
-    <a href="{{ url('challenge') }}?bank=@{{ bank.id }}" class="item">@{{ bank.name }}</a>
+    <a href="{{ url('bank') }}/@{{ bank.id }}" class="item">@{{ bank.name }}</a>
     @{{/each}}
     <div class="ui fitted divider"></div>
-    <a href="{{ url('bank') }}" class="item">{{ __('More') }}</a>
+    <a href="{{ url('bank') }}" class="item">{{ __('navigation.view.banks.more') }}</a>
 </script>
 @endsection
 
