@@ -26,21 +26,15 @@ class ChallengeController extends Controller
             'description'  => 'nullable|string|max:1024',
             'basic_points' => 'required|integer|max:10000',
             'category'     => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
-            'tags'         => 'nullable|string|max:256',
             'flag'         => 'required|string|max:256',
             'bank'         => 'required|integer|exists:banks,id'
         ]);
 
+        $data['description'] = isset($data['description']) ? $data['description'] : '';
         $data['poster'] = Auth::id();
         $data['points'] = $data['basic_points'];
-        if(isset($data['tags'])) {
-            $data['tags'] = str_replace(' ', '', $data['tags']);
-            $data['tags'] = explode(',', $data['tags']);
-        }else{
-            $data['tags'] = [];
-        }
         // Multiple saving
-        $success = (bool)$challenge->createWithTags($data);
+        $success = (bool)$challenge->create($data);
 
         return [
             'status'  => 200,
@@ -48,43 +42,44 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function edit(Request $request, Challenge $challenge)
+    public function edit(Request $request)
     {
         $this->authorize('editChallenge');
 
         $data = $this->validate($request, [
             'id'           => 'required|integer',
             'title'        => 'required|string|max:32',
-            'description'  => 'required|string|max:1024',
+            'description'  => 'nullable|string|max:1024',
             'basic_points' => 'required|integer',
             'category'     => 'required|string|max:256|in:CRYPTO,MISC,PWN,REVERSE,WEB',
-            'tags'         => 'nullable|string|max:256',
             'flag'         => 'required|string|max:256',
             'bank'         => 'required|integer|exists:banks,id'
         ]);
+
+        $data['description'] = isset($data['description']) ? $data['description'] : '';
 
         if(array_key_exists('poster', $data)) {
             unset($data['poster']);
         }
 
-        if(isset($data['tags'])) {
-            $data['tags'] = str_replace(' ', '', $data['tags']);
-            $data['tags'] = explode(',', $data['tags']);
-        }else{
-            $data['tags'] = [];
-        }
-
         $success = false;
-        DB::transaction(function() use($data, $challenge, &$success) {
-            Tag::where('challenge', '=', $data['id'])
-                ->delete();
-
-            $success = (bool)$challenge->updateWithTags($data);
+        $message = '';
+        DB::transaction(function() use($data, &$success, &$message) {
+            $challenge = Challenge::where('id', '=', $data['id'])->first();
+            if(is_null($challenge)) {
+                $message = __('challenge.api.admin.message.challengeNotExists');
+            } else {
+                $success = (bool)$challenge->update($data);
+                $message = $success ?
+                    __('global.success') :
+                    __('global.fail');
+            }
         });
 
         return [
             'status'  => 200,
-            'success' => $success
+            'success' => $success,
+            'message' => $message
         ];
     }
 

@@ -35,42 +35,50 @@
 </style>
 @endpush
 @section('content')
+@can('addChallenge')
+<div class="ui container">
+    <div class="ui basic vertical clearing segment">
+        <button id="challenge-add" class="ui primary right floated button"><i class="add circle icon"></i> {{ __('challenge.view.add') }}</button>
+    </div>
+</div>
+@endcan
 <div class="ui container" id="container-challenges"></div>
 
 @canany(['addChallenge', 'editChallenge'])
 <!-- modal -->
 <div class="ui tiny basic flat modal" id="challenge-modify">
     <i class="close icon"></i>
-    <div class="header">
-        {{ __('Add challenge') }}
+    <div class="header" id="challenge-modal-title">
+        {{ __('challenge.view.modal.title.add') }}
     </div>
     <div class="scrolling content">
         <div class="description">
-            <form class="ui form" id="form-challenge" name="challenge-add" method="post">
+            <form class="ui form" id="form-challenge" name="challenge-add" action="{{ url('api/challenge') }}" method="post">
                 @csrf
                 <input id="id" name="id" type="hidden">
+                <input id="form-method" name="_method" type="hidden" value="">
                 <div class="field">
-                    <label for="title">{{ __('Title') }}</label>
+                    <label for="title">{{ __('challenge.view.modal.label.title') }}</label>
                     <input name="title" type="text" id="title" value="" maxlength="32" required>
                 </div>
 
                 <div class="field">
-                    <label for="description">{{ __('Description') }}</label>
+                    <label for="description">{{ __('challenge.view.modal.label.description') }}</label>
                     <textarea name="description" type="text" id="description" rows="5" maxlength="1024"></textarea>
                 </div>
 
                 <div class="field">
-                    <label for="basic_points">{{ __('Points') }}</label>
+                    <label for="basic_points">{{ __('challenge.view.modal.label.points') }}</label>
                     <input name="basic_points" type="text" id="basic_points" value="">
                 </div>
 
                 <div class="field">
-                    <label for="flag">{{ __('Flag') }}</label>
+                    <label for="flag">{{ __('challenge.view.modal.label.flag') }}</label>
                     <input name="flag" type="text" id="flag" value="">
                 </div>
 
                 <div class="field">
-                    <label for="category">{{ __('Category') }}</label>
+                    <label for="category">{{ __('challenge.view.modal.label.category') }}</label>
                     <select id="category" name="category">
                         <option value="CRYPTO">CRYPTO</option>
                         <option value="MISC">MISC</option>
@@ -81,26 +89,14 @@
                 </div>
 
                 <div class="field">
-                    <label for="tags">{{ __('Tags') }}</label>
-                    <input name="tags" type="text" id="tags" value="">
-                </div>
-
-                <div class="field">
-                    <label for="bank">{{ __('Bank') }}</label>
+                    <label for="bank">{{ __('challenge.view.modal.label.bank') }}</label>
                     <select name="bank" id="bank"></select>
-                </div>
-
-                <div class="field">
-                    <div class="ui checkbox">
-                        <input name="is_hidden" type="checkbox" tabindex="0">
-                        <label>{{ __('Hide') }}</label>
-                    </div>
                 </div>
             </form>
         </div>
     </div>
     <div class="actions">
-        <input class="ui basic fluid button" id="btn-save" type="button" value="{{ __('Save') }}">
+        <input class="ui basic fluid button" id="btn-save" type="button" value="{{ __('challenge.view.modal.button.save') }}">
     </div>
 </div>
 <!-- end modal -->
@@ -124,18 +120,13 @@
     </div>
     @can('submitFlag')
     <div class="actions">
-        <input class="ui basic fluid button" id="btn-submit" type="button" value="Submit">
+        <input class="ui basic fluid button" id="btn-submit" type="button" value="{{ __('challenge.view.modal.submit') }}">
     </div>
     @endcan
 </div>
 <!-- end modal -->
 <!-- template -->
 <script id="tpl-container-challenges" type="text/html">
-    @can('addChallenge')
-    <div class="ui basic vertical clearing segment">
-        <button id="challenge-add" class="ui primary right floated button"><i class="add circle icon"></i> Add</button>
-    </div>
-    @endcan
     @{{if count > 0}}
     <div class="ui basic segments" id="cards-challenges">
         @{{each categories challenges category}}
@@ -204,33 +195,41 @@
 <script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
 <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
 <script src="{{ asset('js/common/tip.js') }}"></script>
+<script src="{{ asset('js/common/error.js') }}"></script>
 <script>
-
     $(document).ready(function() {
         loadChallenges();
         loadBanks();
+        $("#challenge-detail").modal();
+        $('#challenge-modify').modal();
         $("select[name=category]").dropdown();
         @canany(['addChallenge', 'editChallenge'])
+        $("#btn-save").click(function() {
+            $("#form-challenge").submit();
+        });
+        $("#challenge-add").click(function() {
+            $("#challenge-modal-title").text("{{ __('challenge.view.modal.title.add') }}");
+            $("#challenge-modify").modal('show');
+            fillForm();
+        });
         $("#form-challenge").validate({
             "submitHandler": function(form) {
-                var type = '';
                 if($("#id").val()) {
-                    form.action = "{{ url('challenge/edit') }}";
-                    type = "PUT";
+                    $("#form-method").val("PUT");
                 }else{
-                    form.action = "{{ url('challenge/add') }}";
-                    type = "POST";
+                    $("#form-method").val("POST");
                 }
                 $(form).ajaxSubmit({
-                    "type": type,
                     "success": function(data) {
                         if(data.success) {
-                            alert("成功");
-                            location.reload();
+                            $("#challenge-modify").modal('hide');
+                            tip.success("{{ __('global.success') }}");
+                            loadChallenges();
                         }else{
-                            alert("失败");
+                            tip.error(data.message || "{{ __('global.fail') }}");
                         }
-                    }
+                    },
+                    "error": handleError
                 });
             },
             "rules": {
@@ -259,24 +258,12 @@
             }
         });
         @endcanany
-        @canany(['addChallenge', 'editChallenge'])
-        $('#challenge-modify').modal({
-            "onHide": function() {
-                challengeClear();
-            }
-        });
-        @endcanany
-        @canany(['addChallenge', 'editChallenge'])
-        $("#btn-save").click(function() {
-            $("#form-challenge").submit();
-        });
-        @endcanany
         @can('submitFlag')
         $("#btn-submit").click(function() {
             var flag = $("#detail-flag").val().trim();
             var challengeId = $("#detail-id").val().trim();
             if(flag.length === 0) {
-                tip.error("flag 为空！");
+                tip.error("Flag 为空！");
                 return;
             }
             $.ajax({
@@ -288,47 +275,38 @@
                     "flag": flag
                 },
                 "success": function (response) {
-                    if(response.success) {
+                    if(response && response.success) {
                         if(response.correct) {
-                            tip.success("flag 正确");
-                            location.reload();
+                            tip.success("Flag 正确");
+                            $("#challenge-detail").modal("hide");
+                            loadChallenges();
                         }else{
-                            tip.error("flag 错误");
+                            tip.error("Flag 错误");
                         }
                     }else{
-                        tip.error(response.message);
+                        tip.error(response.message || "{{ __('global.unknownError') }}");
                     }
-                }
+                },
+                "error": handleError
             });
         });
         @endcan
     });
-    function bindEvents() {
-        @can('addChallenge')
-        $("#challenge-add").unbind("click").bind("click", function() {
-            $("#challenge-modify").modal('show');
-            fillForm();
-        });
-        @endcan
-    }
-    @canany(['addChallenge', 'editChallenge'])
-    function challengeClear() {
-        $("#challenge-modify input[type=text]").val("");
-        $("#challenge-modify textarea").val("");
-        $("#challenge-modify select").dropdown("clear");
-    }
-    @endcanany
     function challengeDetail(id) {
         $.ajax({
             "type": "GET",
             "url": "{{ url('challenge/detail') }}?id=" + id,
             "async": false,
             "success": function(response) {
-                if(response.success) {
+                if(response && response.success) {
                     $("#challenge-detail").modal('show');
+                    $("#detail-flag").val("");
                     fillDetail(response.data);
+                } else {
+                    tip.error(response.message || "{{ __('global.unknownError') }}");
                 }
-            }
+            },
+            "error": handleError
         });
     }
     @can('deleteChallenge')
@@ -342,36 +320,16 @@
             },
             "success": function (response) {
                 if(response.success) {
-                    alert("删除成功");
-                    location.reload();
+                    tip.success("删除成功");
+                    loadChallenges();
+                }else{
+                    tip.error("删除失败");
                 }
-            }
+            },
+            "error": handleError
         });
     }
     @endcan
-    @canany(['addChallenge', 'editChallenge'])
-    function sendChallengeAction(data, action) {
-        let url = "";
-        if(action === "add") {
-            url = "{{ url('challenge/add') }}"
-        }else{
-            url = "{{ url('challenge/edit') }}"
-        }
-        $.ajax({
-            "type": "POST",
-            "url": url,
-            "data": data,
-            "dataType": "json",
-            "async": false,
-            "success": function(response) {
-                if(response.success) {
-                    alert("成功保存");
-                    location.reload();
-                }
-            }
-        });
-    }
-    @endcanany
     @canany(['addChallenge', 'editChallenge'])
     function fillForm(data) {
         data = data || {};
@@ -399,38 +357,42 @@
             "success": function(response) {
                 if(response.success) {
                     fillForm(response.data);
+                    $("#challenge-modal-title").text("{{ __('challenge.view.modal.title.edit') }}");
                     $("#challenge-modify").modal('show');
                 }
-            }
+            },
+            "error": handleError
         });
     }
     @endcan
     function loadBanks() {
         $.ajax({
             "type": "GET",
-            "url": "{{ url('bank/list') }}",
+            "url": "{{ url('api/banks') }}",
             "success": function(response) {
-                if(response.status === 200 && response.success) {
+                if(response && response.success) {
                     let banks = response.data;
                     let html = "";
                     for(let i = 0;i < banks.length;++i) {
                         html += `<option value="${banks[i].id}">${banks[i].name}</option>`
                     }
                     $("#bank").html(html).dropdown("set selected", {{$bank}});
+                } else {
+                    tip.error(response.message || "{{ __('global.unknownError') }}");
                 }
-            }
+            },
+            "error": handleError
         });
     }
     function loadChallenges(url) {
         if(url == null) {
-            url = "{{ url('api/challenges') }}?bank={{$bank}}";
+            url = "{{ url('api/bank') . '/' . $bank }}";
         }
         $.ajax({
             "type": "GET",
             "url": url,
-            "async": false,
             "success": function(response, status) {
-                if(response.status === 200 && response.success) {
+                if(response && response.success) {
                     let challenges = response.data;
                     let categories = {};
                     for(let i = 0;i < challenges.length;++i) {
@@ -445,9 +407,9 @@
                             "count": challenges.length
                         })
                     );
-                    bindEvents();
                 }else{
-                    tip.error(response.message);
+                    response.message = response.message || "{{ __('global.unknownError') }}";
+                    tip.error(response.message,);
                     $("#container-challenges").html(
                         template("tpl-challenge-errors", {
                             "errors": [
@@ -459,7 +421,8 @@
                         })
                     );
                 }
-            }
+            },
+            "error": handleError
         });
     }
 </script>

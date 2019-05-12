@@ -8,10 +8,7 @@ use App\Models\Base\Bank;
 use App\Models\Base\Challenge;
 use App\Models\Base\Submission;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Redis;
 
 class ChallengeController extends Controller
 {
@@ -23,17 +20,14 @@ class ChallengeController extends Controller
     public function __construct(Challenge $challenges)
     {
         $this->challenges = $challenges;
-        $this->bank = Setting::get('bank.current') ?? false;
-        $this->startTime = Setting::get('bank.start_time') ?? '1970-01-01 00:00:00';
-        $this->endTime = Setting::get('bank.end_time') ?? '1970-01-01 00:00:00';
     }
 
-    public function index(Request $request)
+    public function index($bank = null)
     {
         $this->authorize('listChallenges');
 
         return view('base.challenge.index', [
-            'bank' => $request->query('bank', 1)
+            'bank' => $bank ?? Setting::get('bank.default') ?? 1
         ]);
     }
 
@@ -63,35 +57,17 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function list()
+    public function list($bank)
     {
         $this->authorize('listChallenges');
-
-
-        if(
-            !$this->bank ||
-            !Bank::where('id', $this->bank)->exists()
-        ) {
-            return $this->fail('请求的页面不存在', 403);
-        }
-
-        if(Carbon::parse($this->startTime)->gt(Carbon::now())) {
-            return $this->fail('比赛暂未开放', 403);
-        }
-
-        if(Carbon::parse($this->endTime)->lt(Carbon::now())) {
-            return $this->fail('比赛已结束', 403);
-        }
 
         $paginate = Challenge
             ::select([
                 'id', 'title', 'description', 'category', 'points', 'created_at', 'updated_at'
             ])
-            ->where('is_hidden', '=', false)
-            ->where('bank', '=', $this->bank)
+            ->where('bank', '=', $bank)
             ->whereNotNull('flag')
             ->orderBy('updated_at', 'desc')
-            ->with('tags:challenge,name')
             ->paginate(20, ['*'], 'p')
             ->jsonSerialize();
 
@@ -111,9 +87,6 @@ class ChallengeController extends Controller
             ->toArray();
 
         foreach($challenges as &$challenge) {
-            foreach($challenge['tags'] as $i => $tag) {
-                $challenge['tags'][$i] = $tag['name'];
-            }
             $challenge['is_solved'] = (bool)($submissionsMap[$challenge['id']]['is_correct'] ?? 0);
             $challenge['description'] = str_limit($challenge['description'], 40);
             $challenge['created_time'] = strtotime($challenge['created_at']);
@@ -140,14 +113,25 @@ class ChallengeController extends Controller
             ->firstOrFail()
             ->toArray();
 
-        $flag = Submission
+        $submission = Submission
             ::where('challenge', '=', $data['challengeId'])
             ->where('submitter', '=', Auth::id())
-            ->where('is_correct', '=', true)
+            ->where(function($query) use($data) {
+                /**
+                 * @var \Illuminate\Database\Query\Builder $query
+                 */
+                $query
+                    ->orWhere('content', '=', $data['flag'])
+                    ->orWhere('is_correct', '=', true);
+            })
             ->first();
 
-        if($flag) {
-            return $this->fail('先前已提交过正确的 flag', 200);
+        if(!is_null($submission)) {
+            if($submission->is_correct) {
+                return $this->fail('该挑战已解决，请勿重复提交', 200);
+            } else {
+                return $this->fail('该Flag已提交过，请勿重复提交', 200);
+            }
         }
 
         $data = [
