@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bank extends Model
 {
-    protected $fillable = [
-        'name',
-        'description',
-        'is_hidden'
+    protected $fillable = [];
+
+    protected $hidden = [
+        'is_hidden',
+        'deleted_at'
     ];
 
     public function challenges()
@@ -19,7 +20,7 @@ class Bank extends Model
 
     public function add($data)
     {
-        $data = array_only($data, ['name', 'description', 'is_hidden']);
+        $data = array_only($data, ['name', 'description']);
         return $this->create($data);
     }
 

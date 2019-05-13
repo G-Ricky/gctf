@@ -18,7 +18,7 @@ class CreateBanksTable extends Migration
             $table->string('name', 256)->comment('题库名');
             $table->string('description', 1024)->comment('描述');
             //$table->unsignedInteger('creator')->comment('创建人id');
-            $table->boolean('is_hidden')->comment('是否隐藏');
+            $table->boolean('is_hidden')->default(false)->comment('是否隐藏');
             $table->softDeletes();
             $table->timestamps();
         });
