@@ -12,14 +12,21 @@
 @endpush
 
 @section('content')
+    <div class="ui container">
+        <div class="ui basic vertical clearing segment">
+            @can('addSetting')
+                <button class="ui primary right floated button" onclick="addSetting()"><i class="add circle icon"></i> {{ __('setting.view.button.add') }}</button>
+            @endcan
+        </div>
+    </div>
     <div class="ui container" id="container-settings"></div>
 
     @canany(['addSetting', 'editSetting'])
     <!-- modal -->
     <div class="ui tiny basic flat modal" id="setting-save">
         <i class="close icon"></i>
-        <div class="header">
-            {{ __('Save Setting') }}
+        <div class="header" id="modal-setting-title">
+            {{ __('setting.view.admin.modal.title.add') }}
         </div>
         <div class="scrolling content">
             <div class="description">
@@ -28,12 +35,12 @@
                     <input id="setting-id" name="id" type="hidden" value="">
                     <input id="form-method" name="_method" type="hidden" value="">
                     <div class="field">
-                        <label for="setting-name">{{ __('Name') }}</label>
+                        <label for="setting-name">{{ __('setting.view.admin.modal.label.name') }}</label>
                         <input id="setting-name" name="name" type="text" value="" required maxlength="128">
                     </div>
 
                     <div class="field">
-                        <label for="setting-type">{{ __('Type') }}</label>
+                        <label for="setting-type">{{ __('setting.view.admin.modal.label.type') }}</label>
                         <select id="setting-type" name="type">
                             <option value="string">String</option>
                             <option value="integer">Integer</option>
@@ -50,22 +57,22 @@
                     <textarea id="setting-value" name="value" style="display:none"></textarea>
 
                     <div class="field" id="field-setting-value-text" data-group="field-value" style="display: none">
-                        <label for="setting-value-text">{{ __('Value') }}</label>
+                        <label for="setting-value-text">{{ __('setting.view.admin.modal.label.value') }}</label>
                         <textarea id="setting-value-text" maxlength="2000" rows="3"></textarea>
                     </div>
 
                     <div class="field" id="field-setting-value-integer" data-group="field-value" style="display: none">
-                        <label for="setting-value-integer">{{ __('Value') }}</label>
+                        <label for="setting-value-integer">{{ __('setting.view.admin.modal.label.value') }}</label>
                         <input id="setting-value-integer" type="text" value="0">
                     </div>
 
                     <div class="field" id="field-setting-value-float" data-group="field-value" style="display: none">
-                        <label for="setting-value-float">{{ __('Value') }}</label>
+                        <label for="setting-value-float">{{ __('setting.view.admin.modal.label.value') }}</label>
                         <input id="setting-value-float" type="text" value="0">
                     </div>
 
                     <div class="field" id="field-setting-value-date" data-group="field-value" style="display: none">
-                        <label for="setting-value-date">{{ __('Value') }}</label>
+                        <label for="setting-value-date">{{ __('setting.view.admin.modal.label.value') }}</label>
                         <div class="ui input left icon">
                             <i class="calendar icon"></i>
                             <input id="setting-value-date" type="text" placeholder="Date" value="2017-06-01">
@@ -73,21 +80,21 @@
                     </div>
 
                     <div class="field" id="field-setting-value-boolean" data-group="field-value" style="display: none">
-                        <label for="setting-value-boolean">{{ __('Value') }}</label>
+                        <label for="setting-value-boolean">{{ __('setting.view.admin.modal.label.value') }}</label>
                         <div class="ui toggle checkbox">
                             <input id="setting-value-boolean" type="checkbox">
                         </div>
                     </div>
 
                     <div class="field">
-                        <label for="setting-description">{{ __('Description') }}</label>
+                        <label for="setting-description">{{ __('setting.view.admin.modal.label.description') }}</label>
                         <textarea id="setting-description" name="description" maxlength="250" rows="6"></textarea>
                     </div>
                 </form>
             </div>
         </div>
         <div class="actions">
-            <input class="ui basic fluid button" form="form-setting" type="submit" value="{{ __('Save') }}">
+            <input class="ui basic fluid button" form="form-setting" type="submit" value="{{ __('setting.view.admin.modal.button.save') }}">
         </div>
     </div>
     <!-- end modal -->
@@ -95,21 +102,16 @@
 
     <!-- template -->
     <script id="tpl-container-settings" type="text/html">
-        <div class="ui basic vertical clearing segment">
-            @can('addSetting')
-                <button class="ui primary right floated button" onclick="addSetting()"><i class="add circle icon"></i> {{ __('Add') }}</button>
-            @endcan
-        </div>
         <div class="ui basic vertical segment" id="table-settings">
             <table class="ui single line compact table">
                 <thead>
                 <tr>
-                    <th>{{ __('ID') }}</th>
-                    <th>{{ __('Name') }}</th>
-                    <th>{{ __('Value') }}</th>
-                    <th>{{ __('Type') }}</th>
-                    <th>{{ __('Description') }}</th>
-                    <th>{{ __('Operation') }}</th>
+                    <th>{{ __('setting.view.admin.table.row.id') }}</th>
+                    <th>{{ __('setting.view.admin.table.row.name') }}</th>
+                    <th>{{ __('setting.view.admin.table.row.value') }}</th>
+                    <th>{{ __('setting.view.admin.table.row.type') }}</th>
+                    <th>{{ __('setting.view.admin.table.row.description') }}</th>
+                    <th>{{ __('setting.view.admin.table.row.operation') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -122,12 +124,12 @@
                     <td>@{{setting.description}}</td>
                     <td>
                         @can('editSetting')
-                        <button class="ui primary icon button" data-tooltip="{{ __('Edit setting') }}" onclick="editSetting('@{{setting.id}}')">
+                        <button class="ui primary icon button" data-tooltip="{{ __('setting.view.admin.table.row.tooltip.edit') }}" onclick="editSetting('@{{setting.id}}')">
                             <i class="edit icon"></i>
                         </button>
                         @endcan
                         @can('deleteSetting')
-                        <button class="ui negative icon button" data-tooltip="{{ __('Delete setting') }}" onclick="confirm('{{ __('Are you sure to delete it?')}}') &amp;&amp; deleteSetting('@{{setting.id}}')">
+                        <button class="ui negative icon button" data-tooltip="{{ __('setting.view.admin.table.row.tooltip.delete') }}" onclick="confirm('{{ __('setting.view.admin.table.row.delete.confirm')}}') &amp;&amp; deleteSetting('@{{setting.id}}')">
                             <i class="trash icon"></i>
                         </button>
                         @endcan
@@ -154,18 +156,19 @@
     <script src="{{ asset('js/semantic-ui-calendar.min.js') }}"></script>
     <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
     <script src="{{ asset('js/common/tip.js') }}"></script>
+    <script src="{{ asset('js/common/error.js') }}"></script>
     <script>
         let settingsDict = {};
         let placeHolders = {
-            "string"  : "{{ __('Please input text here.') }}",
-            "integer" : "{{ __('Please input integer here.') }}",
-            "float"   : "{{ __('Please input real here') }}",
-            "date"    : "{{ __('Please input date, format YYYY-MM-DD hh:mm:ss, fill zeros to align.') }}",
+            "string"  : "{{ __('setting.view.admin.modal.placeholder.string') }}",
+            "integer" : "{{ __('setting.view.admin.modal.placeholder.integer') }}",
+            "float"   : "{{ __('setting.view.admin.modal.placeholder.float') }}",
+            "date"    : "{{ __('setting.view.admin.modal.placeholder.date') }}",
             "boolean" : null,
             "null"    : null,
-            "array"   : "{{ __('Please input array in json format.') }}",
-            "object"  : "{{ __('Please input object in serialized format.') }}",
-            "stdclass": "{{ __('Please input object in json format.') }}"
+            "array"   : "{{ __('setting.view.admin.modal.placeholder.array') }}",
+            "object"  : "{{ __('setting.view.admin.modal.placeholder.object') }}",
+            "stdclass": "{{ __('setting.view.admin.modal.placeholder.stdclass') }}"
         };
         function loadSettings(url) {
             if(url == null) {
@@ -200,6 +203,7 @@
         @can('addSetting')
         function addSetting() {
             $("#form-method").val("POST");
+            $("#modal-setting-title").text("{{ __('setting.view.admin.modal.title.add') }}");
             $("#setting-id").val("");
             $("#setting-name").val("");
             $("#setting-value").val("");
@@ -217,6 +221,7 @@
         @can('editSetting')
         function editSetting(id) {
             let setting = settingsDict[id];
+            $("#modal-setting-title").text("{{ __('setting.view.admin.modal.title.edit') }}");
             $("#form-method").val("PUT");
             $("#setting-id").val(setting.id);
             $("#setting-name").val(setting.name);
@@ -294,7 +299,7 @@
         @can('deleteSetting')
         function deleteSetting(id) {
             if(id == null) {
-                tip.error("{{ __('The setting does not exist!') }}");
+                tip.error("{{ __('setting.view.admin.message.settingNotExist') }}");
             }
             $.ajax({
                 "url": "{{ url('api/setting') }}",
@@ -305,7 +310,7 @@
                 },
                 "success": function(response, status) {
                     if(response && response.success) {
-                        tip.success("{{ __('Success') }}");
+                        tip.success("{{ __('global.success') }}");
                         loadSettings();
                     } else {
                         tip.error(response.message || "未知错误！");
@@ -340,22 +345,6 @@
             date.setSeconds(matches[7] || 0);
             date.setMilliseconds(0);
             return date;
-        }
-        function handleError(jqXHR, textStatus, error) {
-            if(textStatus !== "parsererror" && jqXHR.status === 422) {
-                let messages = "";
-                let response = JSON.parse(jqXHR.responseText);
-                for(let key in response.errors) {
-                    let error = response.errors[key];
-                    for(let i = 0;i < error.length;++i) {
-                        messages += "<p>" + error[i] + "</p>";
-                    }
-                }
-
-                tip.error(messages);
-                return;
-            }
-            tip.error("未知错误！");
         }
         $(document).ready(function() {
             @canany(['addSetting', 'editSetting'])
