@@ -44,6 +44,8 @@ function handleError(jqXHR, textStatus, error) {
         return;
     } else if(jqXHR.readyState === 0) {
         tip.error("网络未连接！");
+    } else if(jqXHR.status === 404) {
+        tip.error("目标不存在！");
     } else {
         tip.error("未知错误！");
     }
