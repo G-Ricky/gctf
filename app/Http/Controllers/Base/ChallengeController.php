@@ -31,28 +31,17 @@ class ChallengeController extends Controller
         ]);
     }
 
-    public function detail(Request $request, Challenge $challenges)
+    public function detail($id)
     {
         $this->authorize('listChallenges');
 
-        $challengeId = $request->query('id', 1);
-        $result = $challenges->detail($challengeId)->toArray();
-        if($result) {
-            $success = true;
-            $data = $result[0];
-            $tags = [];
-            foreach($data['tags'] as &$tag) {
-                $tags[] = $tag['name'];
-            }
-            $data['tags'] = $tags;
-        }else{
-            $success = false;
-            $data = null;
-        }
+        $data = Challenge::where('id', '=', $id)
+            ->firstOrFail()
+            ->toArray();
 
         return [
             'status'  => 200,
-            'success' => $success,
+            'success' => true,
             'data'    => $data
         ];
     }
@@ -103,12 +92,14 @@ class ChallengeController extends Controller
 
     public function submitFlag(Request $request)
     {
+        $this->authorize('submitFlag');
+
         $data = $this->validate($request, [
             'challengeId' => 'required|integer',
             'flag'        => 'required'
         ]);
 
-        $challenge = Challenge
+        $challenge = \App\Models\Admin\Challenge
             ::where('id', '=', $data['challengeId'])
             ->firstOrFail()
             ->toArray();

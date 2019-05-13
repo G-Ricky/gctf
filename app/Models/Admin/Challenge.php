@@ -5,9 +5,12 @@ namespace App\Models\Admin;
 use App\Models\Base\Tag;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Challenge extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'title',
         'description',
@@ -17,7 +20,6 @@ class Challenge extends Model
         'basic_points',
         'flag',
         'bank',
-        'is_hidden'
     ];
 
     protected $hidden = [

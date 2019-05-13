@@ -267,7 +267,7 @@
                 return;
             }
             $.ajax({
-                "url": "{{ url('flag') }}",
+                "url": "{{ url('api/flag') }}",
                 "type": "POST",
                 "dataType": "json",
                 "data": {
@@ -295,7 +295,7 @@
     function challengeDetail(id) {
         $.ajax({
             "type": "GET",
-            "url": "{{ url('challenge/detail') }}?id=" + id,
+            "url": "{{ url('api/ch') }}/" + id,
             "async": false,
             "success": function(response) {
                 if(response && response.success) {
@@ -352,7 +352,7 @@
     function challengeEdit(id) {
         $.ajax({
             "type": "GET",
-            "url": "{{ url('challenge/info') }}?id=" + id,
+            "url": "{{ url('api/challenge') }}/" + id,
             "async": false,
             "success": function(response) {
                 if(response.success) {

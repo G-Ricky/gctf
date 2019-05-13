@@ -102,31 +102,19 @@ class ChallengeController extends Controller
         ];
     }
 
-    public function info(Request $request)
+    public function info($id)
     {
         $this->authorize('viewFlag');
 
-        $data = $this->validate($request, [
-            'id' => 'required|integer'
-        ]);
-
-        $challenges = Challenge
-            ::where('id', '=', $data['id'])
-            ->where('is_hidden', '=', false)
-            ->with('tags:challenge,name')
+        $challenge = Challenge
+            ::where('id', '=', $id)
             ->firstOrFail()
             ->toArray();
-
-        if(array_key_exists('tags', $challenges)) {
-            foreach($challenges['tags'] as $i => $tag) {
-                $challenges['tags'][$i] = $tag['name'];
-            }
-        }
 
         return [
             'status'  => 200,
             'success' => true,
-            'data'    => $challenges
+            'data'    => $challenge
         ];
     }
 }

@@ -11,18 +11,16 @@ class Challenge extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [
-        'title',
-        'description',
-        'category',
-        'poster',
-        'points',
-        'flag',
-        'bank'
+    protected $fillable = [];
+
+    protected $dates = [
+        'deleted_at'
     ];
 
-    protected $datas = [
-        'deleted_at'
+    protected $hidden = [
+        'poster',
+        'flag',
+        'deleted_at',
     ];
 
     public function bank()
