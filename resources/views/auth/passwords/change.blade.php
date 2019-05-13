@@ -14,22 +14,22 @@
         </div>
         <div class="twelve wide column">
             <div class="ui basic vertical center aligned segment">
-                <h1 class="ui header">{{ __('Reset Password') }}</h1>
+                <h1 class="ui header">{{ __('auth.changePassword.view.title') }}</h1>
             </div>
             <div class="ui basic vertical segment">
                 <form class="ui form" id="form-reset" action="{{ url('api/password') }}" method="post">
                     @csrf
                     @method('PUT')
                     <div class="field">
-                        <label>{{ __('Old password') }}</label>
+                        <label>{{ __('auth.changePassword.view.label.password.old') }}</label>
                         <input id="old_password" name="old_password" type="password" value="" required maxlength="16">
                     </div>
                     <div class="field">
-                        <label>{{ __('New password') }}</label>
+                        <label>{{ __('auth.changePassword.view.label.password.new') }}</label>
                         <input id="password" name="password" type="password" value="" required maxlength="16">
                     </div>
                     <div class="field">
-                        <label>{{ __('Password confirmation') }}</label>
+                        <label>{{ __('auth.changePassword.view.label.password.confirm') }}</label>
                         <input id="password-confirmation" name="password_confirmation" type="password" value="" required maxlength="16">
                     </div>
                 </form>
@@ -37,7 +37,7 @@
             <div class="ui basic vertical segment">
                 <div class="ui form" id="form-reset">
                     <div class="field">
-                        <button type="submit" form="form-reset" class="ui fluid large primary submit button">{{ __('Reset') }}</button>
+                        <button type="submit" form="form-reset" class="ui fluid large primary submit button">{{ __('auth.changePassword.view.button.save') }}</button>
                     </div>
                 </div>
             </div>
@@ -50,24 +50,25 @@
     <script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
     <script src="{{ asset('js/common/tip.js') }}"></script>
+    <script src="{{ asset('js/common/error.js') }}"></script>
     <script>
         $(document).ready(function() {
             $("#form-reset").validate({
                 "submitHandler": function(form) {
                     $(form).ajaxSubmit({
                         "success": function(response, status) {
-                            if(response.status === 200) {
-                                if(response.success) {
-                                    tip.success("Success");
-                                    setTimeout(function() {
-                                        location.href = "{{ route('login') }}";
-                                    }, 3000);
-                                }else{
-                                    tip.error(response.message);
-                                }
+                            if(response && response.success) {
+                                tip.success("{{ __('global.success') }}");
+                                setTimeout(function() {
+                                    location.href = "{{ route('login') }}";
+                                }, 3000);
+                            }else{
+                                tip.error(response.message || "{{ __('global.fail') }}");
                             }
-                        }
+                        },
+                        "error": handleError
                     });
+                    return false;
                 },
                 "rules": {
                     "old_password": {

@@ -38,7 +38,7 @@
     <div class="column">
         <h2 class="ui image header">
             <img src="{{ asset('img') }}/logo.png" class="image">
-            <div class="content">{{ __('Send Password Reset Email') }}</div>
+            <div class="content">{{ __('auth.email.view.title') }}</div>
         </h2>
         <form class="ui large form" method="POST" action="{{ route('password.email') }}">
             @csrf
@@ -46,11 +46,11 @@
                 <div class="field">
                     <div class="ui left icon input{{ $errors->has('username') ? ' error' : '' }}">
                         <i class="mail icon"></i>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('Email') }}" required autofocus>
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" placeholder="{{ __('auth.email.view.placeholder.email') }}" required autofocus>
                     </div>
                 </div>
                 <button type="submit" class="ui fluid large primary submit button">
-                    {{ __('Send') }}
+                    {{ __('auth.email.view.button.send') }}
                 </button>
             </div>
             <div class="ui message">

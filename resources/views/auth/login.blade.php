@@ -36,7 +36,7 @@
     <div class="column">
         <h2 class="ui image header">
             <img src="{{ asset('img') }}/logo.png" class="image">
-            <div class="content">{{ __('Login') }}</div>
+            <div class="content">{{ __('auth.login.view.title') }}</div>
         </h2>
         <form class="ui large form" action="{{ route('login') }}" method="POST">
             @csrf
@@ -44,23 +44,23 @@
                 <div class="field">
                     <div class="ui left icon input{{ $errors->has('username') ? ' error' : '' }}">
                         <i class="user icon"></i>
-                        <input type="text" name="username" placeholder="{{ __('Username') }}" required autofocus>
+                        <input type="text" name="username" placeholder="{{ __('auth.login.view.placeholder.username') }}" required autofocus>
                     </div>
                 </div>
                 <div class="field">
                     <div class="ui left icon input{{ $errors->has('password') ? ' error' : '' }}">
                         <i class="lock icon"></i>
-                        <input type="password" name="password" placeholder="{{ __('Password') }}" required>
+                        <input type="password" name="password" placeholder="{{ __('auth.login.view.placeholder.password') }}" required>
                     </div>
 
                 </div>
                 <div class="field">
                     <div class="ui checkbox">
                         <input id="lg-remember" type="checkbox" name="remember" {{ old('remember') ? 'checked' : '' }}>
-                        <label for="lg-remember">{{ __('Remember Me') }}</label>
+                        <label for="lg-remember">{{ __('auth.login.view.label.remember') }}</label>
                     </div>
                 </div>
-                <button type="submit" class="ui fluid large primary submit button">{{ __('Login') }}</button>
+                <button type="submit" class="ui fluid large primary submit button">{{ __('auth.login.view.button.login') }}</button>
             </div>
 
             <div class="ui error message{{ count($errors) > 0?' visible':'' }}">
@@ -79,10 +79,13 @@
 
         <div class="ui message">
             <ul>
-                <li>New to us? <a href="{{ route('register') }}">Sign Up</a></li>
+                <li>
+                    {{ __('auth.login.text.newToUs') }}
+                    <a href="{{ route('register') }}">{{ __('auth.login.view.link.signup') }}</a>
+                </li>
                 <li>
                     <a class="btn btn-link" href="{{ route('password.request') }}">
-                        {{ __('Forgot Your Password?') }}
+                        {{ __('auth.login.view.link.forgetPassword') }}
                     </a>
                 </li>
             </ul>
