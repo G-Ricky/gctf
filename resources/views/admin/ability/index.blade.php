@@ -4,25 +4,26 @@
 
 @push('stylesheets')
     <link href="{{ asset('css/extends/modal.flat.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
     <style>
-        #container-privileges {
-            display: flex;
-            flex-direction: column;
-            min-height: 100%;
-        }
-        #container-privileges #table-privileges {
-            flex: 1;
-        }
     </style>
 @endpush
 
 @section('content')
+    <div class="ui container">
+        @can('addPrivilege')
+        <div class="ui basic vertical clearing segment">
+            <button class="ui primary right floated button" onclick="addPrivilege()"><i class="add circle icon"></i> {{ __('privilege.view.admin.button.add') }}</button>
+        </div>
+        @endcan
+    </div>
     <div class="ui container" id="container-privileges"></div>
     @canany(['addPrivilege', 'editPrivilege'])
     <div class="ui tiny basic flat modal" id="privilege-save">
         <i class="close icon"></i>
-        <div class="header">
-            {{ __('Add Privilege') }}
+        <div class="header" id="modal-privilege-title">
+            {{ __('privilege.view.admin.modal.title.add') }}
         </div>
         <div class="scrolling content">
             <div class="description">
@@ -31,37 +32,32 @@
                     <input id="privilege-id" name="id" type="hidden" value="">
                     <input id="form-method" name="_method" type="hidden" value="">
                     <div class="field">
-                        <label for="privilege-name">{{ __('Name') }}</label>
+                        <label for="privilege-name">{{ __('privilege.view.admin.modal.label.name') }}</label>
                         <input id="privilege-name" name="name" type="text" value="" required maxlength="100">
                     </div>
 
                     <div class="field">
-                        <label for="privilege-title">{{ __('Title') }}</label>
+                        <label for="privilege-title">{{ __('privilege.view.admin.modal.label.title') }}</label>
                         <textarea id="privilege-title" name="title" maxlength="200"></textarea>
                     </div>
                 </form>
             </div>
         </div>
         <div class="actions">
-            <input class="ui basic fluid button" form="form-privilege" type="submit" value="{{ __('Save') }}">
+            <input class="ui basic fluid button" form="form-privilege" type="submit" value="{{ __('privilege.view.admin.modal.button.save') }}">
         </div>
     </div>
     @endcanany
     <script id="tpl-container-privileges" type="text/html">
-        @can('addPrivilege')
-        <div class="ui basic vertical clearing segment">
-            <button class="ui primary right floated button" onclick="addPrivilege()"><i class="add circle icon"></i> {{ __('Add') }}</button>
-        </div>
-        @endcan
         <div class="ui basic vertical segment" id="table-privileges">
             @{{if privileges && privileges.length > 0}}
             <table class="ui single line table">
                 <thead>
                 <tr>
-                    <th>{{ __('ID') }}</th>
-                    <th>{{ __('Name') }}</th>
-                    <th>{{ __('Title') }}</th>
-                    <th>{{ __('Operation') }}</th>
+                    <th>{{ __('privilege.view.admin.table.id') }}</th>
+                    <th>{{ __('privilege.view.admin.table.name') }}</th>
+                    <th>{{ __('privilege.view.admin.table.title') }}</th>
+                    <th>{{ __('privilege.view.admin.table.operation') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -72,12 +68,12 @@
                     <td>@{{privilege.title}}</td>
                     <td>
                         @can('editPrivilege')
-                        <button class="ui primary icon button" data-tooltip="{{ __('Edit privilege') }}" onclick="editPrivilege('@{{privilege.id}}')">
+                        <button class="ui primary icon button" data-tooltip="{{ __('privilege.view.admin.table.row.tooltip.edit') }}" onclick="editPrivilege('@{{privilege.id}}')">
                             <i class="edit icon"></i>
                         </button>
                         @endcan
                         @can('deletePrivilege')
-                        <button class="ui negative icon button" data-tooltip="{{ __('Delete privilege') }}" onclick="confirm('确定删除？') &amp;&amp; deletePrivilege('@{{privilege.id}}')">
+                        <button class="ui negative icon button" data-tooltip="{{ __('privilege.view.admin.table.row.tooltip.delete') }}" onclick="confirm('{{ __('privilege.view.admin.table.row.confirm.delete') }}？') &amp;&amp; deletePrivilege('@{{privilege.id}}')">
                             <i class="trash icon"></i>
                         </button>
                         @endcan
@@ -106,6 +102,9 @@
 @push('scripts')
     <script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
+    <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+    <script src="{{ asset('js/common/tip.js') }}"></script>
+    <script src="{{ asset('js/common/error.js') }}"></script>
     <script>
         let privilegesDict = {};
         function loadPrivileges(url) {
@@ -116,24 +115,22 @@
                 "url": url,
                 "type": "GET",
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
-                        if(response.success) {
-                            let privileges = response.data;
-                            for(let i = 0;i < privileges.length;++i) {
-                                privilegesDict[privileges[i].id] = privileges[i];
-                            }
-                            $("#container-privileges").html(
-                                template("tpl-container-privileges", {
-                                    "privileges": response.data,
-                                    "paginate": response.paginate
-                                })
-                            );
+                    if(response && response.success) {
+                        let privileges = response.data;
+                        for(let i = 0;i < privileges.length;++i) {
+                            privilegesDict[privileges[i].id] = privileges[i];
                         }
+                        $("#container-privileges").html(
+                            template("tpl-container-privileges", {
+                                "privileges": response.data,
+                                "paginate": response.paginate
+                            })
+                        );
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 },
-                "error": function(XmlHttpRequest, textStatus, error) {
-
-                },
+                "error": handleError,
                 "complete": function() {
 
                 }
@@ -142,6 +139,7 @@
         @can('addPrivilege')
         function addPrivilege() {
             $("#form-method").val("POST");
+            $("#modal-privilege-title").text("{{ __('privilege.view.admin.modal.title.add') }}");
             $("#privilege-id").val("");
             $("#privilege-name").val("");
             $("#privilege-title").val("");
@@ -152,6 +150,7 @@
         function editPrivilege(id) {
             let privilege = privilegesDict[id];
             $("#form-method").val("PUT");
+            $("#modal-privilege-title").text("{{ __('privilege.view.admin.modal.title.edit') }}");
             $("#privilege-id").val(id);
             $("#privilege-name").val(privilege.name);
             $("#privilege-title").val(privilege.title);
@@ -168,13 +167,14 @@
                     "_method": "DELETE"
                 },
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
+                    if(response && response.success) {
                         loadPrivileges();
+                        tip.success("{{ __('global.success') }}");
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 },
-                "error": function() {
-
-                },
+                "error": handleError,
                 "complete": function() {
 
                 }
@@ -182,20 +182,24 @@
         }
         @endcan
         $(document).ready(function() {
+            @canany(['addPrivilege', 'editPrivilege'])
+            $("#privilege-save").modal();
+            @endcanany
             loadPrivileges();
             @canany(['addPrivilege'])
             $("#form-privilege").validate({
                 "submitHandler": function(form) {
                     $(form).ajaxSubmit({
                         "success": function(response, status) {
-                            if(status === "success" && response && response.status === 200) {
+                            if(response && response.success) {
                                 $("#privilege-save").modal('hide');
                                 loadPrivileges();
+                                tip.success("{{ __('global.success') }}");
+                            } else {
+                                tip.error(response.message || "{{ __('global.fail') }}");
                             }
                         },
-                        "error": function(jqXHR, textStatus, error) {
-
-                        },
+                        "error": handleError,
                         "complete": function(jqXHR, textStatus) {
 
                         }

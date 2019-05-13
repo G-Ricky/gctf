@@ -3,13 +3,15 @@
 @extends('layouts/app')
 
 @push('stylesheets')
+<link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+<link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
 @endpush
 
 @section('content')
     <div class="ui container">
         @can('modifyPermission')
         <div class="ui basic vertical clearing segment">
-            <button class="ui primary right floated button" onclick="savePermissions()"><i class="file text outline icon"></i> {{ __('Save') }}</button>
+            <button class="ui primary right floated button" onclick="savePermissions()"><i class="file text outline icon"></i> {{ __('permission.view.admin.button.save') }}</button>
         </div>
         @endcan
         <div class="ui basic vertical segment" id="list-privileges"></div>
@@ -32,36 +34,43 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+    <script src="{{ asset('js/common/tip.js') }}"></script>
+    <script src="{{ asset('js/common/error.js') }}"></script>
     <script>
         function loadPermissions() {
             $.get(
                 "{{ url('api/permissions') }}/{{ $roleId }}",
                 function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
+                    if(response && response.success) {
                         let permissions = response.data;
                         for(let i in permissions) {
                             $("#privilege-" + permissions[i])
                                 .prop("checked", true)
                                 .data("origin", 1);
                         }
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 }
-            );
+            ).fail(handleError);
         }
         function loadPrivileges() {
             $.get(
                 "{{ url('api/privileges/all') }}",
                 function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
+                    if(response && response.success) {
                         $("#list-privileges").html(
                             template("tpl-list-privileges", {
                                 "privileges": response.data
                             })
                         ).accordion();
                         loadPermissions();
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 }
-            );
+            ).fail(handleError);
         }
         @can('modifyPermission')
         function savePermissions() {
@@ -89,7 +98,7 @@
                 }
             });
             if(grants.length === 0 && revokes.length === 0) {
-                alert("Nothing changed");
+                tip.error("没有任何更改");
                 return;
             }
             $.ajax({
@@ -101,17 +110,14 @@
                     "revokes": revokes
                 },
                 "success": function (response, status) {
-                    if(status === "success" && response && response.status === 200) {
-                        if(response.success) {
-                            loadPrivileges();
-                        }else{
-                            alert("修改权限失败！");
-                        }
+                    if(response && response.success) {
+                        tip.error("{{ __('global.success') }}");
+                        loadPrivileges();
+                    }else{
+                        tip.error(response.message || "修改权限失败！");
                     }
                 },
-                "error": function () {
-                    
-                },
+                "error": handleError,
                 "complete": function () {
 
                 }
