@@ -63,6 +63,8 @@
                         "paginate": response.paginate
                     });
                     $("#bank-list").html(html);
+                } else {
+                    tip.error(response.message || "{{ __('global.unknownError') }}");
                 }
             },
             "error": handleError
@@ -81,7 +83,7 @@
                             $("#bank-modify").modal('hide');
                             location.reload(true);
                         } else {
-                            tip.error(response.message || "{{ __('global.unknownError') }}")
+                            tip.error(response.message || "{{ __('global.unknownError') }}");
                         }
                     },
                     "error": handleError,
