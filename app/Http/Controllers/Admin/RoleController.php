@@ -80,10 +80,10 @@ class RoleController extends Controller
             'title' => 'nullable|string|max:200',
         ]);
 
+        $data['title'] = $data['title'] ?? '';
+
         $affectedRow = Bouncer::role()
-            ->where('id', '=',
-                $data['id']
-            )
+            ->findOrFail($data['id'])
             ->update($data);
 
         return [
@@ -101,7 +101,7 @@ class RoleController extends Controller
         ]);
 
         $success = Bouncer::role()
-            ->where('id', '=', $data['id'])
+            ->findOrFail($data['id'])
             ->delete();
 
         return [
