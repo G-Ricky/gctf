@@ -45,10 +45,11 @@ class ContentController extends Controller
 
         $data = $this->validate($request, [
             'title'   => 'nullable|string|max:60',
-            'type'    => 'nullable|string|max:16',
+            'type'    => 'required|string|max:16',
             'content' => 'required|string|max:2000',
         ]);
 
+        $data['title'] = $data['title'] ?? '';
         $data['modifier'] = $data['poster'] = Auth::id();
 
         $content = Content::create($data);
@@ -66,7 +67,7 @@ class ContentController extends Controller
         $data = $this->validate($request, [
             'id'      => 'required|integer|min:1|exists:contents',
             'title'   => 'nullable|string|max:60',
-            'type'    => 'nullable|string|max:16',
+            'type'    => 'required|string|max:16',
             'content' => 'nullable|string|max:2000',
         ]);
 
@@ -78,7 +79,7 @@ class ContentController extends Controller
             unset($data['title']);
         }
 
-        $affectedRows = Content::where('id', '=', $data['id'])->update($data);
+        $affectedRows = Content::findOrFail($data['id'])->update($data);
 
         return [
             'status'  => 200,
@@ -94,7 +95,7 @@ class ContentController extends Controller
             'id' => 'required|integer|min:1'
         ]);
 
-        $success = Content::where('id', '=', $data['id'])->delete();
+        $success = Content::findOrFail($data['id'])->delete();
 
         return [
             'status'  => 200,
