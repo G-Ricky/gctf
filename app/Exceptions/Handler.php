@@ -50,10 +50,17 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if($exception instanceof AuthorizationException) {
-            return response()->view('errors.errors', [
-                'title'   => 'Forbidden',
-                'message' => 'You have no access to this page.'
-            ], 403);
+            if($request->ajax()) {
+                return response()->json([
+                    'status'  => $exception->getCode(),
+                    'message' => '您没有访问该页面的权限。',
+                ]);
+            } else {
+                return response()->view('errors.errors', [
+                    'title'   => 'Forbidden',
+                    'message' => '您没有访问该页面的权限。'
+                ], 403);
+            }
         }else if($exception instanceof TypeException) {
             return response()->json([
                 'status'  => $exception->getCode(),
