@@ -93,6 +93,9 @@
         <div class="ui simple dropdown item">
             {{ __('navigation.view.admin') }} <i class="dropdown icon"></i>
             <div class="menu">
+                @can('listBanks')
+                <a href="{{ url('admin/banks') }}" class="item">{{ __('navigation.view.banks') }}</a>
+                @endcan
                 @can('listSettings')
                 <a href="{{ url('settings') }}" class="item">{{ __('navigation.view.settings') }}</a>
                 @endcan
