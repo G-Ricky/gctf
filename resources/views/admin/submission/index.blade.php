@@ -23,12 +23,12 @@
             <table class="ui selectable single line compact table">
                 <thead>
                 <tr>
-                    <th>{{ __('Challenge') }}</th>
-                    <th>{{ __('Content') }}</th>
-                    <th>{{ __('Submitter') }}</th>
-                    <th>{{ __('Time') }}</th>
+                    <th>{{ __('submission.view.admin.table.challenge') }}</th>
+                    <th>{{ __('submission.view.admin.table.content') }}</th>
+                    <th>{{ __('submission.view.admin.table.submitter') }}</th>
+                    <th>{{ __('submission.view.admin.table.time') }}</th>
                     @canany(['deleteSubmission'])
-                    <th>{{ __('Operation') }}</th>
+                    <th>{{ __('submission.view.admin.table.operation') }}</th>
                     @endcanany
                 </tr>
                 </thead>
@@ -36,13 +36,19 @@
                 @{{each submissions submission index}}
                 <tr class="@{{if submission.isCorrect}}positive@{{else}}negative@{{/if}}">
                     <td>@{{submission.challenge}}</td>
-                    <td>@{{submission.content}}</td>
+                    <td>
+                        @{{if submission.content.length > 20}}
+                        @{{submission.content.substr(0, 20)}}...
+                        @{{else}}
+                        @{{submission.content}}
+                        @{{/if}}
+                    </td>
                     <td>@{{submission.submitter}}</td>
                     <td>@{{submission.updateTime}}</td>
                     @canany(['deleteSubmission'])
                     <td>
                         @can('deleteSubmission')
-                        <button class="ui negative icon button" data-tooltip="{{ __('Delete submission') }}" onclick="confirm('{{ __('Are you sure to delete it ?') }}') &amp;&amp; deleteSubmission('@{{submission.id}}')">
+                        <button class="ui negative icon button" data-tooltip="{{ __('submission.view.admin.table.row.tooltip.delete') }}" onclick="confirm('{{ __('submission.view.admin.table.row.confirm.delete') }}') &amp;&amp; deleteSubmission('@{{submission.id}}')">
                             <i class="trash icon"></i>
                         </button>
                         @endcan

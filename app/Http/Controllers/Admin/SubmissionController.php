@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Base\Submission;
+use Illuminate\Support\Facades\DB;
 
 class SubmissionController extends Controller
 {

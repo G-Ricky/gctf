@@ -74,6 +74,7 @@ class Submission extends Model
     public static function search($type = null)
     {
         $builder = self::select()
+            ->has('challenge')
             ->orderBy('created_at', 'desc')
             ->with([
                 'submitter:id,nickname,username',
