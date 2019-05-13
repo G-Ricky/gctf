@@ -22,7 +22,7 @@ class AbilityController extends Controller
 
         $paginate = Ability
             ::select('id', 'name', 'title')
-            ->paginate(15, ['*'], 'p')
+            ->paginate(13, ['*'], 'p')
             ->jsonSerialize();
 
         $abilities = $paginate['data'];
@@ -71,6 +71,8 @@ class AbilityController extends Controller
             'title' => 'nullable|string|max:200',
         ]);
 
+        $data['title'] = $data['title'] ?? '';
+
         $ability = $bouncer->ability()->create($data);
 
         return [
@@ -89,8 +91,20 @@ class AbilityController extends Controller
             'title' => 'nullable|string|max:200',
         ]);
 
+        $data['title'] = $data['title'] ?? '';
+
+        $ability = $bouncer
+            ->ability()
+            ->where('name', '=', $data['name'])
+            ->where('id', '!=', $data['id'])
+            ->first();
+
+        if(!is_null($ability)) {
+            return $this->fail('名称已存在！');
+        }
+
         $affectedRows = $bouncer->ability()
-            ->where('id', '=', $data['id'])
+            ->findOrFail($data['id'])
             ->update($data);
 
         return [
@@ -108,7 +122,7 @@ class AbilityController extends Controller
         ]);
 
         $success = $bouncer->ability()
-            ->where('id', '=', $data['id'])
+            ->findOrFail($data['id'])
             ->delete();
 
         return [
