@@ -5,6 +5,8 @@
 @push('stylesheets')
     @canany(['addUser', 'editUser'])
     <link href="{{ asset('css/extends/modal.flat.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
     @endcanany
     <style>
         #container-users {
@@ -26,8 +28,8 @@
     <!-- modal -->
     <div class="ui tiny basic flat modal" id="user-save">
         <i class="close icon"></i>
-        <div class="header">
-            {{ __('Add User') }}
+        <div class="header" id="modal-user-title">
+            {{ __('user.view.admin.modal.title.edit') }}
         </div>
         <div class="scrolling content">
             <div class="description">
@@ -35,33 +37,34 @@
                     @csrf
                     <input id="user-id" name="id" type="hidden" value="">
                     <input id="form-method" name="_method" type="hidden" value="">
-                    <div class="field">
-                        <label for="user-name">{{ __('Name') }}</label>
-                        <input id="user-name" name="name" type="text" value="" required maxlength="16">
-                    </div>
 
                     <div class="field">
-                        <label for="user-nickname">{{ __('Nickname') }}</label>
+                        <label for="user-nickname">{{ __('user.view.admin.modal.label.nickname') }}</label>
                         <input id="user-nickname" name="nickname" type="text" value="" maxlength="16">
                     </div>
 
                     <div class="field">
-                        <label for="user-sid">{{ __('Student Number') }}</label>
+                        <label for="user-name">{{ __('user.view.admin.modal.label.name') }}</label>
+                        <input id="user-name" name="name" type="text" value="" required maxlength="16">
+                    </div>
+
+                    <div class="field">
+                        <label for="user-sid">{{ __('user.view.admin.modal.label.sid') }}</label>
                         <input id="user-sid" name="sid" type="text" value="" maxlength="10">
                     </div>
 
                     <div class="field">
-                        <label for="user-email">{{ __('Email') }}</label>
+                        <label for="user-email">{{ __('user.view.admin.modal.label.email') }}</label>
                         <input id="user-email" name="email" type="text" value="" maxlength="100">
                     </div>
 
                     <div class="field">
-                        <label for="user-password">{{ __('Password') }}</label>
+                        <label for="user-password">{{ __('user.view.admin.modal.label.password') }}</label>
                         <input id="user-password" name="password" type="password" value="" maxlength="16">
                     </div>
 
                     <div class="field">
-                        <label for="user-gender">{{ __('Gender') }}</label>
+                        <label for="user-gender">{{ __('user.view.admin.modal.label.gender') }}</label>
                         <select id="user-gender" name="gender">
                             <option value="UNKNOWN">UNKNOWN</option>
                             <option value="MALE">MALE</option>
@@ -72,7 +75,7 @@
             </div>
         </div>
         <div class="actions">
-            <input class="ui basic fluid button" form="form-user" type="submit" value="{{ __('Save') }}">
+            <input class="ui basic fluid button" form="form-user" type="submit" value="{{ __('user.view.admin.modal.button.save') }}">
         </div>
     </div>
     <!-- end modal-->
@@ -83,7 +86,7 @@
     <div class="ui tiny basic flat modal" id="user-relation">
         <i class="close icon"></i>
         <div class="header">
-            {{ __('Assign Role') }}
+            {{ __('user.view.admin.assignRoleModal.title') }}
         </div>
         <div class="scrolling content">
             <div class="ui dimmer" id="loading-relation">
@@ -96,7 +99,7 @@
                     <input id="relation-form-method" name="_method" type="hidden" value="PUT">
 
                     <div class="field">
-                        <label for="user-roles">{{ __('Roles') }}</label>
+                        <label for="user-roles">{{ __('user.view.admin.assignRoleModal.label.roles') }}</label>
                         <select class="ui dropdown" id="select-roles" name="roles" multiple data-origin="[]"></select>
                     </div>
 
@@ -105,7 +108,7 @@
             </div>
         </div>
         <div class="actions">
-            <input class="ui basic fluid button" form="form-relation" type="submit" value="{{ __('Save') }}">
+            <input class="ui basic fluid button" form="form-relation" type="submit" value="{{ __('user.view.admin.assignRoleModal.button.save') }}">
         </div>
     </div>
     <!-- end modal-->
@@ -113,23 +116,18 @@
 
     <!-- template -->
     <script id="tpl-container-users" type="text/html">
-        @can('addUser')
-        <div class="ui basic vertical clearing segment">
-            <button class="ui primary right floated button" onclick="addUser()"><i class="add circle icon"></i> {{ __('Add') }}</button>
-        </div>
-        @endcan
         <div class="ui basic vertical segment" id="table-users">
             <table class="ui single line compact table">
                 <thead>
                 <tr>
-                    <th>{{ __('ID') }}</th>
-                    <th>{{ __('Username') }}</th>
-                    <th>{{ __('Nickname') }}</th>
-                    <th>{{ __('Name') }}</th>
-                    <th>{{ __('Student Number') }}</th>
-                    <th>{{ __('Email') }}</th>
-                    <th>{{ __('Roles') }}</th>
-                    <th>{{ __('Operation') }}</th>
+                    <th>{{ __('user.view.admin.table.id') }}</th>
+                    <th>{{ __('user.view.admin.table.username') }}</th>
+                    <th>{{ __('user.view.admin.table.nickname') }}</th>
+                    <th>{{ __('user.view.admin.table.name') }}</th>
+                    <th>{{ __('user.view.admin.table.sid') }}</th>
+                    <th>{{ __('user.view.admin.table.email') }}</th>
+                    <th>{{ __('user.view.admin.table.roles') }}</th>
+                    <th>{{ __('user.view.admin.table.operation') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -158,34 +156,23 @@
                     </td>
                     <td>
                         @can('editUser')
-                        <button class="ui primary icon button" data-tooltip="{{ __('Edit user') }}" onclick="editUser('@{{user.id}}')">
+                        <button class="ui primary icon button" data-tooltip="{{ __('user.view.admin.table.row.tooltip.edit') }}" onclick="editUser('@{{user.id}}')">
                             <i class="edit icon"></i>
                         </button>
                         @endcan
-                        @can('hideUser')
-                        @{{if user.is_hidden}}
-                        <button class="ui primary icon button" data-tooltip="{{ __('Show user') }}" onclick="confirm('{{ __('Are you sure to show') }} @{{user.name}}?') &amp;&amp; unhideUser('@{{user.id}}')">
-                            <i class="eye icon"></i>
-                        </button>
-                        @{{else}}
-                        <button class="ui orange icon button" data-tooltip="{{ __('Hide user') }}" onclick="confirm('{{ __('Are you sure to hide') }} @{{user.name}}?') &amp;&amp; hideUser('@{{user.id}}')">
-                            <i class="hide icon"></i>
-                        </button>
-                        @{{/if}}
-                        @endcan
                         @can('banUser')
                         @{{if user.is_ban}}
-                        <button class="ui primary icon button" data-tooltip="{{ __('Unban user') }}" onclick="confirm('{{ __('Are you sure to unban') }} @{{user.name}}?') &amp;&amp; unbanUser('@{{user.id}}')">
+                        <button class="ui primary icon button" data-tooltip="{{ __('user.view.admin.table.row.tooltip.unban') }}" onclick="confirm('{{ __('user.view.admin.table.row.confirm.unban') }} @{{user.nickname || user.name}}?') &amp;&amp; unbanUser('@{{user.id}}')">
                             <i class="undo icon"></i>
                         </button>
                         @{{else}}
-                        <button class="ui orange icon button" data-tooltip="{{ __('Ban user') }}" onclick="confirm('{{ __('Are you sure to ban') }} @{{user.name}}?') &amp;&amp; banUser('@{{user.id}}')">
+                        <button class="ui orange icon button" data-tooltip="{{ __('user.view.admin.table.row.tooltip.ban') }}" onclick="confirm('{{ __('user.view.admin.table.row.confirm.ban') }} @{{user.nickname || user.name}}?') &amp;&amp; banUser('@{{user.id}}')">
                             <i class="ban icon"></i>
                         </button>
                         @{{/if}}
                         @endcan
                         @can('deleteUser')
-                        <button class="ui negative icon button" data-tooltip="{{ __('Delete user') }}" onclick="confirm('{{ __('Are you sure to delete') }} @{{user.name}}?') &amp;&amp; deleteUser('@{{user.id}}')">
+                        <button class="ui negative icon button" data-tooltip="{{ __('user.view.admin.table.row.tooltip.delete') }}" onclick="confirm('{{ __('user.view.admin.table.row.confirm.delete') }} @{{user.nickname || user.name}}?') &amp;&amp; deleteUser('@{{user.id}}')">
                             <i class="trash icon"></i>
                         </button>
                         @endcan
@@ -217,6 +204,9 @@
     @canany(['addUser', 'editUser'])
     <script src="{{ asset('js/jquery/jquery.validate.min.js') }}"></script>
     <script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
+    <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+    <script src="{{ asset('js/common/tip.js') }}"></script>
+    <script src="{{ asset('js/common/error.js') }}"></script>
     @endcanany
     <script>
         let usersDict = {};
@@ -228,30 +218,23 @@
                 "url": url,
                 "type": "GET",
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
-                        if(response.success) {
-                            let users = response.data;
-                            for(let i = 0;i < users.length;++i) {
-                                usersDict[users[i].id] = users[i];
-                            }
-                            $("#container-users").html(
-                                template("tpl-container-users", {
-                                    "success": true,
-                                    "users": response.data,
-                                    "paginate": response.paginate
-                                })
-                            );
-                        }else{
-
+                    if(response && response.success) {
+                        let users = response.data;
+                        for(let i = 0;i < users.length;++i) {
+                            usersDict[users[i].id] = users[i];
                         }
+                        $("#container-users").html(
+                            template("tpl-container-users", {
+                                "success": true,
+                                "users": response.data,
+                                "paginate": response.paginate
+                            })
+                        );
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}")
                     }
                 },
-                "error": function(jqXHR, textStatus, error) {
-
-                },
-                "complete": function() {
-
-                }
+                "error": handleError
             });
         }
         @can('listRoles')
@@ -259,43 +242,28 @@
             $.ajax({
                 "url": "{{ url('api/roles/all') }}",
                 "success": function(response, status) {
-                    if(response && response.status === 200) {
-                        if(response.success) {
-                            $("#select-roles").html(
-                                template('tpl-select-roles', {
-                                    "roles": response.data
-                                })
-                            );
-                        }else{
-                            alert("加载角色失败");
-                        }
+                    if(response && response.success) {
+                        $("#select-roles").html(
+                            template('tpl-select-roles', {
+                                "roles": response.data
+                            })
+                        );
+                    }else{
+                        alert("加载角色失败");
                     }
                 },
-                "error": function() {
-                    alert("加载角色失败");
-                },
+                "error": handleError,
                 "complete": function() {
                     $("#loading-relation").removeClass("active");
                 }
             });
         }
         @endcan
-        @can('addUser')
-        function addUser() {
-            $("#form-method").val("POST");
-            $("#user-id").val("");
-            $("#user-sid").val("");
-            $("#user-name").val("");
-            $("#user-nickname").val("");
-            $("#user-gender").dropdown("set selected", "UNKNOWN");
-            $("#user-email").val("");
-            $("#user-save").modal('show');
-        }
-        @endcan
         @can('editUser')
         function editUser(id) {
             let user = usersDict[id];
             $("#form-method").val("PUT");
+            $("#modal-user-title").text("{{ __('user.view.admin.modal.title.edit') }}");
             $("#user-id").val(id);
             $("#user-sid").val(user.sid);
             $("#user-name").val(user.name);
@@ -303,50 +271,6 @@
             $("#user-gender").dropdown("set selected", user.gender);
             $("#user-email").val(user.email);
             $("#user-save").modal('show');
-        }
-        @endcan
-        @can('hideUser')
-        function hideUser(id) {
-            $.ajax({
-                "url": "{{ url('api/user/hide') }}",
-                "type": "POST",
-                "data": {
-                    "id": id,
-                    "_method": "PUT"
-                },
-                "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
-                        loadUsers();
-                    }
-                },
-                "error": function() {
-
-                },
-                "complete": function() {
-
-                }
-            });
-        }
-        function unhideUser(id) {
-            $.ajax({
-                "url": "{{ url('api/user/unhide') }}",
-                "type": "POST",
-                "data": {
-                    "id": id,
-                    "_method": "PUT"
-                },
-                "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
-                        loadUsers();
-                    }
-                },
-                "error": function() {
-
-                },
-                "complete": function() {
-
-                }
-            });
         }
         @endcan
         @can('banUser')
@@ -359,16 +283,14 @@
                     "_method": "PUT"
                 },
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
+                    if(response && response.success) {
                         loadUsers();
+                        tip.success("{{ __('global.success') }}");
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 },
-                "error": function() {
-
-                },
-                "complete": function() {
-
-                }
+                "error": handleError
             });
         }
         function unbanUser(id) {
@@ -380,16 +302,14 @@
                     "_method": "PUT"
                 },
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
+                    if(response && response.success) {
                         loadUsers();
+                        tip.success("{{ __('global.success') }}");
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 },
-                "error": function() {
-
-                },
-                "complete": function() {
-
-                }
+                "error": handleError
             });
         }
         @endcan
@@ -403,16 +323,14 @@
                     "_method": "DELETE"
                 },
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
+                    if(response && response.success) {
                         loadUsers();
+                        tip.success("{{ __('global.success') }}");
+                    } else {
+                        tip.error(response.message || "{{ __('global.fail') }}");
                     }
                 },
-                "error": function() {
-
-                },
-                "complete": function() {
-
-                }
+                "error": handleError
             });
         }
         @endcan
@@ -436,56 +354,48 @@
         }
         @endcanany
         $(document).ready(function() {
+            @canany(['addUser', 'editUser'])
+            $("#user-save").modal();
+            @endcanany
             loadUsers();
             loadRoles();
             @canany(['addUser', 'editUser'])
             $("#user-gender").dropdown();
             @endcanany
             @canany(['addUser', 'editUser'])
-            let validator = $("#form-user").validate({
+            $("#form-user").validate({
                 "submitHandler": function(form) {
                     $(form).ajaxSubmit({
                         "success": function(response, status) {
-                            if(status === "success" && response && response.status === 200) {
+                            if(response && response.success) {
                                 $("#user-save").modal('hide');
+                                tip.success("{{ __('global.success') }}");
                                 loadUsers();
+                            } else {
+                                tip.error(response.message || "{{ __('global.fail') }}");
                             }
                         },
-                        "error": function(jqXHR, textStatus, errorThrown) {
-                            if(textStatus !== "parsererror") {
-                                response = JSON.parse(jqXHR.responseText);
-                                switch(jqXHR.status) {
-                                    case 422:
-                                        let errors = {};
-                                        for(let name in response.errors) {
-                                            if(response.errors[name].length > 0) {
-                                                errors[name] = response.errors[name][0];
-                                            }
-                                        }
-                                        validator.showErrors(errors);
-                                        break;
-                                }
-
-                            }
-                        },
+                        "error": handleError,
                         "complete": function(jqXHR, textStatus) {
 
                         }
                     });
+                    return false;
                 },
                 "rules": {
                     "sid": {
-                        "required": requiredIfAdd,
+                        "required": false,
                         "maxlength": 10
                     },
                     "name": {
-                        "required": requiredIfAdd,
+                        "required": false,
                         "maxlength": 16
                     },
                     "nickname": {
                         "maxlength": 16
                     },
                     "email": {
+                        "required": false,
                         "maxlength": 100,
                         "email": true
                     },
@@ -498,9 +408,9 @@
             });
             @endcanany
             @can('changeRelation')
-            let relationValidator = $("#form-relation").validate({
+            $("#form-relation").validate({
                 "submitHandler": function (form) {
-                    $("[name='assigns[]'], [name='assigns[]']").each(function() {
+                    $("[name='assigns[]'], [name='retracts[]']").each(function() {
                         this.remove();
                     });
 
@@ -537,15 +447,16 @@
                             "success": function(response, status) {
                                 if(response.success) {
                                     $("#user-relation").modal('hide');
+                                    tip.success("{{ __('global.success') }}");
                                     loadUsers();
+                                } else {
+                                    tip.error(response.message || "{{ __('global.error') }}")
                                 }
                             },
-                            "error": function(jqXHR, status) {
-                                alert(status);
-                            }
+                            "error": handleError
                         });
                     }else{
-                        alert("{{ __('Nothing changed') }}");
+                        $("#user-relation").modal('hide');
                     }
                 }
             });

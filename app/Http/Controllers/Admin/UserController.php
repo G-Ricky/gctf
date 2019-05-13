@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Admin\User;
+use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,14 +11,6 @@ use Silber\Bouncer\Bouncer;
 
 class UserController extends Controller
 {
-    private function doHide($userId, $isHidden)
-    {
-        return !!User
-            ::where('id', '=', $userId)
-            ->update([
-                'is_hidden' => $isHidden
-            ]);
-    }
 
     public function index()
     {
@@ -101,12 +93,12 @@ class UserController extends Controller
                 'nullable', 'string', 'max:10',
                 Rule::unique('users')->ignore($id)
             ],
-            'name'     => [
+            'name'     => 'nullable|string|max:16',
+            'nickname' => [
                 'nullable', 'string', 'max:16',
                 Rule::unique('users')->ignore($id)
             ],
-            'nickname' => 'nullable|string|max:16',
-            'gender'   => 'nullable|string|in:UNKNOWN,MALE,FEMALE',
+            'gender'   => 'required|string|in:UNKNOWN,MALE,FEMALE',
             'email'    => [
                 'nullable', 'string', 'email',
                 Rule::unique('users')->ignore($id)
@@ -114,18 +106,20 @@ class UserController extends Controller
             'password' => 'nullable|string|min:6|max:16',
         ]);
 
-        foreach($data as $key => $value) {
-            if($value === '' || is_null($data[$key])) {
-                unset($data[$key]);
-            }
-        }
+        $data['sid'] = $data['sid'] ?? '';
+        $data['name'] = $data['name'] ?? '';
+        $data['email'] = $data['email'] ?? '';
+        $data['nickname'] = $data['nickname'] ?? '';
+
 
         if(isset($data['password'])) {
             $data['password'] = Hash::make($data['password']);
+        } else if(array_key_exists('password', $data)) {
+            unset($data['password']);
         }
 
         $affectedRows = User
-            ::where('id', '=', $data['id'])
+            ::findOrFail($data['id'])
             ->update($data);
 
         return [
@@ -143,40 +137,12 @@ class UserController extends Controller
         ]);
 
         $success = User
-            ::where('id', '=', $data['id'])
+            ::findOrFail($data['id'])
             ->delete();
 
         return [
             'status'  => 200,
             'success' => $success
-        ];
-    }
-
-    public function hide(Request $request)
-    {
-        $this->authorize('hideUser');
-
-        $data = $this->validate($request, [
-            'id' => 'bail|required|integer',
-        ]);
-
-        return [
-            'status'  => 200,
-            'success' => $this->doHide($data['id'], true)
-        ];
-    }
-
-    public function unhide(Request $request)
-    {
-        $this->authorize('hideUser');
-
-        $data = $this->validate($request, [
-            'id' => 'bail|required|integer',
-        ]);
-
-        return [
-            'status'  => 200,
-            'success' => $this->doHide($data['id'], false)
         ];
     }
 

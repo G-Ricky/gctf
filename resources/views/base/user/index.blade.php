@@ -3,6 +3,8 @@
 @extends('layouts.app')
 
 @push('stylesheets')
+    <link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
 @endpush
 
 @section('content')
@@ -13,44 +15,44 @@
     <div class="ui basic vertical clearing segment">
         <div class="ui right floated main menu">
             <a class="icon item" id="btn-edit" href="javascript:edit();">
-                <i class="edit icon"></i>&nbsp;<span>{{ __('Edit') }}</span>
+                <i class="edit icon"></i>&nbsp;<span>{{ __('user.view.button.edit') }}</span>
             </a>
             <a class="icon item" id="btn-cancel" href="javascript:cancel();" style="display: none;">
-                <i class="edit icon"></i>&nbsp;<span>{{ __('Cancel') }}</span>
+                <i class="edit icon"></i>&nbsp;<span>{{ __('user.view.button.cancel') }}</span>
             </a>
             <a class="icon item disabled" id="btn-save" href="javascript:save();" style="display: none;">
-                <i class="edit icon"></i>&nbsp;<span>{{ __('Save') }}</span>
+                <i class="edit icon"></i>&nbsp;<span>{{ __('user.view.button.save') }}</span>
             </a>
         </div>
     </div>
     <div class="ui basic vertical segment">
         <div class="ui form" id="form">
             <div class="field">
-                <label>{{ __('Username') }}</label>
+                <label>{{ __('user.view.label.username') }}</label>
                 <input id="username" type="text" value="" readonly disabled>
             </div>
             <div class="field">
-                <label>{{ __('Nickname') }}</label>
+                <label>{{ __('user.view.label.nickname') }}</label>
                 <input id="nickname" type="text" value="" readonly>
             </div>
             <div class="field">
-                <label>{{ __('Student Number') }}</label>
+                <label>{{ __('user.view.label.sid') }}</label>
                 <input id="sid" type="text" value="" readonly>
             </div>
             <div class="field">
-                <label>{{ __('Name') }}</label>
+                <label>{{ __('user.view.label.name') }}</label>
                 <input id="name" type="text" value="" readonly>
             </div>
             <div class="field">
-                <label>{{ __('Gender') }}</label>
+                <label>{{ __('user.view.label.gender') }}</label>
                 <select class="ui dropdown" id="gender" disabled>
-                    <option value="UNKNOWN" selected>{{ __('Unknown') }}</option>
-                    <option value="MALE">{{ __('Male') }}</option>
-                    <option value="FEMALE">{{ __('Female') }}</option>
+                    <option value="UNKNOWN" selected>{{ __('user.view.gender.unknown') }}</option>
+                    <option value="MALE">{{ __('user.view.gender.male') }}</option>
+                    <option value="FEMALE">{{ __('user.view.gender.female') }}</option>
                 </select>
             </div>
             <div class="field">
-                <label>{{ __('Email') }}</label>
+                <label>{{ __('user.view.label.email') }}</label>
                 <input id="email" type="text" value="" readonly>
             </div>
         </div>
@@ -59,8 +61,10 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/common/error.js') }}"></script>
+<script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+<script src="{{ asset('js/common/tip.js') }}"></script>
 <script src="{{ asset('js/common/misc.js') }}"></script>
+<script src="{{ asset('js/common/error.js') }}"></script>
 <script>
     window.info = {
         "sid"     : "",
@@ -123,17 +127,18 @@
     }
     function save() {
         let userInfo = getInfo();
+        userInfo._method = "POST";
         $.ajax({
-            "url": "{{ url('user/edit') }}",
+            "url": "{{ url('api/usr') }}",
             "data": userInfo,
             "dataType": "json",
             "method": "POST",
             "success": function(response) {
                 if(response.success) {
-                    alert("修改成功");
+                    tip.success("修改成功");
                     location.reload();
                 }else{
-                    console.log(response.message);
+                    tip.error(response.message || "{{ __('global.unknownError') }}");
                 }
             },
             "error": function(XMLHttpRequest, textStatus, errorThrown) {
@@ -144,34 +149,35 @@
             }
         });
         openLoader("正在保存...")
-    };
+    }
+    function loadUser() {
+        $.ajax({
+            "url": "{{ url('api/usr') }}",
+            "dataType": "json",
+            "success": function(response) {
+                if(response && response.success) {
+                    window.info.sid = response.data.sid || "";
+                    window.info.username = response.data.username || "";
+                    window.info.nickname = response.data.nickname || "";
+                    window.info.name = response.data.name || "";
+                    window.info.gender = response.data.gender || "UNKNOWN";
+                    window.info.email = response.data.email || "";
+                    fill(window.info);
+                }else{
+                    tip.error(response.message || "{{ __('global.unknownError') }}");
+                }
+            },
+            "error": handleError,
+            "complete": function() {
+                closeLoader();
+            }
+        });
+        openLoader("正在载入...");
+    }
     $(document).ready(function() {
         (function() {
             $('#gender').dropdown();
-            $.ajax({
-                "url": "{{ url('user/info') }}",
-                "dataType": "json",
-                "success": function(response) {
-                    if(response.success) {
-                        window.info.sid = response.data.sid || "";
-                        window.info.username = response.data.username || "";
-                        window.info.nickname = response.data.nickname || "";
-                        window.info.name = response.data.name || "";
-                        window.info.gender = response.data.gender || "UNKNOWN";
-                        window.info.email = response.data.email || "";
-                        fill(window.info);
-                    }else{
-                        console.log(response.message);
-                    }
-                },
-                "error": function() {
-                    console.log("请求失败");
-                },
-                "complete": function() {
-                    closeLoader();
-                }
-            });
-            openLoader("正在载入...");
+            loadUser();
         })();
         $("#form input").keyup(changeSaveButtonStatus);
         $("#form select").change(changeSaveButtonStatus);
