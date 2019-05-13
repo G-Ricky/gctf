@@ -13,45 +13,6 @@
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('challenge', 'Base\\ChallengeController@index');
-    Route::get('challenge/info', 'Admin\\ChallengeController@info');
-    Route::post('challenge/add', 'Admin\\ChallengeController@add');
-    Route::put('challenge/edit', 'Admin\\ChallengeController@edit');
-    Route::get('challenge/detail', 'Base\\ChallengeController@detail');
-    Route::post('flag', 'Base\\ChallengeController@submitFlag');
-});
-
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('user', 'Base\\UserController@index');
-    Route::get('user/info', 'Base\\UserController@info');
-    Route::post('user/edit', 'Base\\UserController@edit');
-});
-
-Route::group(['middleware' => 'auth'], function() {
-    Route::post('bank/add', 'Admin\\BankController@add');
-    Route::get('bank/list', 'Admin\\BankController@list');
-});
-
-Route::group(['middleware' => 'auth'], function() {
-    Route::get('submissions', 'Admin\\SubmissionController@index');
-    Route::get('submissions/correct', 'Admin\\SubmissionController@index');
-    Route::get('submissions/incorrect', 'Admin\\SubmissionController@index');
-});
-
-Route::group(['middleware' => 'auth'], function() {
-    Route::get('roles', 'Admin\\RoleController@index');
-    Route::get('role/{id}', 'Admin\\RoleController@role');
-});
-
-Route::group(['middleware' => 'auth'], function() {
-    Route::get('privileges', 'Admin\\AbilityController@index');
-});
-
-Route::group(['middleware' => 'auth'], function() {
-    Route::get('permissions/{roleId}', 'Admin\\PermissionController@index');
-});
-
 Route::group([], function() {
     Route::get('', 'Base\\HomeController@index');
 });
@@ -59,17 +20,29 @@ Route::group([], function() {
 Route::group(
     ['middleware' => 'auth'],
     function() {
-
+        Route::get('bank/{bank?}', 'Base\\ChallengeController@index');
         Route::get('banks', 'Base\\BankController@index');
+        Route::get('admin/banks', 'Admin\\BankController@index');
 
         Route::get('contents', 'Admin\\ContentController@index');
 
         Route::get('password/change', 'Auth\\ChangePasswordController@index');
 
+        Route::get('permissions/{roleId}', 'Admin\\PermissionController@index');
+
+        Route::get('privileges', 'Admin\\AbilityController@index');
+
         Route::get('ranking', 'Base\\RankingController@index');
+
+        Route::get('roles', 'Admin\\RoleController@index');
 
         Route::get('settings', 'Admin\\SettingController@index');
 
+        Route::get('submissions', 'Admin\\SubmissionController@index');
+        Route::get('submissions/correct', 'Admin\\SubmissionController@index');
+        Route::get('submissions/incorrect', 'Admin\\SubmissionController@index');
+
+        Route::get('user', 'Base\\UserController@index');
         Route::get('users', 'Admin\\UserController@index');
 
     }
@@ -82,13 +55,26 @@ Route::group(
     ],
     function() {
 
-        Route::get('challenges', 'Base\\ChallengeController@list');
+        Route::post('bank', 'Admin\\BankController@add');
+        Route::put('bank', 'Admin\\BankController@edit');
+        Route::delete('bank', 'Admin\\BankController@delete');
+        Route::get('banks', 'Admin\\BankController@list');
+
+        Route::get('bank/{bank}', 'Base\\ChallengeController@list');
         Route::delete('challenge', 'Admin\\ChallengeController@delete');
+
+
+        Route::get('ch/{id}', 'Base\\ChallengeController@detail');
+        Route::get('challenge/{id}', 'Admin\\ChallengeController@info');
+        Route::post('challenge', 'Admin\\ChallengeController@add');
+        Route::put('challenge', 'Admin\\ChallengeController@edit');
 
         Route::get('contents', 'Admin\\ContentController@list');
         Route::post('content', 'Admin\\ContentController@add');
         Route::put('content', 'Admin\\ContentController@edit');
         Route::delete('content', 'Admin\\ContentController@delete');
+
+        Route::post('flag', 'Base\\ChallengeController@submitFlag');
 
         Route::put('password', 'Auth\\ChangePasswordController@change');
 
@@ -128,6 +114,8 @@ Route::group(
         Route::put('user/ban', 'Admin\\UserController@ban');
         Route::put('user/unban', 'Admin\\UserController@unban');
         Route::delete('user', 'Admin\\UserController@delete');
+        Route::get('usr', 'Base\\UserController@info');
+        Route::post('usr', 'Base\\UserController@edit');
     }
 );
 
