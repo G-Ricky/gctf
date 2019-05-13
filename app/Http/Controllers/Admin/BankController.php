@@ -3,57 +3,111 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Base\Bank;
+use App\Models\Admin\Bank;
+use App\Models\Admin\Challenge;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 
 class BankController extends Controller
 {
-    public function add(Request $request, Bank $banks)
+    public function index()
     {
-        $this->validate($request, [
-            'name'        => 'required|string|max:256',
-            'description' => 'required|string|max:1024',
+        $this->authorize('listBanks');
+
+        return view('admin.bank.index');
+    }
+
+    public function add(Request $request)
+    {
+        $this->authorize('addBank');
+
+        $data = $this->validate($request, [
+            'name'        => 'required|string|max:250',
+            'description' => 'required|string|max:1000',
         ]);
 
-        $data = $request->all();
-        if(array_key_exists('is_hidden', $data) and $data['is_hidden'] === 'on') {
-            $data['is_hidden'] = true;
-        }else{
-            $data['is_hidden'] = false;
-        }
+        $success = Bank::create($data);
 
-        $success = $banks->add($data);
         return [
             'status'  => 200,
             'success' => !!$success
         ];
     }
 
-    public function edit()
+    public function edit(Request $request)
     {
+        $this->authorize('editBank');
 
-    }
+        $data = $this->validate($request, [
+            'id'          => 'required|integer',
+            'name'        => 'required|string|max:250',
+            'description' => 'required|string|max:1000'
+        ]);
 
-    public function delete()
-    {
-
-    }
-
-    public function list(Request $request, Bank $banks)
-    {
-        $data['page'] = $request->query('page', 1);
-        $data['pageSize'] = $request->query('pageSize', 20);
-
-        $result = $banks->list($data['page'], min($data['pageSize'], 30));
+        $success = false;
+        $message = __('global.success');
+        DB::transaction(function() use($data, &$success, &$message) {
+            $bank = Bank::findOrFail($data['id']);
+            $success = (bool)$bank->update($data);
+            $message = $success ? $message : __('global.fail');
+        });
 
         return [
             'status'  => 200,
-            'success' => true,
-            'data'    => $result['data'],
-            'page'    => array_only($result, [
-                'current_page', 'first_page_url', 'from', 'last_page', 'last_page_url', 'next_page_url', 'path',
-                'per_page', 'prev_page_url', 'to'
-            ])
+            'success' => $success,
+            'message' => $message
+        ];
+    }
+
+    public function delete(Request $request)
+    {
+        $this->authorize('deleteBank');
+
+        $data = $this->validate($request, [
+            'id' => 'required|integer'
+        ]);
+
+        $success = false;
+        $message = __('global.success');
+        DB::transaction(function() use ($data, &$message, &$success) {
+            $bank = Bank::findOrFail($data['id']);
+            $count = Challenge::where('bank', '=', $data['id'])->count();
+            if($count > 0) {
+                $message = '题库下的挑战数不为0，不能删除';
+            } else {
+                $success = $bank->delete();
+                $message = $success ? $message : __('global.fail');
+            }
+        });
+
+        return [
+            'status'  => 200,
+            'success' => $success,
+            'message' => $message
+        ];
+    }
+
+    public function list(Request $request)
+    {
+        $this->authorize('listBanks');
+
+        $data['page'] = $request->query('page', 1);
+        $data['pageSize'] = $request->query('pageSize', 20);
+
+        $paginate = Bank::orderBy('created_at')
+        ->withCount('challenges')
+        ->paginate()
+        ->jsonSerialize();
+
+        $data = $paginate['data'];
+        unset($paginate['data']);
+
+        return [
+            'status'   => 200,
+            'success'  => true,
+            'data'     => $data,
+            'paginate' => $paginate
         ];
     }
 }
