@@ -3,6 +3,8 @@
 @extends('layouts/app')
 
 @push('stylesheets')
+    <link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
     <style>
         #time-refresh {
             color: #c0c1c2;
@@ -24,20 +26,23 @@
             <table class="ui fixed selectable single line compact table">
                 <thead>
                 <tr>
-                    <th>{{ __('Range') }}</th>
-                    <th>{{ __('Username') }}</th>
-                    <th>{{ __('Nickname') }}</th>
-                    <th>{{ __('Points') }}</th>
-                    <th>{{ __('Total') }}</th>
-                    <th>{{ __('Some Solutions') }}</th>
+                    <th>{{ __('ranking.view.table.range') }}</th>
+                    <th>{{ __('ranking.view.table.username') }}</th>
+                    <th>{{ __('ranking.view.table.points') }}</th>
+                    <th>{{ __('ranking.view.table.total') }}</th>
+                    <th>{{ __('ranking.view.table.solutions') }}</th>
                 </tr>
                 </thead>
                 <tbody>
                 @{{each rankings ranking index}}
                 <tr>
                     <td>@{{index + 1}}</td>
-                    <td>@{{ranking.username}}</td>
-                    <td>@{{ranking.nickname}}</td>
+                    <td>
+                        @{{ranking.username}}
+                        @{{if ranking.nickname}}
+                        (@{{ranking.nickname}})
+                        @{{/if}}
+                    </td>
                     <td>@{{ranking.points}}</td>
                     <td>@{{ranking.solutions_count}}</td>
                     <td>
@@ -67,29 +72,30 @@
 
 @push('scripts')
     <script src="{{ asset('js/echarts.min.js') }}"></script>
+    <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+    <script src="{{ asset('js/common/tip.js') }}"></script>
+    <script src="{{ asset('js/common/error.js') }}"></script>
     <script>
         function loadRankings() {
             $.ajax({
                 "url": "{{ url('api/rankings') }}",
                 "type": "GET",
                 "success": function(response, status) {
-                    if(status === "success" && response && response.status === 200) {
-                        if(response.success) {
-                            for(let i = 0;i < response.data.length;++i) {
-                                response.data[i].points = parseInt(response.data[i].points);
-                            }
-                            $("#container-rankings").html(
-                                template("tpl-container-rankings", {
-                                    "rankings": response.data
-                                })
-                            );
-                            makeChartRankings(response.data);
+                    if(response && response.success) {
+                        for(let i = 0;i < response.data.length;++i) {
+                            response.data[i].points = parseInt(response.data[i].points);
                         }
+                        $("#container-rankings").html(
+                            template("tpl-container-rankings", {
+                                "rankings": response.data
+                            })
+                        );
+                        makeChartRankings(response.data);
+                    } else {
+                        tip.error(response.message || "{{ __('global.unknownError') }}");
                     }
                 },
-                "error": function(XmlHttpRequest, textStatus, error) {
-
-                },
+                "error": handleError,
                 "complete": function() {
 
                 }
