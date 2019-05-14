@@ -111,7 +111,7 @@
                 },
                 "success": function (response, status) {
                     if(response && response.success) {
-                        tip.error("{{ __('global.success') }}");
+                        tip.success("{{ __('global.success') }}");
                         loadPrivileges();
                     }else{
                         tip.error(response.message || "修改权限失败！");

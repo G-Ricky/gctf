@@ -89,7 +89,7 @@ class SubmissionController extends Controller
         ]);
 
         $success = Submission
-            ::where('id', '=', $data['id'])
+            ::findOrFail($data['id'])
             ->delete();
 
         return [

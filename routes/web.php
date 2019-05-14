@@ -32,7 +32,7 @@ Route::group(
 
         Route::get('privileges', 'Admin\\AbilityController@index');
 
-        Route::get('ranking', 'Base\\RankingController@index');
+        Route::get('ranking/{bank?}', 'Base\\RankingController@index');
 
         Route::get('roles', 'Admin\\RoleController@index');
 
@@ -87,7 +87,7 @@ Route::group(
         Route::put('privilege', 'Admin\\AbilityController@edit');
         Route::delete('privilege', 'Admin\\AbilityController@delete');
 
-        Route::get('rankings', 'Base\\RankingController@list');
+        Route::get('rankings/{bank?}', 'Base\\RankingController@list');
 
         Route::put('relation', 'Admin\\RoleController@change');
 

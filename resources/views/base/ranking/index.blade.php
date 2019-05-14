@@ -78,7 +78,7 @@
     <script>
         function loadRankings() {
             $.ajax({
-                "url": "{{ url('api/rankings') }}",
+                "url": "{{ url('api/rankings') . '?bank=' . $bank }}",
                 "type": "GET",
                 "success": function(response, status) {
                     if(response && response.success) {

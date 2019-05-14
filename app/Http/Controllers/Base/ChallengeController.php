@@ -26,8 +26,14 @@ class ChallengeController extends Controller
     {
         $this->authorize('listChallenges');
 
+        $bank = $bank ??
+            request()->session()->get('bank') ??
+            Setting::get('bank.default', 1);
+
+        request()->session()->put('bank', $bank);
+
         return view('base.challenge.index', [
-            'bank' => $bank ?? Setting::get('bank.default') ?? 1
+            'bank' => $bank
         ]);
     }
 

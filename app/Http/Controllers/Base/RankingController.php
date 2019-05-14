@@ -3,19 +3,33 @@
 namespace App\Http\Controllers\Base;
 
 use App\Http\Controllers\Controller;
+use App\Library\Setting\Facades\Setting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
 class RankingController extends Controller
 {
-    public function index()
+    public function index($bank = null)
     {
-        return view('base.ranking.index');
+        $this->authorize('viewRanking');
+
+        $bank = $bank ??
+            request()->session()->get('bank') ??
+            Setting::get('bank.default', 1);
+
+        request()->session()->put('bank', $bank);
+
+        return view(
+            'base.ranking.index', [
+            'bank' => $bank
+        ]);
     }
 
     public function list(Request $request)
     {
+        $this->authorize('viewRanking');
+
         $data = $this->validate($request, [
             'bank' => 'nullable|integer|exists:banks,id'
         ]);
