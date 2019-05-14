@@ -3,7 +3,7 @@
 @extends('layouts/app')
 
 @push('stylesheets')
-    @canany(['addUser', 'editUser'])
+    @canany(['addContent', 'editContent'])
     <link href="{{ asset('css/extends/modal.flat.css') }}" rel="stylesheet">
     @endcanany
     <link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
