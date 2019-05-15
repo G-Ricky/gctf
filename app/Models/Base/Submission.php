@@ -33,6 +33,11 @@ class Submission extends Model
         return Carbon::parse($date)->diffForHumans();
     }
 
+    public function getCreatedAtAttribute($date)
+    {
+        return Carbon::parse($date)->diffForHumans();
+    }
+
 	public function add($challengeId, $submitterId, $content, $isCorrect)
     {
         return $this->create([

@@ -104,6 +104,7 @@ Route::group(
 
         Route::get('submissions/{type}', 'Admin\\SubmissionController@list');
         Route::get('submissions', 'Admin\\SubmissionController@listAll');
+        Route::put('submission', 'Admin\\SubmissionController@changeCorrectness');
         Route::delete('submission', 'Admin\\SubmissionController@delete');
 
         Route::get('users', 'Admin\\UserController@list');

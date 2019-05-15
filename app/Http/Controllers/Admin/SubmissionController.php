@@ -22,6 +22,7 @@ class SubmissionController extends Controller
                 'content'    => $submission['content'],
                 'isCorrect'  => $submission['is_correct'],
                 'updateTime' => $submission['updated_at'],
+                'createTime' => $submission['created_at'],
             ];
         }
 
@@ -77,6 +78,37 @@ class SubmissionController extends Controller
             'success'  => true,
             'data'     => $result,
             'paginate' => $paginate
+        ];
+    }
+
+    public function changeCorrectness(Request $request) {
+        $this->authorize('correctSubmission');
+
+        $data = $this->validate($request, [
+            'id'         => 'required|integer|min:1',
+            'is_correct' => 'required|boolean',
+        ]);
+
+        // TODO 确保最多存在一个正确的提交
+
+        $submission = Submission::findOrFail($data['id']);
+
+        if(
+            $data['is_correct'] == 1 &&
+            !$submission->is_correct &&
+            Submission::where('challenge', '=', $submission->challenge)
+                ->where('submitter', '=', $submission->submitter)
+                ->where('is_correct', '=', true)
+                ->count() > 0
+        ) {
+            return $this->fail('同一个挑战正确提交的个数最多为一个');
+        }
+
+        $affectedRows = $submission->update($data);
+
+        return [
+            'status'  => 200,
+            'success' => (bool)$affectedRows
         ];
     }
 

@@ -3,6 +3,8 @@
 @extends('layouts/app')
 
 @push('stylesheets')
+    <link href="{{ asset('css/wu-ui/wu-ui.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/wu-ui/iconfont.css') }}" rel="stylesheet">
     <style>
         #container-submissions {
             display: flex;
@@ -16,6 +18,9 @@
 @endpush
 
 @section('content')
+    <div class="ui dimmer" id="global-loader">
+        <div class="ui big text loader"></div>
+    </div>
     <div class="ui container" id="container-submissions"></div>
     <script id="tpl-container-submissions" type="text/html">
         <div class="ui basic vertical segment" id="table-submissions">
@@ -34,9 +39,15 @@
                 </thead>
                 <tbody>
                 @{{each submissions submission index}}
-                <tr class="@{{if submission.isCorrect}}positive@{{else}}negative@{{/if}}">
-                    <td>@{{submission.challenge}}</td>
-                    <td>
+                <tr class="@{{if submission.isCorrect}}positive@{{else}}negative@{{/if}}" data-entity="submission" data-id="@{{submission.id}}">
+                    <td @{{if submission.challenge.length > 10}}data-tooltip="@{{submission.challenge}}"@{{/if}}>
+                        @{{if submission.content.length > 10}}
+                        @{{submission.challenge.substr(0, 10)}}...
+                        @{{else}}
+                        @{{submission.challenge}}
+                        @{{/if}}
+                    </td>
+                    <td @{{if submission.content.length > 20}}data-tooltip="@{{submission.content}}"@{{/if}}>
                         @{{if submission.content.length > 20}}
                         @{{submission.content.substr(0, 20)}}...
                         @{{else}}
@@ -44,9 +55,20 @@
                         @{{/if}}
                     </td>
                     <td>@{{submission.submitter}}</td>
-                    <td>@{{submission.updateTime}}</td>
-                    @canany(['deleteSubmission'])
+                    <td>@{{submission.createTime}}</td>
+                    @canany(['correctSubmission', 'deleteSubmission'])
                     <td>
+                        @can('correctSubmission')
+                        @{{if submission.isCorrect}}
+                        <button class="ui orange icon button" data-tooltip="{{ __('submission.view.admin.table.row.tooltip.setIncorrect') }}" onclick="confirm('{{ __('submission.view.admin.table.row.confirm.setIncorrect') }}') &amp;&amp; changeCorrectness('@{{submission.id}}', 0)">
+                            <i class="times icon"></i>
+                        </button>
+                        @{{else}}
+                        <button class="ui positive icon button" data-tooltip="{{ __('submission.view.admin.table.row.tooltip.setCorrect') }}" onclick="confirm('{{ __('submission.view.admin.table.row.confirm.setCorrect') }}') &amp;&amp; changeCorrectness('@{{submission.id}}', 1)">
+                            <i class="check icon"></i>
+                        </button>
+                        @{{/if}}
+                        @endcan
                         @can('deleteSubmission')
                         <button class="ui negative icon button" data-tooltip="{{ __('submission.view.admin.table.row.tooltip.delete') }}" onclick="confirm('{{ __('submission.view.admin.table.row.confirm.delete') }}') &amp;&amp; deleteSubmission('@{{submission.id}}')">
                             <i class="trash icon"></i>
@@ -78,26 +100,32 @@
 @endsection
 
 @push('scripts')
+<script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
+<script src="{{ asset('js/common/tip.js') }}"></script>
+<script src="{{ asset('js/common/misc.js') }}"></script>
+<script src="{{ asset('js/common/error.js') }}"></script>
 <script>
     function loadSubmissions(url) {
         let html = "";
         if(url == null) {
             url = "{{ url('api/submissions') }}";
         }
+        openLoader("正在加载用户提交...");
         $.ajax({
             "url": url,
             "success": function(response, status, jqXHR) {
-                if(status === "success" && response && response.status === 200 && response.success) {
+                if(response && response.success) {
                     html = template('tpl-container-submissions', {
                         "submissions": response.data,
                         "paginate": response.paginate
                     });
                 }else{
-                    html = template('tpl-container-submissions', {});
+                    tip.error(response.message || "{{ __('global.fail') }}");
                 }
             },
             "complete": function(jqXHR, textStatus) {
                 $("#container-submissions").html(html);
+                closeLoader();
             }
         });
     }
@@ -111,13 +139,35 @@
                 "_method": "DELETE"
             },
             "success": function(response, status) {
-                if(response.success) {
+                if(response || response.success) {
+                    tip.success("{{ __('global.success') }}");
                     loadSubmissions();
                 }else{
-
+                    tip.error(response.message || "{{ __('global.fail') }}");
+                }
+            },
+            "error": handleError
+        });
+    }
+    @endcan
+    @can('correctSubmission')
+    function changeCorrectness(id, isCorrect) {
+        $.post(
+            "{{ url('api/submission') }}",
+            {
+                "_method": "PUT",
+                "id": id,
+                "is_correct": isCorrect
+            },
+            function (response) {
+                if(response && response.success) {
+                    tip.success("{{ __('global.success') }}");
+                    loadSubmissions();
+                } else {
+                    tip.error(response.message || "{{ __('global.fail') }}");
                 }
             }
-        });
+        ).fail(handleError);
     }
     @endcan
     $(document).ready(function() {
