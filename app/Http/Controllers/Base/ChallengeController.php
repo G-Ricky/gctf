@@ -56,6 +56,8 @@ class ChallengeController extends Controller
     {
         $this->authorize('listChallenges');
 
+        $b = Bank::findOrFail($bank);
+
         $paginate = Challenge
             ::select([
                 'id', 'title', 'description', 'category', 'points', 'created_at', 'updated_at'
