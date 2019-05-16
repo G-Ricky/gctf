@@ -35,6 +35,11 @@
 </style>
 @endpush
 @section('content')
+
+<div class="ui dimmer" id="global-loader">
+    <div class="ui big text loader"></div>
+</div>
+
 @can('addChallenge')
 <div class="ui container">
     <div class="ui basic vertical clearing segment">
@@ -42,6 +47,7 @@
     </div>
 </div>
 @endcan
+
 <div class="ui container" id="container-challenges"></div>
 
 @canany(['addChallenge', 'editChallenge'])
@@ -195,6 +201,7 @@
 <script src="{{ asset('js/jquery/jquery.form.min.js') }}"></script>
 <script src="{{ asset('js/wu-ui/wu-ui.min.js') }}"></script>
 <script src="{{ asset('js/common/tip.js') }}"></script>
+<script src="{{ asset('js/common/misc.js') }}"></script>
 <script src="{{ asset('js/common/error.js') }}"></script>
 <script>
     $(document).ready(function() {
@@ -388,6 +395,7 @@
         if(url == null) {
             url = "{{ url('api/bank') . '/' . $bank }}";
         }
+        openLoader("正在加载挑战...");
         $.ajax({
             "type": "GET",
             "url": url,
@@ -422,7 +430,10 @@
                     );
                 }
             },
-            "error": handleError
+            "error": handleError,
+            "complete": function () {
+                closeLoader();
+            }
         });
     }
 </script>
