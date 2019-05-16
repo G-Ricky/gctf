@@ -29,24 +29,44 @@ function removeInputError(id) {
     $("#" + id).parent(".field").removeClass("error").children(".ui.error.message").remove();
 }
 
-function handleError(jqXHR, textStatus, error) {
-    if(textStatus !== "parsererror" && jqXHR.status === 422) {
-        let messages = "";
-        let response = JSON.parse(jqXHR.responseText);
-        for(let key in response.errors) {
-            let error = response.errors[key];
-            for(let i = 0;i < error.length;++i) {
-                messages += "<p>" + error[i] + "</p>";
+function handleServerError(jqXHR, textStatus, error) {
+    let response = JSON.parse(jqXHR.responseText);
+    switch(jqXHR.status) {
+        case 422:
+            let messages = "";
+            for (let key in response.errors) {
+                let error = response.errors[key];
+                for (let i = 0; i < error.length; ++i) {
+                    messages += "<p>" + error[i] + "</p>";
+                }
             }
-        }
 
-        tip.error(messages);
-        return;
-    } else if(jqXHR.readyState === 0) {
-        tip.error("网络未连接！");
-    } else if(jqXHR.status === 404) {
-        tip.error("目标不存在！");
-    } else {
-        tip.error("未知错误！");
+            tip.error(messages);
+            break;
+        case 404:
+            tip.error("目标不存在！");
+            break;
+        default:
+            tip.error(response.message || "未知错误！");
+    }
+}
+
+function handleAjaxError(jqXHR, textStatus, error) {
+    switch(textStatus) {
+        case "parsererror":
+            tip.error("返回数据错误！");
+            break;
+        default:
+            handleServerError(jqXHR, textStatus, error);
+    }
+}
+
+function handleError(jqXHR, textStatus, error) {
+    switch (jqXHR.readyState) {
+        case 0:
+            tip.error("网络未连接！");
+            break;
+        default:
+            handleAjaxError(jqXHR, textStatus, error);
     }
 }
