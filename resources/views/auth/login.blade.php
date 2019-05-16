@@ -80,7 +80,7 @@
         <div class="ui message">
             <ul>
                 <li>
-                    {{ __('auth.login.text.newToUs') }}
+                    {{ __('auth.login.view.text.newToUs') }}
                     <a href="{{ route('register') }}">{{ __('auth.login.view.link.signup') }}</a>
                 </li>
                 <li>
