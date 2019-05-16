@@ -46,6 +46,9 @@ class RankingController extends Controller
         }
 
         $bankDict = json_decode($rankingsJson, true);
+        if(!isset($bankDict[$data['bank']])) {
+            return $this->fail('目标题库不存在');
+        }
         $bank = $bankDict[$data['bank']];
         $rankings = $bank['rankings'];
         $rankingIds = array_column($rankings, 'id');
