@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Base\Submission;
@@ -21,8 +22,12 @@ class SubmissionController extends Controller
                 'submitter'  => $submitter['nickname'] ?? $submitter['username'] ?? '',
                 'content'    => $submission['content'],
                 'isCorrect'  => $submission['is_correct'],
-                'updateTime' => $submission['updated_at'],
-                'createTime' => $submission['created_at'],
+                'updateTime' => isset($submission['updated_at']) ?
+                    Carbon::parse($submission['updated_at'])->diffForHumans() :
+                    null,
+                'createTime' => isset($submission['created_at']) ?
+                    Carbon::parse($submission['created_at'])->diffForHumans() :
+                    null,
             ];
         }
 

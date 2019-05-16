@@ -28,6 +28,7 @@ class Submission extends Model
 		return $this->belongsTo('App\User', 'submitter');
 	}
 
+	/*
     public function getUpdatedAtAttribute($date)
     {
         return Carbon::parse($date)->diffForHumans();
@@ -37,6 +38,7 @@ class Submission extends Model
     {
         return Carbon::parse($date)->diffForHumans();
     }
+	*/
 
 	public function add($challengeId, $submitterId, $content, $isCorrect)
     {
