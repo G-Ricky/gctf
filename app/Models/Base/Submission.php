@@ -2,10 +2,8 @@
 
 namespace App\Models\Base;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\DB;
 
 class Submission extends Model
 {
@@ -28,54 +26,9 @@ class Submission extends Model
 		return $this->belongsTo('App\User', 'submitter');
 	}
 
-	/*
-    public function getUpdatedAtAttribute($date)
-    {
-        return Carbon::parse($date)->diffForHumans();
-    }
-
-    public function getCreatedAtAttribute($date)
-    {
-        return Carbon::parse($date)->diffForHumans();
-    }
-	*/
-
-	public function add($challengeId, $submitterId, $content, $isCorrect)
-    {
-        return $this->create([
-            'challenge'  => $challengeId,
-            'submitter'  => $submitterId,
-            'content'    => $content,
-            'is_correct' => $isCorrect
-        ]);
-    }
-
     public function correct()
     {
         return $this->where('is_correct', '=', true);
-    }
-
-    public function notCorrect()
-    {
-        return $this->where('is_correct', '=', false);
-    }
-
-    public function isSolved($submitterId, $challengeId)
-    {
-        $result = $this
-            ->select(
-                DB::raw('COUNT(*)')
-            )
-            ->where('submitter', '=', $submitterId)
-            ->where('challenge', '=', $challengeId)
-            ->correct()
-            ->get()
-            ->first();
-        if(is_null($result)) {
-            return false;
-        }else{
-            return true;
-        }
     }
 
     public static function search($type = null)

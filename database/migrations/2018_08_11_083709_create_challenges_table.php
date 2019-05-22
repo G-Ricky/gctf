@@ -23,7 +23,6 @@ class CreateChallengesTable extends Migration
             $table->unsignedInteger('points')->comment('分数');
             $table->string('flag', 256)->nullable()->comment('flag');
             $table->unsignedInteger('bank')->comment('题库id');
-            $table->boolean('is_hidden')->default(0)->comment('是否隐藏');
             $table->softDeletes();
             $table->timestamps();
         });

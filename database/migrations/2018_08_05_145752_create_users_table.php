@@ -22,7 +22,6 @@ class CreateUsersTable extends Migration
             $table->enum('gender', ['UNKNOWN', 'MALE', 'FEMALE'])->default('UNKNOWN')->comment('性别');
             $table->string('email', 255)->nullable()->default(null)->comment('邮箱');
             $table->string('password', 255)->comment('密码(Hash)');
-            $table->boolean('is_hidden')->default(0)->comment('是否隐藏');
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

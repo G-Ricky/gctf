@@ -16,7 +16,6 @@ class User extends Model
         'password',
         'email',
         'gender',
-        'is_hidden',
     ];
 
     public function roles()
