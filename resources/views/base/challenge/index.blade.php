@@ -42,6 +42,9 @@
 
 @can('addChallenge')
 <div class="ui container">
+    <div class="ui sizer vertical segment">
+        <h1 class="ui header">H1</h1>
+    </div>
     <div class="ui basic vertical clearing segment">
         <button id="challenge-add" class="ui primary right floated button"><i class="add circle icon"></i> {{ __('challenge.view.add') }}</button>
     </div>

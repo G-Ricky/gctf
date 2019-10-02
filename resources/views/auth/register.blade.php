@@ -62,7 +62,7 @@
                 <div class="field">
                     <div class="ui left icon input{{ $errors->has('password_confirmation') ? ' error' : '' }}">
                         <i class="lock icon"></i>
-                        <input type="password" name="password_confirmation" placeholder="{{ __('auth.register.view.placeholder.password.confirm ') }}" required>
+                        <input type="password" name="password_confirmation" placeholder="{{ __('auth.register.view.placeholder.password.confirm') }}" required>
                     </div>
                 </div>
                 <button type="submit" class="ui fluid large primary submit button">{{ __('auth.register.view.button.register') }}</button>
